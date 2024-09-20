@@ -20,7 +20,7 @@ ChartJS.register(
   Legend
 );
 
-const ExpensesVsIncome = () => {
+const ExpensesVsIncomeBar = () => {
   const chartRef = useRef(null);
 
   const uData = [
@@ -60,12 +60,12 @@ const ExpensesVsIncome = () => {
             return null;
           }
           return pData.map((value) =>
-            createGradient(ctx, chartArea, "#08D59C", "#00FFB8", 1)
+            createGradient(ctx, chartArea, "#01FFB9", "#01FFB9", 1)
           );
         },
         //text B7B7B7
         borderRadius: 20,
-        hoverBackgroundColor: "rgba(8,213,156,1)",
+        hoverBackgroundColor: "#01FFB9",
       },
       {
         label: "Expenses",
@@ -127,6 +127,7 @@ const ExpensesVsIncome = () => {
           color: "#343756", // Change this to your desired grid color
         },
       },
+      categoryPercentage: 0.7,
     },
   };
 
@@ -137,4 +138,4 @@ const ExpensesVsIncome = () => {
   );
 };
 
-export default ExpensesVsIncome;
+export default ExpensesVsIncomeBar;

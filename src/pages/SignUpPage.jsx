@@ -1,4 +1,6 @@
 import loginImg from "../assets/LoginPage.png";
+import { Link } from "react-router-dom";
+
 const SignUpPage = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121428] to-[#000036]">
@@ -91,12 +93,9 @@ const SignUpPage = () => {
             <div className="mt-6 text-center relative z-10">
               <p className="font-normal text-[16px] text-[#969696]">
                 Already a member?{" "}
-                <a
-                  href="#"
-                  className="font-normal text-[16px] text-purple-400 hover:underline"
-                >
+                <Link to="/" className="text-purple-400 hover:underline">
                   Sign In
-                </a>
+                </Link>
               </p>
             </div>
           </div>

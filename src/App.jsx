@@ -1,6 +1,12 @@
 //Used ES6:
+import Dashboard from "./components/Dashboard";
+
 const App = () => {
-  return <div></div>;
+  return (
+    <div>
+      <Dashboard />
+    </div>
+  );
 };
 
 export default App;

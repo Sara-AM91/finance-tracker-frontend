@@ -35,6 +35,7 @@ const IncSourcesPie = () => {
   };
 
   const options = {
+    //maintainAspectRatio: false,
     responsive: true,
     plugins: {
       legend: {

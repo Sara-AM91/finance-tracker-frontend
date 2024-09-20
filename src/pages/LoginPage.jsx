@@ -1,5 +1,5 @@
-import React from "react";
 import loginImg from "../assets/LoginPage.png";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   return (
@@ -69,12 +69,9 @@ const LoginPage = () => {
             <div className="mt-6 text-center relative z-10">
               <p className="font-normal text-[16px] text-[#969696]">
                 New here?{" "}
-                <a
-                  href="#"
-                  className="font-normal text-[16px] text-purple-400 hover:underline"
-                >
+                <Link to="/signup" className="text-purple-400 hover:underline">
                   Sign Up
-                </a>
+                </Link>
               </p>
             </div>
           </div>

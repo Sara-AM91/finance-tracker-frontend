@@ -4,11 +4,11 @@ import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ExpSourcesPie = () => {
+const IncSourcesPie = () => {
   const chartRef = useRef(null);
 
-  const data = [2500, 1630, 340, 1200];
-  const labels = ["Groceries", "House", "Entertainment", "Car"];
+  const data = [25000, 1630, 10640, 1200];
+  const labels = ["Salary", "Side Hustle", "Investments", "Hobby"];
 
   const chartData = {
     labels: labels,
@@ -17,16 +17,16 @@ const ExpSourcesPie = () => {
         label: "Expenses",
         data: data,
         backgroundColor: [
-          "rgb(243, 103, 19)",
-          "rgb(234, 84, 53)",
-          "rgb(227, 64, 87)",
-          "rgb(255, 32, 139)",
+          "rgb(1, 225, 185)",
+          "rgb(18, 170, 226)",
+          "rgb(27, 237, 255)",
+          "rgb(99, 63, 215)",
         ],
         hoverBackgroundColor: [
-          "rgb(263, 123, 39)",
-          "rgb(254, 104, 73)",
-          "rgb(247, 84, 107)",
-          "rgb(275, 52, 159)",
+          "rgb(21, 245, 205)",
+          "rgb(38, 190, 246)",
+          "rgb(47, 257, 275)",
+          "rgb(119, 83, 235)",
         ],
         borderColor: "#161A40", // Make the border transparent
         borderWidth: 5, // Adjust this value for more or less spacing
@@ -62,4 +62,4 @@ const ExpSourcesPie = () => {
   );
 };
 
-export default ExpSourcesPie;
+export default IncSourcesPie;

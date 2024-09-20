@@ -125,7 +125,7 @@ const ExpensesVsIncomeLine = () => {
   };
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%", height: "100%" }} className="px-4">
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

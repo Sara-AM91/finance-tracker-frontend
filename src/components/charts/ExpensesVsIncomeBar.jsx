@@ -127,12 +127,11 @@ const ExpensesVsIncomeBar = () => {
           color: "#343756", // Change this to your desired grid color
         },
       },
-      categoryPercentage: 0.7,
     },
   };
 
   return (
-    <div style={{ width: "100%", height: "400px" }} className="p-3 xl:p-8">
+    <div style={{ width: "100%" }}>
       <Bar ref={chartRef} data={chartData} options={options} />
     </div>
   );

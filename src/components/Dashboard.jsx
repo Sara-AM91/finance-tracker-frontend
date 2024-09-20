@@ -13,9 +13,9 @@ const Dashboard = () => {
   let year = d.getFullYear();
 
   return (
-    <div className="grid grid-cols-6 gap-4 p-4 w-full h-full">
-      <div className="col-span-4 grid grid-cols-4 gap-4 h-full">
-        <div className="col-span-3 bg-[#161A40] p-4 text-white rounded-lg flex flex-col h-full">
+    <div className="grid grid-cols-6 gap-4 p-4">
+      <div className="col-span-4 grid grid-cols-4 grid-rows-7 gap-4">
+        <div className="col-span-3 bg-[#161A40] p-4 text-white rounded-lg flex flex-col row-span-3">
           <div className="flex justify-between">
             <div>
               <h1 className="text-xl">Income & Expenses</h1>
@@ -43,24 +43,24 @@ const Dashboard = () => {
             {bar ? <ExpensesVsIncomeBar /> : <ExpensesVsIncomeLine />}
           </div>
         </div>
-        <div className="col-span-1 bg-[#161A40] p-4 text-white rounded-lg h-full">
+        <div className="col-span-1 bg-[#161A40] p-4 text-white rounded-lg row-span-3">
           01
         </div>
-        <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-lg h-full">
+        <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-lg row-span-3">
           <h1 className="text-xl">Sources Expenses</h1>
           <ExpSourcesPie />
         </div>
-        <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-lg h-full">
+        <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-lg row-span-3">
           03
         </div>
-        <div className="col-span-4 bg-[#161A40] p-4 text-white rounded-lg h-full">
+        <div className="col-span-4 bg-[#161A40] p-4 text-white rounded-lg row-span-1">
           04
         </div>
       </div>
       <div className="col-span-2 grid grid-rows-12 gap-4 h-full">
-        <div className="row-span-2 bg-[#161A40] text-white rounded-lg">01</div>
+        <div className="row-span-3 bg-[#161A40] text-white rounded-lg">01</div>
         <div className="row-span-8 bg-[#161A40] text-white rounded-lg">02</div>
-        <div className="row-span-3 bg-[#161A40] text-white rounded-lg">03</div>
+        <div className="row-span-1 bg-[#161A40] text-white rounded-lg">03</div>
       </div>
     </div>
   );

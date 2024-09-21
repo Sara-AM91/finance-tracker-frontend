@@ -97,8 +97,8 @@ const ExpensesVsIncomeLine = () => {
 
   // Chart options
   const options = {
-    responsive: true,
-    maintainAspectRatio: false,
+    responsive: true, // Disable responsive resizing
+    maintainAspectRatio: false, // Allow chart to stretch without maintaining aspect ratio
     plugins: {
       legend: {
         display: false,
@@ -125,8 +125,19 @@ const ExpensesVsIncomeLine = () => {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%" }} className="px-4">
-      <Line ref={chartRef} data={chartData} options={options} />
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        padding: "20px",
+        overflow: "hidden",
+      }}
+      className="relative flex items-center justify-center"
+    >
+      <div style={{ width: "100%", height: "90%" }}>
+        {/* Chart with constrained size */}
+        <Line ref={chartRef} data={chartData} options={options} />
+      </div>
     </div>
   );
 };

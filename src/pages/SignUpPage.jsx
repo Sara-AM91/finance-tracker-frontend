@@ -5,14 +5,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignUpPage = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState();
   const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [emailError, setEmailError] = useState();
+  const [passwordError, setPasswordError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(true);
   const [strength, setStrength] = useState(0);
   const [feedback, setFeedback] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const validateEmail = (emailValue) => {
     setEmail(emailValue);
@@ -119,6 +124,73 @@ const SignUpPage = () => {
     }
   };
 
+  //Sign Up Authentication:
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    setError(null);
+
+    //Validation for empty fields
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      setError("All fields are required");
+      setIsLoading(false);
+      return;
+    }
+
+    //Simple validation before sending the data
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+    const userData = {
+      firstName,
+      lastName,
+      email,
+      password,
+    };
+    try {
+      const res = await fetch("http://localhost:5000/user/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setIsLoading(false);
+        setError(data.error);
+        alert("Sign up failed: " + data.error);
+      }
+
+      if (res.ok) {
+        localStorage.setItem("user", JSON.stringify(data));
+        setIsLoading(false);
+        alert("Sign up successful!");
+      }
+    } catch (err) {
+      setIsLoading(false);
+      setError("Something went wrong, please try again");
+      alert("Sign up failed: Something went wrong, please try again");
+    }
+  };
+
+  const isFormInvalid =
+    !firstName ||
+    !lastName ||
+    !email ||
+    !password ||
+    !confirmPassword ||
+    emailError ||
+    feedback.length > 0 ||
+    passwordError;
+
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121428] to-[#000036]">
       {/* First Background Curve */}
@@ -152,24 +224,34 @@ const SignUpPage = () => {
               Get on Board!
             </h2>
 
-            <form className="relative z-10 w-full flex flex-col space-y-2">
+            <form
+              className="relative z-10 w-full flex flex-col space-y-2"
+              onSubmit={handleSubmit}
+            >
               <div className="mb-2">
                 <input
                   type="text"
+                  name="firstName"
                   placeholder="First Name"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-[20px] text-[#969696]"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div className="mb-4 pb-2">
                 <input
                   type="text"
+                  name="lastName"
                   placeholder="Last Name"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-[20px] text-[#969696]"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
               <div className="mb-4 pb-2">
                 <input
                   type="email"
+                  name="email"
                   placeholder="E-mail"
                   //className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-[20px] text-[#969696]"
                   className={`w-full text-[20px] text-[#969696] p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 ${
@@ -257,12 +339,12 @@ const SignUpPage = () => {
               >
                 <button
                   type="submit"
-                  className="w-[200px] h-[55px] bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700 font-normal text-[24px] text-white p-2 rounded-lg transition duration-300"
-                  disabled={
-                    emailError !== "" ||
-                    feedback.length > 0 ||
-                    passwordError !== ""
-                  }
+                  className={`w-[200px] h-[55px] font-normal text-[24px] text-white p-2 rounded-lg transition duration-300 ${
+                    isFormInvalid || isLoading
+                      ? "bg-gradient-to-b from-[#833ac9] to-[#5c40da] opacity-40 shadow-inner text-gray-300 cursor-not-allowed"
+                      : "bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700"
+                  }`}
+                  disabled={isFormInvalid || isLoading}
                 >
                   Sign Up
                 </button>
@@ -274,15 +356,6 @@ const SignUpPage = () => {
                 </p>
               </div>
             </form>
-
-            {/* <div className="mt-6 text-center relative z-10">
-              <p className="font-normal text-[16px] text-[#969696]">
-                Already a member?{" "}
-                <Link to="/" className="text-purple-400 hover:underline">
-                  Sign In
-                </Link>
-              </p>
-            </div> */}
           </div>
         </div>
 

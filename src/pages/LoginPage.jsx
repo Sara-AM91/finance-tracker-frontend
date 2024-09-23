@@ -10,6 +10,9 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [feedback, setFeedback] = useState([]);
   const validateEmail = (emailValue) => {
     setEmail(emailValue);
 
@@ -46,16 +49,39 @@ const LoginPage = () => {
     validateEmail(emailValue);
   };
 
-  const handlePasswordChange = (e) => {
-    const newPassword = e.target.value;
-    setPassword(newPassword);
-    checkPasswordStrength(newPassword);
-    checkConfirmPasswordMatch(confirmPassword, newPassword);
-  };
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  //Login Authentication:
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    setError(null);
+
+    const res = await fetch("http://localhost:5000/user/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setIsLoading(false);
+      setError(data.error);
+      alert("login failed: " + data.error);
+    }
+
+    if (res.ok) {
+      localStorage.setItem("user", JSON.stringify(data));
+      setIsLoading(false);
+      alert("Loged in!");
+    }
+  };
+  const isFormInvalid =
+    !email || !password || emailError || feedback.length > 0 || passwordError;
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121428] to-[#000036]">
       {/* First Background Curve */}
@@ -90,7 +116,7 @@ const LoginPage = () => {
               welcome back
             </h2>
 
-            <form className="relative z-10">
+            <form className="relative z-10" onSubmit={handleSubmit}>
               <div className="mb-4">
                 <input
                   type="email"
@@ -107,7 +133,7 @@ const LoginPage = () => {
                   placeholder="Password"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
                   value={password}
-                  onChange={handlePasswordChange}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 {passwordError && (
                   <p className="text-red-500">{passwordError}</p>
@@ -128,8 +154,12 @@ const LoginPage = () => {
               </div>
               <div className="flex justify-center">
                 <button
-                  className="w-[150px] h-[55px] bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700 font-normal text-[24px] text-white p-2 mt-5 rounded-lg transition duration-300"
-                  disabled={emailError || passwordError}
+                  className={`w-[200px] h-[55px] font-normal text-[24px] text-white p-2 rounded-lg transition duration-300 ${
+                    isFormInvalid || isLoading
+                      ? "bg-gradient-to-b from-[#833ac9] to-[#5c40da] opacity-40 shadow-inner text-gray-300 cursor-not-allowed"
+                      : "bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700"
+                  }`}
+                  disabled={isFormInvalid || isLoading}
                 >
                   Sign In
                 </button>

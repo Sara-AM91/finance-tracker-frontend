@@ -1,7 +1,61 @@
 import loginImg from "../assets/LoginPage.png";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState();
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(true);
+  const validateEmail = (emailValue) => {
+    setEmail(emailValue);
+
+    if (emailValue === "") {
+      setEmailError("");
+      return;
+    }
+    const atIndex = emailValue.indexOf("@");
+    if (atIndex === -1) {
+      setEmailError("Email must include '@'.");
+      return;
+    }
+    //Check that there's a "." after the "@" and there's at least one character before the "."
+    const dotIndex = emailValue.indexOf(".", atIndex);
+    if (dotIndex === -1) {
+      setEmailError("Email must include a domain like '.com'.");
+      return;
+    } else if (dotIndex - atIndex < 2) {
+      setEmailError(
+        "There must be at least one character between '@' and '.'."
+      );
+      return;
+    }
+    const domainPart = emailValue.substring(dotIndex + 1);
+    if (domainPart.length < 2 || domainPart.length > 4) {
+      setEmailError("Invalid domain after the dot.");
+      return;
+    }
+    setEmailError("");
+  };
+
+  const handleEmailChange = (e) => {
+    const emailValue = e.target.value;
+    validateEmail(emailValue);
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    checkPasswordStrength(newPassword);
+    checkConfirmPasswordMatch(confirmPassword, newPassword);
+  };
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121428] to-[#000036]">
       {/* First Background Curve */}
@@ -42,13 +96,26 @@ const LoginPage = () => {
                   type="email"
                   placeholder="E-mail"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
+                  value={email}
+                  onChange={handleEmailChange}
                 />
+                {emailError && <p className="text-red-500">{emailError}</p>}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 relative flex items-center">
                 <input
-                  type="password"
+                  type={passwordVisible ? "password" : "text"}
                   placeholder="Password"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                {passwordError && (
+                  <p className="text-red-500">{passwordError}</p>
+                )}
+                <FontAwesomeIcon
+                  icon={passwordVisible ? faEyeSlash : faEye}
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400"
                 />
               </div>
               <div className="mb-4 text-center">
@@ -60,7 +127,10 @@ const LoginPage = () => {
                 </a>
               </div>
               <div className="flex justify-center">
-                <button className="w-[150px] h-[55px] bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700 font-normal text-[24px] text-white p-2 mt-5 rounded-lg transition duration-300">
+                <button
+                  className="w-[150px] h-[55px] bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700 font-normal text-[24px] text-white p-2 mt-5 rounded-lg transition duration-300"
+                  disabled={emailError || passwordError}
+                >
                   Sign In
                 </button>
               </div>

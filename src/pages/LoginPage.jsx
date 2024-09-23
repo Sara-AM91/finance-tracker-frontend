@@ -75,7 +75,7 @@ const LoginPage = () => {
     }
 
     if (res.ok) {
-      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("user", JSON.stringify(data.token));
       setIsLoading(false);
       alert("Loged in!");
     }

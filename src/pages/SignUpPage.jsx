@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import loginImg from "../assets/LoginPage.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { Alert } from "daisyui";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -18,6 +19,22 @@ const SignUpPage = () => {
   const [feedback, setFeedback] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  //Alert:
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState(""); //can be 'success' or 'error'
+  const [alertMessage, setAlertMessage] = useState("");
+
+  //useNavigate to redirect after signup
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (alertVisible) {
+      const timer = setTimeout(() => {
+        setAlertVisible(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertVisible]);
 
   const validateEmail = (emailValue) => {
     setEmail(emailValue);
@@ -124,26 +141,13 @@ const SignUpPage = () => {
     }
   };
 
-  //Sign Up Authentication:
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsLoading(true);
     setError(null);
+    setAlertVisible(false);
 
-    //Validation for empty fields
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      setError("All fields are required");
-      setIsLoading(false);
-      return;
-    }
-
-    //Simple validation before sending the data
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
     const userData = {
       firstName,
       lastName,
@@ -165,19 +169,37 @@ const SignUpPage = () => {
 
       if (!res.ok) {
         setIsLoading(false);
-        setError(data.error);
-        alert("Sign up failed: " + data.error);
+        console.log(data.error);
+        if (data.error === "Email already exists") {
+          setError(data.error);
+          setAlertType("error");
+          setAlertMessage(
+            "This email is already registered. Please use a different email."
+          );
+        } else {
+          setAlertType("error");
+          setAlertMessage("Something went wrong. Please try again.");
+        }
+        setAlertVisible(true);
+        return;
       }
 
       if (res.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
         setIsLoading(false);
-        alert("Sign up successful!");
+        setAlertType("success");
+        setAlertMessage("Your account has been created successfully!");
+        setAlertVisible(true);
+
+        setTimeout(() => {
+          navigate("/home");
+        }, 3000);
       }
     } catch (err) {
       setIsLoading(false);
       setError("Something went wrong, please try again");
-      alert("Sign up failed: Something went wrong, please try again");
+      setAlertType("error");
+      setAlertMessage("Something went wrong, please try again.");
+      setAlertVisible(true);
     }
   };
 
@@ -193,21 +215,6 @@ const SignUpPage = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121428] to-[#000036]">
-      {/* First Background Curve */}
-      <div className="absolute top-0 left-0 w-[1853px] h-[780.46px] bg-gradient-to-b from-[#121428] to-[#000036]">
-        {/* Upper Curve */}
-        <div
-          className="absolute top-0 left-0 w-full h-dull bg-gradient-to-r from-[#121428] to-[#000036]"
-          style={{ clipPath: "ellipse(80% 50% at 50% 0%)" }}
-        ></div>
-      </div>
-
-      {/* Second Background Curve */}
-      <div
-        className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-l from-[#121428] to-[#000036]"
-        style={{ clipPath: "ellipse(80% 60% at 50% 100%)" }}
-      ></div>
-
       {/* Content Area */}
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full p-10">
         {/* Left Side (Login Form) */}
@@ -220,9 +227,35 @@ const SignUpPage = () => {
               style={{ clipPath: "ellipse(80% 60% at 50% 0%)" }}
             ></div>
 
-            <h2 className="text-2xl mb-10 mt-10 font-normal text-[36px] text-white">
-              Get on Board!
-            </h2>
+            {/* Corrected SVG Wave at the top */}
+            <div className="absolute top-0 left-0 w-full">
+              <svg
+                viewBox="0 0 1440 320"
+                className="w-full h-[100px]"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+              >
+                <defs>
+                  <linearGradient
+                    id="waveGradient"
+                    gradientTransform="rotate(1)"
+                  >
+                    <stop offset="0%" stopColor="#7F3BCB" />
+                    <stop offset="100%" stopColor="#633FD7" />
+                  </linearGradient>
+                </defs>
+                <path
+                  fill="url(#waveGradient)"
+                  fillOpacity="1"
+                  d="M0,320L48,293.3C96,267,192,213,288,202.7C384,192,480,224,576,234.7C672,245,768,235,864,218.7C960,203,1056,181,1152,186.7C1248,192,1344,224,1392,240L1440,256L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+                />
+              </svg>
+            </div>
+            <div className="pt-6">
+              <h2 className="text-2xl mb-10 mt-10 font-normal text-[36px] text-white">
+                Get on Board!
+              </h2>
+            </div>
 
             <form
               className="relative z-10 w-full flex flex-col space-y-2"
@@ -350,12 +383,42 @@ const SignUpPage = () => {
                 </button>
                 <p className="font-normal text-[16px] text-[#969696]">
                   Already a member?{" "}
-                  <Link to="/" className="text-purple-400 hover:underline">
+                  <Link to="/login" className="text-purple-400 hover:underline">
                     Sign In
                   </Link>
                 </p>
               </div>
             </form>
+            {/* Add Alert */}
+            {alertVisible && (
+              <div
+                role="alert"
+                className={`alert ${
+                  alertType === "success" ? "alert-success" : "alert-error"
+                } shadow-lg`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 shrink-0 stroke-current"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d={
+                      alertType === "success"
+                        ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        : "M6 18L18 6M6 6l12 12"
+                    }
+                  />
+                </svg>
+                <span>{alertMessage}</span>
+              </div>
+            )}
+
+            {/* End of Alert */}
           </div>
         </div>
 

@@ -106,7 +106,8 @@ const Dashboard = () => {
               <p className="text-6xl text-[#08D59C]">{balance}</p>
             </div>
           </div>
-          <div className="row-span-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex items-center">
+          <div className="row-span-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center">
+            <h1 className="text-xl">Recent Transactions</h1>
             <TransactionsList />
           </div>
           <div className="row-span-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center">

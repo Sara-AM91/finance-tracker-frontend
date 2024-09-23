@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import loginImg from "../assets/LoginPage.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { Alert } from "daisyui";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -18,6 +19,22 @@ const SignUpPage = () => {
   const [feedback, setFeedback] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  //Alert:
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState(""); // can be 'success' or 'error'
+  const [alertMessage, setAlertMessage] = useState("");
+
+  //useNavigate to redirect after signup
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (alertVisible) {
+      const timer = setTimeout(() => {
+        setAlertVisible(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertVisible]);
 
   const validateEmail = (emailValue) => {
     setEmail(emailValue);
@@ -124,26 +141,32 @@ const SignUpPage = () => {
     }
   };
 
-  //Sign Up Authentication:
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsLoading(true);
     setError(null);
+    setAlertVisible(false);
 
     //Validation for empty fields
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      setError("All fields are required");
-      setIsLoading(false);
-      return;
-    }
+    // // if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    // //   setError("All fields are required");
+    // //   setAlertType("error");
+    // //   setAlertMessage("All fields are required");
+    // //   setAlertVisible(true);
+    // //   setIsLoading(false);
+    // //   return;
+    // // }
 
     //Simple validation before sending the data
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
+    // if (password !== confirmPassword) {
+    //   setError("Passwords do not match");
+    //   setAlertType("error");
+    //   setAlertMessage("Passwords do not match");
+    //   setAlertVisible(true);
+    //   setIsLoading(false);
+    //   return;
+    // }
     const userData = {
       firstName,
       lastName,
@@ -166,18 +189,27 @@ const SignUpPage = () => {
       if (!res.ok) {
         setIsLoading(false);
         setError(data.error);
-        alert("Sign up failed: " + data.error);
+        setAlertType("error");
+        setAlertMessage("Something went wrong. Please try again.");
+        setAlertVisible(true);
       }
 
       if (res.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
         setIsLoading(false);
-        alert("Sign up successful!");
+        setAlertType("success");
+        setAlertMessage("Your account has been created successfully!");
+        setAlertVisible(true);
+        // Delay navigation by 3 seconds to show the alert
+        setTimeout(() => {
+          navigate("/home");
+        }, 3000); // Adjust the delay time as needed
       }
     } catch (err) {
       setIsLoading(false);
       setError("Something went wrong, please try again");
-      alert("Sign up failed: Something went wrong, please try again");
+      setAlertType("error");
+      setAlertMessage("Something went wrong, please try again.");
+      setAlertVisible(true);
     }
   };
 
@@ -350,12 +382,42 @@ const SignUpPage = () => {
                 </button>
                 <p className="font-normal text-[16px] text-[#969696]">
                   Already a member?{" "}
-                  <Link to="/" className="text-purple-400 hover:underline">
+                  <Link to="/login" className="text-purple-400 hover:underline">
                     Sign In
                   </Link>
                 </p>
               </div>
             </form>
+            {/* Add Alert */}
+            {alertVisible && (
+              <div
+                role="alert"
+                className={`alert ${
+                  alertType === "success" ? "alert-success" : "alert-error"
+                } shadow-lg`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 shrink-0 stroke-current"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d={
+                      alertType === "success"
+                        ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        : "M6 18L18 6M6 6l12 12"
+                    }
+                  />
+                </svg>
+                <span>{alertMessage}</span>
+              </div>
+            )}
+
+            {/* End of Alert */}
           </div>
         </div>
 

@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "64e43f4b9a34230e28a86c25",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "income",
+    "title": "Freelance Project",
+    "amount": 1500,
+    "category": {
+      "_id": "64e43f5c9a34230e28a86c26",
+      "name": "Freelance Income"
+    },
+    "invoice": "invoice123.pdf",
+    "date": "2024-09-21T14:48:00.000Z",
+    "description": "Payment for web development project"
+  },
+  {
+    "_id": "64e43f6b9a34230e28a86c27",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "expense",
+    "title": "Office Rent",
+    "amount": 500,
+    "category": {
+      "_id": "64e43f7c9a34230e28a86c28",
+      "name": "Rent"
+    },
+    "invoice": null,
+    "date": "2024-09-01T10:00:00.000Z",
+    "description": "Monthly office rent"
+  },
+  {
+    "_id": "64e43f8b9a34230e28a86c29",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "expense",
+    "title": "Software Subscription",
+    "amount": 100,
+    "category": {
+      "_id": "64e43f9c9a34230e28a86c2a",
+      "name": "Software"
+    },
+    "invoice": "invoice456.pdf",
+    "date": "2024-08-15T12:30:00.000Z",
+    "description": "Annual subscription for design software"
+  }
+]

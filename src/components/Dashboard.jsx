@@ -99,18 +99,18 @@ const Dashboard = () => {
         </div>
 
         {/* Right Grid (Sidebar) */}
-        <div className="col-span-2 flex flex-col gap-4 h-full">
+        <div className="col-span-2 flex flex-col gap-4 h-full justify-between">
           <div className="flex-3 text-white rounded-3xl overflow-auto p-8">
             <div className="">
               <h1 className="text-4xl text-right">Available Balance</h1>
               <p className="text-6xl text-[#08D59C] text-right">{balance}</p>
             </div>
           </div>
-          <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center">
+          <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center grow">
             <h1 className="text-xl">Recent Transactions</h1>
             <TransactionsList />
           </div>
-          <div className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center max-h-12 cursor-pointer">
+          <div className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl flex justify-center items-center max-h-12 cursor-pointer">
             <img src={plus} className="max-h-12" />
           </div>
         </div>

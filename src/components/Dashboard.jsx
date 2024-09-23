@@ -3,6 +3,7 @@ import ExpensesVsIncomeBar from "./charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
 import BasicPie from "./charts/BasicPie";
 import ProgressBar from "./charts/ProgressBar";
+import TransactionsList from "./TransactionsList";
 import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave.png";
 import plus from "../assets/plus.png";
@@ -105,8 +106,8 @@ const Dashboard = () => {
               <p className="text-6xl text-[#08D59C]">{balance}</p>
             </div>
           </div>
-          <div className="row-span-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4">
-            02
+          <div className="row-span-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex items-center">
+            <TransactionsList />
           </div>
           <div className="row-span-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center">
             <img src={plus} className=" max-h-12 " />

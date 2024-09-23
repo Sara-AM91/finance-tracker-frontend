@@ -3,42 +3,168 @@
     "_id": "64e43f4b9a34230e28a86c25",
     "user": "64e43f3b9a34230e28a86c24",
     "type": "income",
-    "title": "Freelance Project",
-    "amount": 1500,
+    "title": "Freelance Project - January",
+    "amount": 2000,
     "category": {
       "_id": "64e43f5c9a34230e28a86c26",
       "name": "Freelance Income"
     },
-    "invoice": "invoice123.pdf",
-    "date": "2024-09-21T14:48:00.000Z",
-    "description": "Payment for web development project"
+    "invoice": "invoice_jan.pdf",
+    "date": "2024-01-15T10:00:00.000Z",
+    "description": "Payment for January freelance project"
   },
   {
     "_id": "64e43f6b9a34230e28a86c27",
     "user": "64e43f3b9a34230e28a86c24",
     "type": "expense",
-    "title": "Office Rent",
+    "title": "Office Rent - January",
     "amount": 500,
     "category": {
       "_id": "64e43f7c9a34230e28a86c28",
       "name": "Rent"
     },
     "invoice": null,
-    "date": "2024-09-01T10:00:00.000Z",
-    "description": "Monthly office rent"
+    "date": "2024-01-05T10:00:00.000Z",
+    "description": "Monthly office rent for January"
   },
   {
     "_id": "64e43f8b9a34230e28a86c29",
     "user": "64e43f3b9a34230e28a86c24",
     "type": "expense",
     "title": "Software Subscription",
-    "amount": 100,
+    "amount": 120,
     "category": {
       "_id": "64e43f9c9a34230e28a86c2a",
       "name": "Software"
     },
-    "invoice": "invoice456.pdf",
-    "date": "2024-08-15T12:30:00.000Z",
-    "description": "Annual subscription for design software"
+    "invoice": "invoice_software_jan.pdf",
+    "date": "2024-01-12T12:30:00.000Z",
+    "description": "Monthly software subscription"
+  },
+  {
+    "_id": "64e43fab9a34230e28a86c30",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "income",
+    "title": "Freelance Project - February",
+    "amount": 2200,
+    "category": {
+      "_id": "64e43f5c9a34230e28a86c26",
+      "name": "Freelance Income"
+    },
+    "invoice": "invoice_feb.pdf",
+    "date": "2024-02-10T10:00:00.000Z",
+    "description": "Payment for February freelance project"
+  },
+  {
+    "_id": "64e43fbc9a34230e28a86c31",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "expense",
+    "title": "Office Rent - February",
+    "amount": 500,
+    "category": {
+      "_id": "64e43f7c9a34230e28a86c28",
+      "name": "Rent"
+    },
+    "invoice": null,
+    "date": "2024-02-05T10:00:00.000Z",
+    "description": "Monthly office rent for February"
+  },
+  {
+    "_id": "64e43fcc9a34230e28a86c32",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "income",
+    "title": "Freelance Project - March",
+    "amount": 2300,
+    "category": {
+      "_id": "64e43f5c9a34230e28a86c26",
+      "name": "Freelance Income"
+    },
+    "invoice": "invoice_mar.pdf",
+    "date": "2024-03-10T10:00:00.000Z",
+    "description": "Payment for March freelance project"
+  },
+  {
+    "_id": "64e43f6c9a34230e28a86c33",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "expense",
+    "title": "Office Rent - March",
+    "amount": 500,
+    "category": {
+      "_id": "64e43f7c9a34230e28a86c28",
+      "name": "Rent"
+    },
+    "invoice": null,
+    "date": "2024-03-05T10:00:00.000Z",
+    "description": "Monthly office rent for March"
+  },
+  {
+    "_id": "64e43f6d9a34230e28a86c34",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "income",
+    "title": "Freelance Project - April",
+    "amount": 2500,
+    "category": {
+      "_id": "64e43f5c9a34230e28a86c26",
+      "name": "Freelance Income"
+    },
+    "invoice": "invoice_apr.pdf",
+    "date": "2024-04-10T10:00:00.000Z",
+    "description": "Payment for April freelance project"
+  },
+  {
+    "_id": "64e43f7d9a34230e28a86c35",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "expense",
+    "title": "Office Rent - April",
+    "amount": 500,
+    "category": {
+      "_id": "64e43f7c9a34230e28a86c28",
+      "name": "Rent"
+    },
+    "invoice": null,
+    "date": "2024-04-05T10:00:00.000Z",
+    "description": "Monthly office rent for April"
+  },
+  {
+    "_id": "64e43f8d9a34230e28a86c36",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "income",
+    "title": "Freelance Project - May",
+    "amount": 2000,
+    "category": {
+      "_id": "64e43f5c9a34230e28a86c26",
+      "name": "Freelance Income"
+    },
+    "invoice": "invoice_may.pdf",
+    "date": "2024-05-10T10:00:00.000Z",
+    "description": "Payment for May freelance project"
+  },
+  {
+    "_id": "64e43f9d9a34230e28a86c37",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "expense",
+    "title": "Office Rent - May",
+    "amount": 500,
+    "category": {
+      "_id": "64e43f7c9a34230e28a86c28",
+      "name": "Rent"
+    },
+    "invoice": null,
+    "date": "2024-05-05T10:00:00.000Z",
+    "description": "Monthly office rent for May"
+  },
+  {
+    "_id": "64e43fac9a34230e28a86c38",
+    "user": "64e43f3b9a34230e28a86c24",
+    "type": "income",
+    "title": "Freelance Project - June",
+    "amount": 2100,
+    "category": {
+      "_id": "64e43f5c9a34230e28a86c26",
+      "name": "Freelance Income"
+    },
+    "invoice": "invoice_june.pdf",
+    "date": "2024-06-10T10:00:00.000Z",
+    "description": "Payment for June freelance project"
   }
 ]

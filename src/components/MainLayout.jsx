@@ -3,7 +3,7 @@ import Header from "./Header";
 
 const MainLayout = () => {
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b from-[#121428] to-[#000036]">
+    <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036]">
       {/* First Background Curve */}
       <div className="absolute top-0 left-0 w-full h-[780px] bg-gradient-to-b from-[#121428] to-[#000036] z-0">
         {/* Upper Curve */}

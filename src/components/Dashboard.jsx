@@ -3,6 +3,7 @@ import ExpensesVsIncomeBar from "./charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
 import BasicPie from "./charts/BasicPie";
 import ProgressBar from "./charts/ProgressBar";
+import TransactionsList from "./TransactionsList";
 import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave.png";
 import plus from "../assets/plus.png";
@@ -10,9 +11,9 @@ import plus from "../assets/plus.png";
 const Dashboard = () => {
   const [bar, setBar] = useState(true);
   const [balance, setBalance] = useState(14500);
-
   const [maxExp, setMaxExp] = useState({ month: "June", amount: "1600" });
   const [maxInc, setMaxInc] = useState({ month: "April", amount: "2500" });
+
   const toggleChart = () => {
     setBar(!bar);
   };
@@ -21,13 +22,12 @@ const Dashboard = () => {
   let year = d.getFullYear();
 
   return (
-    <div className="h-screen">
-      {/* Grid with fixed column and row sizes */}
-      <div className="grid grid-cols-6 gap-4 h-full">
-        {/* Main grid (left side) */}
+    <div className="h-full flex flex-col">
+      {/* Main grid layout */}
+      <div className="grid grid-cols-6 gap-4 flex-grow">
+        {/* Left Grid (Income & Expenses + Other items) */}
         <div className="col-span-4 grid grid-cols-4 gap-4 h-full">
-          {/* Income & Expenses */}
-          <div className="col-span-3 bg-[#161A40] p-4 text-white rounded-3xl flex flex-col overflow-hidden">
+          <div className="col-span-3 bg-[#161A40] p-4 text-white rounded-3xl flex flex-col">
             <div className="flex justify-between">
               <div>
                 <h1 className="text-xl">Income & Expenses</h1>
@@ -50,10 +50,8 @@ const Dashboard = () => {
                 </button>
               </div>
             </div>
-            {/* Chart Placeholder */}
-            <div className="flex-grow flex items-center justify-center overflow-hidden">
+            <div className="flex-grow flex items-center justify-center">
               <div className="w-full h-full">
-                {/* Add chart here */}
                 {bar ? <ExpensesVsIncomeBar /> : <ExpensesVsIncomeLine />}
               </div>
             </div>
@@ -61,14 +59,14 @@ const Dashboard = () => {
 
           {/* Other Grid Items */}
           <div className="col-span-1 bg-[#161A40] p-4 text-white rounded-3xl overflow-auto flex flex-col items-center justify-around gap-6">
-            <div className="flex flex-col items-center ">
+            <div className="flex flex-col items-center">
               <p className="text-lg">Max. Income</p>
               <p className="text-3xl">{maxInc.amount}</p>
               <img src={greenWave} />
               <p className="text-lg">{maxInc.month}</p>
             </div>
 
-            <div className="flex flex-col items-center ">
+            <div className="flex flex-col items-center">
               <p className="text-lg">Max. Expenses</p>
               <p className="text-3xl">{maxExp.amount}</p>
               <img src={redWave} />
@@ -76,43 +74,44 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl ">
+          <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl">
             <h1 className="text-xl">Sources Income</h1>
-            <div className="flex-grow flex items-center justify-center ">
+            <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
-                <BasicPie /> {/* Make sure to uncomment and use this */}
+                <BasicPie />
               </div>
             </div>
           </div>
 
-          <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl ">
-            <h1 className="text-xl">Sources Income</h1>
-            <div className="flex-grow flex items-center justify-center ">
+          <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl">
+            <h1 className="text-xl">Sources Expenses</h1>
+            <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
-                <BasicPie /> {/* Make sure to uncomment and use this */}
+                <BasicPie />
               </div>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="col-span-4 bg-[#161A40] p-4 text-white rounded-3xl overflow-hidden text-center">
+          <div className="col-span-4 bg-[#161A40] p-4 text-white rounded-3xl overflow-hidden ">
             <ProgressBar balance={balance} />
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="col-span-2 grid grid-rows-12 gap-4 h-full">
-          <div className="row-span-3 bg-[#161A40] text-white rounded-3xl overflow-auto p-8">
-            <div className="flex flex-col items-end gap-2">
-              <h1 className="text-4xl">Available Balance</h1>
-              <p className="text-6xl text-[#08D59C]">{balance}</p>
+        {/* Right Grid (Sidebar) */}
+        <div className="col-span-2 flex flex-col gap-4 h-full">
+          <div className="flex-3 text-white rounded-3xl overflow-auto p-8">
+            <div className="">
+              <h1 className="text-4xl text-right">Available Balance</h1>
+              <p className="text-6xl text-[#08D59C] text-right">{balance}</p>
             </div>
           </div>
-          <div className="row-span-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4">
-            02
+          <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center">
+            <h1 className="text-xl">Recent Transactions</h1>
+            <TransactionsList />
           </div>
-          <div className="row-span-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center">
-            <img src={plus} className=" max-h-12 " />
+          <div className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center max-h-12 cursor-pointer">
+            <img src={plus} className="max-h-12" />
           </div>
         </div>
       </div>

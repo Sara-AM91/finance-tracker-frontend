@@ -5,7 +5,7 @@ const TransactionsList = () => {
   const lastFive = data.slice(0, 5);
 
   return (
-    <div className="w-full mx-auto p-4">
+    <div className="w-full mx-auto p-4 overflow-auto">
       {lastFive.map((action) => (
         <ListItem key={action._id} action={action} lastFive={lastFive} />
       ))}

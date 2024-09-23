@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 
 export default function BasicPie() {
   return (
-    <div className="flex justify-center items-center pt-3 -mb-4">
+    <div className="flex justify-center items-center pt-3 ">
       <PieChart
         sx={(theme) => ({
           [`.css-1mhcdve-MuiPieArc-root`]: {

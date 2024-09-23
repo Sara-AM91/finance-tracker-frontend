@@ -84,7 +84,7 @@ const Dashboard = () => {
           </div>
 
           <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl">
-            <h1 className="text-xl">Sources Income</h1>
+            <h1 className="text-xl">Sources Expenses</h1>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
                 <BasicPie />
@@ -93,25 +93,25 @@ const Dashboard = () => {
           </div>
 
           {/* Progress Bar */}
-          <div className="col-span-4 bg-[#161A40] p-4 text-white rounded-3xl overflow-hidden text-center">
+          <div className="col-span-4 bg-[#161A40] p-4 text-white rounded-3xl overflow-hidden ">
             <ProgressBar balance={balance} />
           </div>
         </div>
 
         {/* Right Grid (Sidebar) */}
-        <div className="col-span-2 grid grid-rows-12 gap-4 h-full">
-          <div className="row-span-3 bg-[#161A40] text-white rounded-3xl overflow-auto p-8">
-            <div className="flex flex-col items-end gap-2">
-              <h1 className="text-4xl">Available Balance</h1>
-              <p className="text-6xl text-[#08D59C]">{balance}</p>
+        <div className="col-span-2 flex flex-col gap-4 h-full">
+          <div className="flex-3 text-white rounded-3xl overflow-auto p-8">
+            <div className="">
+              <h1 className="text-4xl text-right">Available Balance</h1>
+              <p className="text-6xl text-[#08D59C] text-right">{balance}</p>
             </div>
           </div>
-          <div className="row-span-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center">
+          <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center">
             <h1 className="text-xl">Recent Transactions</h1>
             <TransactionsList />
           </div>
-          <div className="row-span-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center">
-            <img src={plus} className=" max-h-12 " />
+          <div className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl overflow-auto flex justify-center items-center max-h-12 cursor-pointer">
+            <img src={plus} className="max-h-12" />
           </div>
         </div>
       </div>

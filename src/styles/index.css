@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.wave {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 70px;
+  width: 100%;
+  background: dodgerblue;
+  z-index: -1;
+}
+.wave::before {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100% 90%;
+  width: 51%;
+  height: 75px;
+  background-color: white;
+  right: 0px;
+  top: 35px;
+}
+.wave::after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100% 90%;
+  width: 51%;
+  height: 75px;
+  background-color: dodgerblue;
+  left: -8px;
+  top: 25px;
+}

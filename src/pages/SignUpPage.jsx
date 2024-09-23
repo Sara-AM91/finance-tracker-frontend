@@ -22,7 +22,7 @@ const SignUpPage = () => {
 
   //Alert:
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertType, setAlertType] = useState(""); // can be 'success' or 'error'
+  const [alertType, setAlertType] = useState(""); //can be 'success' or 'error'
   const [alertMessage, setAlertMessage] = useState("");
 
   //useNavigate to redirect after signup
@@ -148,25 +148,6 @@ const SignUpPage = () => {
     setError(null);
     setAlertVisible(false);
 
-    //Validation for empty fields
-    // // if (!firstName || !lastName || !email || !password || !confirmPassword) {
-    // //   setError("All fields are required");
-    // //   setAlertType("error");
-    // //   setAlertMessage("All fields are required");
-    // //   setAlertVisible(true);
-    // //   setIsLoading(false);
-    // //   return;
-    // // }
-
-    //Simple validation before sending the data
-    // if (password !== confirmPassword) {
-    //   setError("Passwords do not match");
-    //   setAlertType("error");
-    //   setAlertMessage("Passwords do not match");
-    //   setAlertVisible(true);
-    //   setIsLoading(false);
-    //   return;
-    // }
     const userData = {
       firstName,
       lastName,
@@ -188,10 +169,19 @@ const SignUpPage = () => {
 
       if (!res.ok) {
         setIsLoading(false);
-        setError(data.error);
-        setAlertType("error");
-        setAlertMessage("Something went wrong. Please try again.");
+        console.log(data.error);
+        if (data.error === "Email already exists") {
+          setError(data.error);
+          setAlertType("error");
+          setAlertMessage(
+            "This email is already registered. Please use a different email."
+          );
+        } else {
+          setAlertType("error");
+          setAlertMessage("Something went wrong. Please try again.");
+        }
         setAlertVisible(true);
+        return;
       }
 
       if (res.ok) {
@@ -199,10 +189,10 @@ const SignUpPage = () => {
         setAlertType("success");
         setAlertMessage("Your account has been created successfully!");
         setAlertVisible(true);
-        // Delay navigation by 3 seconds to show the alert
+
         setTimeout(() => {
           navigate("/home");
-        }, 3000); // Adjust the delay time as needed
+        }, 3000);
       }
     } catch (err) {
       setIsLoading(false);

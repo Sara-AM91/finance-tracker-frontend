@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
 
 const MainLayout = () => {
   return (
@@ -20,10 +21,13 @@ const MainLayout = () => {
       ></div>
 
       {/* Content Wrapper */}
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen m-4">
         <Header />
-        <div className="flex-grow">
-          <Outlet /> {/* Dashboard content */}
+        <div className="flex flex-grow gap-6">
+          <Sidebar />
+          <div className="grow">
+            <Outlet /> {/* Dashboard content */}
+          </div>
         </div>
       </div>
     </div>

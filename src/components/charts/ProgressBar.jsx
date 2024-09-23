@@ -4,7 +4,7 @@ import GoalModal from "../GoalModal";
 
 const ProgressBar = ({ balance }) => {
   const [value, setValue] = useState(0);
-  const [goal, setGoal] = useState(100);
+  const [goal, setGoal] = useState(0);
 
   const [reached, setReached] = useState(false);
   const [open, setOpen] = useState(false);
@@ -21,6 +21,12 @@ const ProgressBar = ({ balance }) => {
     const progress = Math.round((balance / goal) * 100);
     setValue(progress);
   }, [goal, balance]);
+
+  useEffect(() => {
+    const retrievedGoal = localStorage.getItem("goal");
+    console.log("Retrieved Storage:", retrievedGoal);
+    setGoal(retrievedGoal);
+  }, [goal]);
 
   return (
     <>

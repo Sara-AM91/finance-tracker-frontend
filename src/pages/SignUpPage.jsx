@@ -137,11 +137,11 @@ const SignUpPage = () => {
       ></div>
 
       {/* Content Area */}
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-center">
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full p-10">
         {/* Left Side (Login Form) */}
-        <div className="flex flex-col justify-center items-center md:w-1/2 w-full p-10 ">
+        <div className="flex flex-col justify-center items-center md:w-1/2 w-full p-10">
           {/* Used w-full instead of  w-[434px] for being responsive for mobile view*/}
-          <div className="p-8 rounded-lg shadow-lg w-full max-w-md h-[729px] bg-[#161a40] relative overflow-hidden border border-indigo-400">
+          <div className="fixed p-8 rounded-lg shadow-lg w-full max-w-md h-[780px] bg-[#161a40] relative overflow-hidden border border-indigo-400">
             {/* Decorative Shape */}
             <div
               className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-r from-purple-600 to-indigo-900 transform -translate-y-1/2 rounded-t-lg"
@@ -152,22 +152,22 @@ const SignUpPage = () => {
               Get on Board!
             </h2>
 
-            <form className="relative z-10 w-full">
-              <div className="mb-4">
+            <form className="relative z-10 w-full flex flex-col space-y-2">
+              <div className="mb-2">
                 <input
                   type="text"
                   placeholder="First Name"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-[20px] text-[#969696]"
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-4 pb-2">
                 <input
                   type="text"
                   placeholder="Last Name"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-[20px] text-[#969696]"
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-4 pb-2">
                 <input
                   type="email"
                   placeholder="E-mail"
@@ -185,7 +185,7 @@ const SignUpPage = () => {
               </div>
               {/* The wrapper (div) is set to relative to control the position of the icon inside the input field. */}
               {/* Adding flex and items-center aligns the content (input and icon) vertically in the center.*/}
-              <div className="mb-4 relative flex items-center">
+              <div className="mb-4 pb-2 relative flex items-center">
                 <input
                   type={passwordVisible ? "password" : "text"}
                   placeholder="Enter Password"
@@ -201,7 +201,7 @@ const SignUpPage = () => {
                 />
               </div>
               {/* Progress Bar */}
-              <div className="mb-4">
+              <div className="mb-4 pb-2">
                 <div className="w-full bg-gray-200 rounded-full h-4">
                   <div
                     className={`h-4 rounded-full ${
@@ -251,7 +251,10 @@ const SignUpPage = () => {
                 </a>
               </p>
 
-              <div className="flex justify-center mt-6">
+              <div
+                className="flex flex-col items-center"
+                style={{ paddingBottom: "50px", overflow: "auto" }}
+              >
                 <button
                   type="submit"
                   className="w-[200px] h-[55px] bg-gradient-to-b from-[#833ac9] to-[#5c40da] hover:bg-purple-700 font-normal text-[24px] text-white p-2 rounded-lg transition duration-300"
@@ -263,17 +266,23 @@ const SignUpPage = () => {
                 >
                   Sign Up
                 </button>
+                <p className="font-normal text-[16px] text-[#969696]">
+                  Already a member?{" "}
+                  <Link to="/" className="text-purple-400 hover:underline">
+                    Sign In
+                  </Link>
+                </p>
               </div>
             </form>
 
-            <div className="mt-6 text-center relative z-10">
+            {/* <div className="mt-6 text-center relative z-10">
               <p className="font-normal text-[16px] text-[#969696]">
                 Already a member?{" "}
                 <Link to="/" className="text-purple-400 hover:underline">
                   Sign In
                 </Link>
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
 

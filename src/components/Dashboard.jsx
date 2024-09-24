@@ -4,6 +4,7 @@ import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
 import BasicPie from "./charts/BasicPie";
 import ProgressBar from "./charts/ProgressBar";
 import TransactionsList from "./TransactionsList";
+import NewEntryModal from "./NewEntryModal";
 import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave.png";
 import plus from "../assets/plus.png";
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [balance, setBalance] = useState(14500);
   const [maxExp, setMaxExp] = useState({ month: "June", amount: "1600" });
   const [maxInc, setMaxInc] = useState({ month: "April", amount: "2500" });
+  const [open, setOpen] = useState(false);
 
   const toggleChart = () => {
     setBar(!bar);
@@ -110,9 +112,15 @@ const Dashboard = () => {
             <h1 className="text-xl">Recent Transactions</h1>
             <TransactionsList />
           </div>
-          <div className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl flex justify-center items-center max-h-12 cursor-pointer">
+          <div
+            className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl flex justify-center items-center max-h-12 cursor-pointer"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
             <img src={plus} className="max-h-12" />
           </div>
+          {open && <NewEntryModal setOpen={setOpen} />}
         </div>
       </div>
     </div>

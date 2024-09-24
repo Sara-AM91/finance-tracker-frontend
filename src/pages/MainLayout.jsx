@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 
 const MainLayout = () => {
   return (
-    <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-screen">
+    <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-full">
       {/* First Background Curve */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#121428] to-[#000036] z-0">
         {/* Upper Curve */}

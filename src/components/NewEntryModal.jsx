@@ -1,9 +1,4 @@
 import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { useMediaQuery } from "@mui/material";
 
 const NewEntryModal = ({ setOpen }) => {
@@ -11,13 +6,32 @@ const NewEntryModal = ({ setOpen }) => {
     user: "",
     title: "",
     type: "",
+    category: "", // category field was missing
     description: "",
-    amouunt: "",
+    amount: "",
     date: "",
     invoice: "",
   });
 
-  const handleSubmit = () => {};
+  // Handle form input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const onAmountChange = (e) => {
+    const amount = e.target.value;
+
+    if (!amount || amount.match(/^\d{1,}(\,\d{0,2})?$/)) {
+      setForm((prev) => ({ ...prev, amount: amount }));
+    }
+  };
+
+  const handleSubmit = () => {
+    // Your form submission logic
+    console.log(form);
+  };
+
   const isDesktop = useMediaQuery("(min-width: 768px)"); // Detects screen sizes >= 768px (md breakpoint)
 
   return (
@@ -34,7 +48,7 @@ const NewEntryModal = ({ setOpen }) => {
               transition="true"
               className="relative transform overflow-hidden rounded-xl text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
             >
-              <div className="bg-[#161a40] border border-indigo-400 rounded-xl relative overflow-hidden">
+              <div className="bg-[#161a40] border border-indigo-400 rounded-xl relative overflow-hidden pb-2">
                 <div className="absolute top-0 left-0 w-full">
                   <svg
                     viewBox="0 0 1440 320"
@@ -59,126 +73,116 @@ const NewEntryModal = ({ setOpen }) => {
                   </svg>
                 </div>
 
-                <div className="px-4 pb-4 pt-12 sm:p-6 sm:pb-4 relative z-10 mt-20">
+                <div className="px-4 pb-4 pt-12 sm:p-6 sm:pb-4 relative z-10 mt-6 sm:mt-16">
                   <div className="sm:flex sm:items-start">
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <div
-                        as="h3"
-                        className="text-lg font-semibold leading-6 text-white"
-                      >
+                    <div className="mt-3 text-center sm:mx-6 sm:mt-0 sm:text-left">
+                      <div className="text-lg font-semibold leading-6 text-white">
                         Add a Transaction
                       </div>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          I dont know text
+                          Please fill out the details below.
                         </p>
+                        <form className="mt-4" onSubmit={handleSubmit}>
+                          <div className="flex justify-between gap-6 pb-4">
+                            <div className="flex-grow">
+                              <label
+                                htmlFor="type"
+                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                              ></label>
+                              <select
+                                id="type"
+                                name="type"
+                                onChange={handleChange}
+                                value={form.type}
+                                required
+                                className="bg-[#161a40] border-b border-indigo-300 text-white text-sm  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  placeholder-gray-400"
+                              >
+                                <option value="">Choose a Type</option>
+                                <option value="EXP">Expenses</option>
+                                <option value="INC">Income</option>
+                              </select>
+                            </div>
+                            <div className="flex-grow">
+                              <label
+                                htmlFor="category"
+                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                              ></label>
+                              <select
+                                id="category"
+                                name="category"
+                                className="bg-[#161a40] border-b border-indigo-300 text-white text-sm  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
+                                value={form.category}
+                                onChange={handleChange}
+                                required
+                              >
+                                <option value="">Choose a Category</option>
+                                <option value="US">United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="FR">France</option>
+                                <option value="DE">Germany</option>
+                              </select>
+                            </div>
+                          </div>
 
-                        <input
-                          className="w-full mt-4 p-2 rounded bg-[#222759] border border-indigo-300 text-white"
-                          placeholder="Title"
-                        />
-                        <input
-                          className="w-full mt-4 p-2 rounded bg-[#222759] border border-indigo-300 text-white"
-                          placeholder="Description"
-                        />
-                        <input
-                          className="w-full mt-4 p-2 rounded bg-[#222759] border border-indigo-300 text-white"
-                          placeholder="Type"
-                        />
-                        <input
-                          className="w-full mt-4 p-2 rounded bg-[#222759] border border-indigo-300 text-white"
-                          placeholder="Category"
-                        />
-                        <div className="mt-4">
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            {isDesktop ? (
-                              <DesktopDatePicker
-                                defaultValue={dayjs("2022-04-17")}
-                                slotProps={{
-                                  textField: {
-                                    InputProps: {
-                                      style: {
-                                        color: "#ffffff",
-                                        background: "#222759",
-                                      },
-                                    },
-                                    sx: {
-                                      "& .MuiOutlinedInput-root": {
-                                        "& fieldset": {
-                                          borderColor: "#A5B4FC",
-                                        },
-                                        "&:hover fieldset": {
-                                          borderColor: "#bbdefb",
-                                        },
-                                      },
-                                    },
-                                  },
-                                  day: {
-                                    sx: {
-                                      color: "#A5B4FC", // Day number color
-                                    },
-                                  },
-                                  calendar: {
-                                    sx: {
-                                      "& .MuiDayCalendar-root": {
-                                        backgroundColor: "#0d47a1",
-                                        color: "#bbdefb",
-                                      },
-                                    },
-                                  },
-                                }}
-                              />
-                            ) : (
-                              <MobileDatePicker
-                                defaultValue={dayjs("2022-04-17")}
-                                slotProps={{
-                                  textField: {
-                                    InputProps: {
-                                      style: {
-                                        color: "#ffffff",
-                                        background: "#222759",
-                                      },
-                                    },
-                                    sx: {
-                                      "& .MuiOutlinedInput-root": {
-                                        "& fieldset": {
-                                          borderColor: "#A5B4FC",
-                                        },
-                                        "&:hover fieldset": {
-                                          borderColor: "#bbdefb",
-                                        },
-                                      },
-                                    },
-                                  },
-                                  day: {
-                                    sx: {
-                                      color: "#A5B4FC", // Day number color
-                                    },
-                                  },
-                                  calendar: {
-                                    sx: {
-                                      "& .MuiDayCalendar-root": {
-                                        backgroundColor: "#0d47a1",
-                                        color: "#bbdefb",
-                                      },
-                                    },
-                                  },
-                                }}
-                              />
-                            )}
-                          </LocalizationProvider>
-                        </div>
+                          <input
+                            id="title"
+                            name="title"
+                            className="w-full p-2 mb-4 bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block placeholder-gray-400"
+                            placeholder="Title"
+                            value={form.title}
+                            onChange={handleChange}
+                            required
+                          />
+
+                          <input
+                            id="amount"
+                            name="amount"
+                            type="text"
+                            className="p-2 mb-4 bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block placeholder-gray-400"
+                            placeholder="Amount"
+                            value={form.amount}
+                            onChange={onAmountChange}
+                            required
+                            min="0"
+                            step="0.01"
+                          />
+                          <input
+                            id="date"
+                            name="date"
+                            type="date"
+                            className="p-2 mb-4 bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block placeholder-gray-400"
+                            placeholder="Date"
+                            value={form.date}
+                            onChange={handleChange}
+                            required
+                          />
+                          <label
+                            htmlFor="description"
+                            className="block mt-7 mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Description
+                          </label>
+                          <textarea
+                            id="description"
+                            name="description"
+                            className="w-full p-2 bg-[#161a40] border rounded-lg border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block placeholder-gray-400"
+                            placeholder="Add a short description of your transaction"
+                            value={form.description}
+                            onChange={handleChange}
+                          />
+                        </form>
                       </div>
                     </div>
                   </div>
                 </div>
-
                 <div className="px-4 pt-3 pb-6 sm:flex sm:flex-row-reverse sm:px-6 relative z-10">
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-gradient-to-t from-orange-500 to-pink-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gradient-to-b sm:ml-3 sm:w-auto"
+                    onClick={handleSubmit}
                   >
-                    Set Goal
+                    Submit
                   </button>
                   <button
                     type="button"

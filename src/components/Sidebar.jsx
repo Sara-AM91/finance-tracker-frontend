@@ -12,14 +12,14 @@ const Sidebar = () => {
     <div
       className={`transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-12" : "w-56 bg-[#161A40]"
-      } h-screen  text-white relative flex-shrink-0 rounded-3xl`}
+      }  text-white relative flex-shrink-0 rounded-3xl`}
     >
       {/* Hamburger Menu Button */}
       <div className="relative sm:max-w-xl mx-auto">
         <nav>
           <button
             onClick={toggleSidebar}
-            className="text-gray-500 w-10 h-10 relative focus:outline-none  rounded-md bg-white"
+            className="text-white w-10 h-10 relative focus:outline-none  rounded-md bg-gradient-to-r from-orange-400 to-pink-600"
           >
             <span className="sr-only">Open main menu</span>
             <div className="block w-5 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">

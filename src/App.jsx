@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import MainLayout from "./components/MainLayout";
+import MainLayout from "./pages/MainLayout";
 import Dashboard from "./components/Dashboard";
 
 const App = () => {

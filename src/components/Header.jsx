@@ -2,16 +2,6 @@ import React from "react";
 import { useState } from "react";
 
 const Header = () => {
-  const [currentDate, setCurrentDate] = useState(getDate());
-
-  function getDate() {
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const date = today.getDate();
-    return `${month}/${date}/${year}`;
-  }
-
   return (
     <div className="flex gap-4">
       <div className="navbar bg-[#161A40] rounded-3xl py-2 px-6 mb-4">
@@ -58,7 +48,7 @@ const Header = () => {
         </div>
       </div>
       <div className="bg-[#161A40] rounded-3xl py-2 px-8 mb-4 flex items-center">
-        <p>{currentDate}</p>
+        <p>{new Date().toLocaleDateString()}</p>
       </div>
     </div>
   );

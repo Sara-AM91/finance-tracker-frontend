@@ -1,5 +1,5 @@
 import loginImg from "../assets/LoginPage.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
@@ -13,6 +13,13 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState([]);
+  const navigate = useNavigate();
+
+  //Alert:
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertType, setAlertType] = useState(""); //can be 'success' or 'error'
+  const [alertMessage, setAlertMessage] = useState("");
+
   const validateEmail = (emailValue) => {
     setEmail(emailValue);
 
@@ -59,25 +66,55 @@ const LoginPage = () => {
 
     setIsLoading(true);
     setError(null);
+    setAlertVisible(false);
 
-    const res = await fetch("http://localhost:5000/user/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
+      if (!res.ok) {
+        // alert("login failed: " + data.error);
+        setIsLoading(false);
+        console.log(data.error);
+        if (data.error === "Incorrect email") {
+          setError(data.error);
+          setAlertType("error");
+          setAlertMessage("Your Email is not correct.");
+        } else if (data.error === "Incorrect password") {
+          setError(data.error);
+          setAlertType("error");
+          setAlertMessage("Your password is not correct.");
+        } else {
+          setAlertType("error");
+          setAlertMessage("Something went wrong. Please try again.");
+        }
+        setAlertVisible(true);
+
+        //Automatically hide the alert after 2 seconds
+        setTimeout(() => {
+          setAlertVisible(false);
+        }, 2000);
+
+        return;
+      }
+
+      if (res.ok) {
+        localStorage.setItem("user", JSON.stringify(data.token));
+        setIsLoading(false);
+        //alert("Loged in!");
+        navigate("/home");
+      }
+    } catch (err) {
       setIsLoading(false);
-      setError(data.error);
-      alert("login failed: " + data.error);
-    }
-
-    if (res.ok) {
-      localStorage.setItem("user", JSON.stringify(data.token));
-      setIsLoading(false);
-      alert("Loged in!");
+      setError("Something went wrong, please try again");
+      setAlertType("error");
+      setAlertMessage("Something went wrong, please try again.");
+      setAlertVisible(true);
     }
   };
   const isFormInvalid =
@@ -183,6 +220,37 @@ const LoginPage = () => {
                 </Link>
               </p>
             </div>
+
+            {/* Add Alert */}
+            {alertVisible && (
+              <div
+                role="alert"
+                className={`alert ${
+                  alertType === "success" ? "alert-success" : "alert-error"
+                } shadow-lg`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 shrink-0 stroke-current"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d={
+                      alertType === "success"
+                        ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        : "M6 18L18 6M6 6l12 12"
+                    }
+                  />
+                </svg>
+                <span>{alertMessage}</span>
+              </div>
+            )}
+
+            {/* End of Alert */}
           </div>
         </div>
 

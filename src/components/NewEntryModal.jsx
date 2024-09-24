@@ -178,8 +178,23 @@ const NewEntryModal = ({ setOpen }) => {
                 </div>
                 <div className="px-4 pt-3 pb-6 sm:flex sm:flex-row-reverse sm:px-6 relative z-10">
                   <button
+                    disabled={
+                      !form.category ||
+                      !form.title ||
+                      !form.type ||
+                      !form.date ||
+                      !form.amount
+                    }
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-gradient-to-t from-orange-500 to-pink-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gradient-to-b sm:ml-3 sm:w-auto"
+                    className={`inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm  sm:ml-3 sm:w-auto ${
+                      !form.category ||
+                      !form.title ||
+                      !form.type ||
+                      !form.date ||
+                      !form.amount
+                        ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white"
+                    }`}
                     onClick={handleSubmit}
                   >
                     Submit
@@ -188,7 +203,7 @@ const NewEntryModal = ({ setOpen }) => {
                     type="button"
                     data-autofocus
                     onClick={() => setOpen(false)}
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-gradient-to-r from-orange-500 to-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  sm:mt-0 sm:w-auto"
                   >
                     Cancel
                   </button>

@@ -19,7 +19,7 @@ const Sidebar = () => {
         <nav>
           <button
             onClick={toggleSidebar}
-            className="text-white w-10 h-10 relative focus:outline-none  rounded-md bg-gradient-to-r from-orange-400 to-pink-600"
+            className="text-white w-10 h-10 relative focus:outline-none  rounded-md "
           >
             <span className="sr-only">Open main menu</span>
             <div className="block w-5 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">

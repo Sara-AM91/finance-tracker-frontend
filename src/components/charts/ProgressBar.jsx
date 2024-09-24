@@ -13,7 +13,7 @@ const ProgressBar = ({ balance }) => {
     if ((balance === goal && goal !== 0) || (balance > goal && goal !== 0)) {
       setReached(true);
     } else {
-      setReached(false); // Optional: Reset if condition is not met
+      setReached(false); //Reset if condition is not met
     }
   }, [balance, goal]);
 
@@ -22,7 +22,7 @@ const ProgressBar = ({ balance }) => {
       (parseFloat(balance).toFixed(2) / parseFloat(goal)).toFixed(2) * 100
     );
     setValue(progress);
-    console.log("Goal:", parseFloat(goal).toFixed(2));
+    // console.log("Goal:", parseFloat(goal).toFixed(2));
   }, [goal, balance]);
 
   useEffect(() => {

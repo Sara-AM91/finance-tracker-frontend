@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import MainLayout from "./pages/MainLayout";
 import Dashboard from "./components/Dashboard";
+import ExpensesPage from "./pages/ExpensesPage";
 
 const App = () => {
   return (
@@ -11,13 +12,17 @@ const App = () => {
       <Routes>
         {/* Redirect root path to login page */}
         <Route path="/" element={<Navigate to="/login" />} />
+
         {/* Login and Signup routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
-        {/* Dashboard/Home route wrapped inside MainLayout */}
-        <Route path="/home" element={<MainLayout />}>
-          <Route index element={<Dashboard />} /> {/* Home dashboard */}
+
+        {/* Wrap Dashboard and Expenses with MainLayout */}
+        <Route element={<MainLayout />}>
+          <Route path="/home" element={<Dashboard />} />
+          <Route path="/expenses" element={<ExpensesPage />} />{" "}
         </Route>
+
         {/* Optional: handle unknown routes by redirecting */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

@@ -64,6 +64,12 @@ const Sidebar = () => {
               <Link className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2">
                 <span className="ml-3">Settings</span>
               </Link>
+              <Link
+                to="/expenses"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+              >
+                <span className="ml-3">Expenses</span>
+              </Link>
             </li>
             {/* Add more menu items here */}
           </ul>

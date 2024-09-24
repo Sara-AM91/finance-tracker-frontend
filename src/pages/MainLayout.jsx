@@ -24,7 +24,6 @@ const MainLayout = () => {
       <div className="relative z-10 flex flex-col h-full">
         <Header />
         <div className="flex flex-grow gap-6 h-full">
-          <Sidebar />
           <Outlet /> {/* Dashboard content */}
         </div>
       </div>

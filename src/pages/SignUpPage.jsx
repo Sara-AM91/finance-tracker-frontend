@@ -176,6 +176,14 @@ const SignUpPage = () => {
           setAlertMessage(
             "This email is already registered. Please use a different email."
           );
+        }
+        //I don't need it because I used email validation in the front! But just in case!
+        else if (data.error === "Invalid email address") {
+          setError(data.error);
+          setAlertType("error");
+          setAlertMessage(
+            "This email is not valid. Please use a different email."
+          );
         } else {
           setAlertType("error");
           setAlertMessage("Something went wrong. Please try again.");

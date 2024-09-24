@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
 
 export default function GoalModal({ setOpen, setGoal, goal }) {
-  const [number, setNumber] = useState(0);
+  const [number, setNumber] = useState("");
 
   const handleSubmit = () => {
     if (number) {
       setGoal(number);
       localStorage.setItem("goal", number);
       setOpen(false);
+    }
+  };
+
+  const onAmountChange = (e) => {
+    const number = e.target.value;
+
+    // Validate input to allow only numbers and optional decimal places
+    if (!number || number.match(/^\d{1,}(\,\d{0,2})?$/)) {
+      setNumber(number);
     }
   };
 
@@ -68,11 +77,11 @@ export default function GoalModal({ setOpen, setGoal, goal }) {
                           your success!
                         </p>
                         <input
-                          type="number"
+                          id="register"
+                          type="text"
+                          placeholder="e.g. 25600,78"
                           value={number}
-                          onChange={(e) => {
-                            setNumber(e.target.value);
-                          }}
+                          onChange={onAmountChange}
                           className="w-full mt-4 p-2 rounded bg-[#222759] border border-indigo-300 text-white"
                         />
                       </div>
@@ -82,9 +91,14 @@ export default function GoalModal({ setOpen, setGoal, goal }) {
 
                 <div className="px-4 pt-3 pb-6 sm:flex sm:flex-row-reverse sm:px-6 relative z-10">
                   <button
+                    disabled={!number} // Disable button if 'number' is empty
                     type="button"
                     onClick={handleSubmit}
-                    className="inline-flex w-full justify-center rounded-md bg-gradient-to-t from-orange-500 to-pink-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gradient-to-b sm:ml-3 sm:w-auto"
+                    className={`inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm hover:bg-gradient-to-l sm:ml-3 sm:w-auto ${
+                      !number
+                        ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white"
+                    }`}
                   >
                     Set Goal
                   </button>
@@ -92,7 +106,7 @@ export default function GoalModal({ setOpen, setGoal, goal }) {
                     type="button"
                     data-autofocus
                     onClick={() => setOpen(false)}
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-gradient-to-r from-orange-500 to-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm sm:mt-0 sm:w-auto"
                   >
                     Cancel
                   </button>

@@ -3,7 +3,6 @@ import loginImg from "../assets/LoginPage.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { Alert } from "daisyui";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -199,7 +198,7 @@ const SignUpPage = () => {
         setAlertVisible(true);
 
         setTimeout(() => {
-          navigate("/home");
+          navigate("/dashboard");
         }, 3000);
       }
     } catch (err) {

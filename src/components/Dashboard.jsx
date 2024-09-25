@@ -121,7 +121,7 @@ const Dashboard = () => {
           >
             <img src={plus} className="max-h-12" />
           </div>
-          {open && <NewEntryModal setOpen={setOpen} />}
+          <NewEntryModal open={open} setOpen={setOpen} />
         </div>
       </div>
     </div>

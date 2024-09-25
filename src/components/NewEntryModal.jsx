@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "@mui/material";
 
-const NewEntryModal = ({ setOpen }) => {
+const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
   const [form, setForm] = useState({
     user: "",
     title: "",
@@ -12,6 +12,9 @@ const NewEntryModal = ({ setOpen }) => {
     date: "",
     invoice: "",
   });
+
+  //Always call hooks at the top level
+  const isDesktop = useMediaQuery("(min-width: 768px)"); // Always called, no condition
 
   // Handle form input change
   const handleChange = (e) => {
@@ -31,8 +34,7 @@ const NewEntryModal = ({ setOpen }) => {
     // Your form submission logic
     console.log(form);
   };
-
-  const isDesktop = useMediaQuery("(min-width: 768px)"); // Detects screen sizes >= 768px (md breakpoint)
+  if (!open) return null;
 
   return (
     <div className="relative z-10">
@@ -77,7 +79,7 @@ const NewEntryModal = ({ setOpen }) => {
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mx-6 sm:mt-0 sm:text-left">
                       <div className="text-lg font-semibold leading-6 text-white">
-                        Add a Transaction
+                        Add New Transaction
                       </div>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
@@ -94,11 +96,15 @@ const NewEntryModal = ({ setOpen }) => {
                                 id="type"
                                 name="type"
                                 onChange={handleChange}
-                                value={form.type}
+                                value={defaultCategory || ""}
+                                disabled={!!defaultCategory}
                                 required
                                 className="bg-[#161a40] border-b border-indigo-300 text-white text-sm  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  placeholder-gray-400"
                               >
-                                <option value="">Choose a Type</option>
+                                {" "}
+                                {!defaultCategory && (
+                                  <option value="">Choose a Type</option>
+                                )}
                                 <option value="EXP">Expenses</option>
                                 <option value="INC">Income</option>
                               </select>
@@ -152,11 +158,19 @@ const NewEntryModal = ({ setOpen }) => {
                             name="date"
                             type="date"
                             className="p-2 mb-4 bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block placeholder-gray-400"
+                            style={{
+                              backgroundImage:
+                                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 24 24'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z'/%3E%3C/svg%3E\")",
+                              backgroundPosition: "right 10px center",
+                              backgroundRepeat: "no-repeat",
+                              backgroundSize: "20px 20px",
+                            }}
                             placeholder="Date"
                             value={form.date}
                             onChange={handleChange}
                             required
                           />
+
                           <label
                             htmlFor="description"
                             className="block mt-7 mb-2 text-sm font-medium text-gray-900 dark:text-white"

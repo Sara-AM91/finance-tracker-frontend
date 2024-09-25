@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 
 const Header = () => {
@@ -44,7 +44,9 @@ const Header = () => {
           </label>
         </div>
         <div className="navbar-center">
-          <a className="btn btn-ghost text-xl text-white">FinanceTracker</a>
+          <Link to="/dashboard" className="text-xl text-white">
+            FinanceTracker
+          </Link>
         </div>
       </div>
       <div className="bg-[#161A40] rounded-3xl py-2 px-8 mb-4 flex items-center text-white">

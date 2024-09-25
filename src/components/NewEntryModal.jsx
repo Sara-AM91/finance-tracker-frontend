@@ -22,7 +22,7 @@ const NewEntryModal = ({ setOpen }) => {
   const onAmountChange = (e) => {
     const amount = e.target.value;
 
-    if (!amount || amount.match(/^\d{1,}(\,\d{0,2})?$/)) {
+    if (!amount || amount.match(/^\d{1,}(\.\d{0,2})?$/)) {
       setForm((prev) => ({ ...prev, amount: amount }));
     }
   };

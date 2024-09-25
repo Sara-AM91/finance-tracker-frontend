@@ -11,7 +11,7 @@ import plus from "../assets/plus.png";
 
 const Dashboard = () => {
   const [bar, setBar] = useState(true);
-  const [balance, setBalance] = useState(14500);
+  const [balance, setBalance] = useState(14500.65);
   const [maxExp, setMaxExp] = useState({ month: "June", amount: "1600" });
   const [maxInc, setMaxInc] = useState({ month: "April", amount: "2500" });
   const [open, setOpen] = useState(false);

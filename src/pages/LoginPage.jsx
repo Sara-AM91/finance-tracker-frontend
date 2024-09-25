@@ -107,7 +107,7 @@ const LoginPage = () => {
         localStorage.setItem("user", JSON.stringify(data.token));
         setIsLoading(false);
         //alert("Loged in!");
-        navigate("/home");
+        navigate("/dashboard");
       }
     } catch (err) {
       setIsLoading(false);

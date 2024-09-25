@@ -1,14 +1,7 @@
 import { useState } from "react";
 import ExpensesVsIncomeBar from "../components/charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "../components/charts/ExpensesVsIncomeLine";
-import BasicPie from "../components/charts/BasicPie";
-import ProgressBar from "../components/charts/ProgressBar";
-import TransactionsList from "../components/TransactionsList";
-import NewEntryModal from "../components/NewEntryModal";
-import greenWave from "../assets/greenWave2.png";
-import redWave from "../assets/redWave.png";
-import plus from "../assets/plus.png";
-import SearchBar from "../components/SearchBar";
+import TransactionFilter from "../components/TransactionFilter";
 
 const recentExpenses = [
   {
@@ -16,29 +9,64 @@ const recentExpenses = [
     date: "Sep 20, 2024",
     amount: "50,00",
     category: "Shopping",
+    createdDate: "Sep 20, 2024",
   },
-  { title: "Gas", date: "Sep 19, 2024", amount: "30,00", category: "Auto" },
+  {
+    title: "Gas",
+    date: "Sep 19, 2024",
+    amount: "30,00",
+    category: "Auto",
+    createdDate: "Sep 20, 2024",
+  },
   {
     title: "Movie Tickets",
     date: "Sep 18, 2024",
     amount: "15,00",
     category: "Entertainment",
+    createdDate: "Sep 20, 2024",
   },
   {
     title: "Doctor Visit",
     date: "Sep 17, 2024",
     amount: "90,00",
     category: "Health",
+    createdDate: "Sep 20, 2024",
   },
   {
     title: "Doctor Visit",
     date: "Sep 17, 2024",
     amount: "90,00",
     category: "Health",
+    createdDate: "Sep 20, 2024",
+  },
+  {
+    title: "Groceries",
+    date: "Sep 20, 2024",
+    amount: "50,00",
+    category: "Shopping",
+    createdDate: "Sep 20, 2024",
   },
 ];
 
 const ExpensesPage = () => {
+  const [filters, setFilters] = useState({
+    title: "",
+    category: "",
+    amount: "",
+    date: "",
+  });
+
+  const filteredExpenses = recentExpenses.filter((expense) => {
+    return (
+      (filters.title === "" ||
+        expense.title.toLowerCase().includes(filters.title.toLowerCase())) &&
+      (filters.category === "" || expense.category === filters.category) &&
+      (filters.amount === "" ||
+        parseFloat(expense.amount) === parseFloat(filters.amount)) &&
+      (filters.date === "" || expense.date === filters.date)
+    );
+  });
+
   const [bar, setBar] = useState(true);
   const toggleChart = () => {
     setBar(!bar);
@@ -90,30 +118,44 @@ const ExpensesPage = () => {
           </div>
 
           {/* Latest Transactions Section */}
-          <div className="bg-[#161A40] p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold">Recent Expenses</h3>
-            {/* Search Bar */}
-            <div className="my-4">
-              <SearchBar onSearch={handleSearch} />
-            </div>
+          <div className="w-full flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] text-white">
+            {/* Filter Section */}
+            <TransactionFilter filters={filters} setFilters={setFilters} />
 
-            <div className="space-y-4 mt-4">
-              {recentExpenses.map((expense, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between items-center bg-[#202747] p-3 rounded-lg" //202747 3A3A57 202147 272747
-                >
-                  <div className="flex flex-col">
-                    <span className="font-semibold">{expense.title}</span>
-                    <span className="text-sm text-gray-400">
-                      {expense.date}
-                    </span>
-                  </div>
-                  <div className="font-semibold text-right">
-                    {expense.amount}$
-                  </div>
-                </div>
-              ))}
+            {/* Transactions Table */}
+            <div className="rounded-lg shadow-lg mt-4">
+              <table className="min-w-full bg-[#161A40] text-gray-300 rounded-lg shadow-lg">
+                <thead>
+                  {/* //202747 3A3A57 202147 272747 */}
+                  <tr className="text-left bg-[#272747]">
+                    {" "}
+                    <th className="p-4">Title</th>
+                    <th className="p-4">Category</th>
+                    <th className="p-4">Amount</th>
+                    <th className="p-4">Date</th>
+                    <th className="p-4">Created Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredExpenses.length > 0 ? (
+                    filteredExpenses.map((expense, index) => (
+                      <tr key={index} className="border-b border-gray-700">
+                        <td className="p-4">{expense.title}</td>
+                        <td className="p-4">{expense.category}</td>
+                        <td className="p-4">{expense.amount}$</td>
+                        <td className="p-4">{expense.date}</td>
+                        <td className="p-4">{expense.createdDate}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td className="p-4 text-center" colSpan="5">
+                        No transactions found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 

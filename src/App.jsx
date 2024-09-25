@@ -19,7 +19,7 @@ const App = () => {
 
         {/* Wrap Dashboard and Expenses with MainLayout */}
         <Route element={<MainLayout />}>
-          <Route path="/home" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expenses" element={<ExpensesPage />} />{" "}
         </Route>
 

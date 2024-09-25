@@ -23,11 +23,9 @@ const MainLayout = () => {
       {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
         <Header />
-        <div className="flex flex-grow overflow-hidden gap-6">
+        <div className="flex flex-grow gap-6 h-full">
           <Sidebar />
-          <div className="flex-grow overflow-y-auto">
-            <Outlet /> {/* Dashboard content */}
-          </div>
+          <Outlet /> {/* Dashboard content */}
         </div>
       </div>
     </div>

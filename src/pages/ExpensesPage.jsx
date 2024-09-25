@@ -3,7 +3,7 @@ import TransactionFilter from "../components/TransactionFilter";
 import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
 import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
 import TrashIconWithCross from "../components/TrashIconWithCross";
-
+import NewEntryModal from "../components/NewEntryModal";
 const ExpensesPage = () => {
   const [bar, setBar] = useState(true);
 
@@ -152,6 +152,8 @@ const ExpensesPage = () => {
     );
   });
 
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] text-white">
       <div className="flex flex-grow">
@@ -260,11 +262,17 @@ const ExpensesPage = () => {
           </div>
 
           {/* Floating "+" Button */}
-          <button className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10">
+          <button
+            className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"
+            onClick={() => setOpen(true)}
+          >
             +
           </button>
         </div>
       </div>
+
+      {/* Modal Section */}
+      <NewEntryModal open={open} setOpen={setOpen} defaultCategory="Expense" />
     </div>
   );
 };

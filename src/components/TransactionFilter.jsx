@@ -14,14 +14,17 @@ const TransactionFilter = ({ filters, setFilters }) => {
           placeholder="Search by title"
           className="w-full bg-white text-black p-2 rounded-md"
           onChange={handleInputChange}
+          value={filters.title}
         />
       </div>
+
       <div className="w-full sm:w-1/6">
         <label className="text-gray-300 font-bold">Category</label>
         <select
           name="category"
           className="w-full bg-white text-black p-2 rounded-md"
           onChange={handleInputChange}
+          value={filters.category}
         >
           <option value="">All</option>
           <option value="Shopping">Shopping</option>
@@ -30,6 +33,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           <option value="Health">Health</option>
         </select>
       </div>
+
       <div className="w-full sm:w-1/6">
         <label className="text-gray-300 font-bold">Amount</label>
         <input
@@ -38,8 +42,10 @@ const TransactionFilter = ({ filters, setFilters }) => {
           placeholder="Search by amount"
           className="w-full bg-white text-black p-2 rounded-md"
           onChange={handleInputChange}
+          value={filters.amount}
         />
       </div>
+
       <div className="w-full sm:w-1/6">
         <label className="text-gray-300 font-bold">Date</label>
         <input
@@ -47,15 +53,18 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="date"
           className="w-full bg-white text-black p-2 rounded-md"
           onChange={handleInputChange}
+          value={filters.date}
         />
       </div>
+
       <div className="w-full sm:w-1/6">
         <label className="text-gray-300 font-bold">Created Date</label>
         <input
           type="date"
-          name="date"
+          name="createdDate"
           className="w-full bg-white text-black p-2 rounded-md"
           onChange={handleInputChange}
+          value={filters.createdDate}
         />
       </div>
     </div>

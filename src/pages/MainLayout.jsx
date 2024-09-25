@@ -21,7 +21,7 @@ const MainLayout = () => {
       ></div>
 
       {/* Content Wrapper */}
-      <div className="relative z-10 flex flex-col h-full">
+      <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
         <Header />
         <div className="flex flex-grow gap-6 h-full">
           <Sidebar />

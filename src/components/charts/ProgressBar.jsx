@@ -13,18 +13,20 @@ const ProgressBar = ({ balance }) => {
     if ((balance === goal && goal !== 0) || (balance > goal && goal !== 0)) {
       setReached(true);
     } else {
-      setReached(false); // Optional: Reset if condition is not met
+      setReached(false); //Reset if condition is not met
     }
   }, [balance, goal]);
 
   useEffect(() => {
-    const progress = Math.round((balance / goal) * 100);
+    const progress = Math.round(
+      (parseFloat(balance).toFixed(2) / parseFloat(goal)).toFixed(2) * 100
+    );
     setValue(progress);
+    // console.log("Goal:", parseFloat(goal).toFixed(2));
   }, [goal, balance]);
 
   useEffect(() => {
     const retrievedGoal = localStorage.getItem("goal");
-    console.log("Retrieved Storage:", retrievedGoal);
     setGoal(retrievedGoal);
   }, [goal]);
 
@@ -32,7 +34,7 @@ const ProgressBar = ({ balance }) => {
     <>
       <div className="flex gap-10 items-center justify-between px-2">
         <div className="flex flex-row items-center gap-4">
-          <h2 className="text-xl text-left">Income Goal</h2>
+          <h2 className="text-xl text-left">Balance Goal</h2>
           <h2 className="font-bold text-[#01FFB9] text-2xl">
             {reached ? "100%" : `${value}%`}
           </h2>
@@ -54,6 +56,7 @@ const ProgressBar = ({ balance }) => {
             ></div>
           </div>
           <button
+            className="px-2 py-1 bg-[#7F3BCB] rounded-lg mt-2"
             onClick={() => {
               setOpen(true);
             }}

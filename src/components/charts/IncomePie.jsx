@@ -1,9 +1,8 @@
-import * as React from "react";
 import { PieChart, PiePlot } from "@mui/x-charts/PieChart";
 import { ResponsiveChartContainer } from "@mui/x-charts";
 import { Box } from "@mui/material";
 
-export default function BasicPie() {
+export default function IncomePie() {
   return (
     <div className="flex justify-center items-center pt-3 ">
       <PieChart

@@ -1,5 +1,3 @@
-import React from "react";
-
 const TransactionFilter = ({ filters, setFilters }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;

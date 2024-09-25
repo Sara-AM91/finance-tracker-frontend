@@ -58,7 +58,10 @@ const Sidebar = () => {
                 />
                 <span className="ml-3">Account</span>
               </Link>
-              <Link className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2">
+              <Link
+                to="/dashboard"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+              >
                 <span className="ml-3">Dashboard</span>
               </Link>
               <Link className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2">

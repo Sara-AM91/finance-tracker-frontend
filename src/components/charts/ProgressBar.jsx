@@ -22,7 +22,12 @@ const ProgressBar = ({ balance }) => {
       (parseFloat(balance).toFixed(2) / parseFloat(goal)).toFixed(2) * 100
     );
     setValue(progress);
-    // console.log("Goal:", parseFloat(goal).toFixed(2));
+    console.log(
+      "Goal:",
+      parseFloat(goal).toFixed(2),
+      "Balance:",
+      parseFloat(balance).toFixed(2)
+    );
   }, [goal, balance]);
 
   useEffect(() => {

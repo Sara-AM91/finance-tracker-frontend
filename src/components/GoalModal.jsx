@@ -15,7 +15,7 @@ export default function GoalModal({ setOpen, setGoal, goal }) {
     const number = e.target.value;
 
     // Validate input to allow only numbers and optional decimal places
-    if (!number || number.match(/^\d{1,}(\,\d{0,2})?$/)) {
+    if (!number || number.match(/^\d{1,}(\.\d{0,2})?$/)) {
       setNumber(number);
     }
   };
@@ -79,7 +79,7 @@ export default function GoalModal({ setOpen, setGoal, goal }) {
                         <input
                           id="register"
                           type="text"
-                          placeholder="e.g. 25600,78"
+                          placeholder="e.g. 25600.78"
                           value={number}
                           onChange={onAmountChange}
                           className="w-full mt-4 p-2 rounded bg-[#222759] border border-indigo-300 text-white"

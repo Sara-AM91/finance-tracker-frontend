@@ -11,9 +11,8 @@ import {
   Legend,
 } from "chart.js";
 
-import ChartDataLabels from "chartjs-plugin-datalabels"; // Import the plugin
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-// Register chart.js components and plugins
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -21,19 +20,17 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ChartDataLabels // Register the plugin
+  ChartDataLabels
 );
 
-const ExpensesCategoryBar = ({ categories }) => {
+const ExpensesCategoryBar = ({ categories, onBarClick }) => {
   const chartRef = useRef(null);
 
-  // Extract labels, data, colors, and percentages from categories
   const xLabels = categories.map((category) => category.name);
   const yData = categories.map((category) => category.amount);
   const barColors = categories.map((category) => category.color);
   const percentages = categories.map((category) => category.percentage);
 
-  // Create chart data with gradient fills
   const chartData = {
     labels: xLabels,
     datasets: [
@@ -45,7 +42,6 @@ const ExpensesCategoryBar = ({ categories }) => {
           const { ctx, chartArea } = chart;
 
           if (!chartArea) {
-            // Return solid colors if chartArea is not available
             return barColors;
           }
 
@@ -59,7 +55,6 @@ const ExpensesCategoryBar = ({ categories }) => {
     ],
   };
 
-  // Gradient function
   const createGradient = (ctx, chartArea, color) => {
     const gradient = ctx.createLinearGradient(
       0,
@@ -68,11 +63,10 @@ const ExpensesCategoryBar = ({ categories }) => {
       chartArea.bottom
     );
     gradient.addColorStop(0, color);
-    gradient.addColorStop(1, `${color}00`); // Transparent at the bottom
+    gradient.addColorStop(1, `${color}00`);
     return gradient;
   };
 
-  // Chart options with data labels
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -113,10 +107,32 @@ const ExpensesCategoryBar = ({ categories }) => {
       },
     },
   };
+  const onClick = (event) => {
+    const chart = chartRef.current;
+    if (!chart) return;
 
+    const elements = chart.getElementsAtEventForMode(
+      event.nativeEvent,
+      "nearest",
+      { intersect: true },
+      true
+    );
+
+    if (elements.length) {
+      const datasetIndex = elements[0].datasetIndex;
+      const index = elements[0].index;
+      const clickedCategory = categories[index].name;
+      onBarClick(clickedCategory);
+    }
+  };
   return (
     <div style={{ width: "100%", height: "100%" }} className="px-4">
-      <Bar ref={chartRef} data={chartData} options={options} />
+      <Bar
+        ref={chartRef}
+        data={chartData}
+        options={options}
+        onClick={onClick}
+      />
     </div>
   );
 };

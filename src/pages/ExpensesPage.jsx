@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ExpensesVsIncomeBar from "../components/charts/ExpensesVsIncomeBar";
-import ExpensesVsIncomeLine from "../components/charts/ExpensesVsIncomeLine";
 import TransactionFilter from "../components/TransactionFilter";
+import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
+import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
 
 const recentExpenses = [
   {
@@ -46,9 +46,18 @@ const recentExpenses = [
     category: "Shopping",
     createdDate: "Sep 20, 2024",
   },
+  {
+    title: "Groceries",
+    date: "Sep 20, 2024",
+    amount: "50,00",
+    category: "Shopping",
+    createdDate: "Sep 20, 2024",
+  },
 ];
 
 const ExpensesPage = () => {
+  const [bar, setBar] = useState(true);
+
   const [filters, setFilters] = useState({
     title: "",
     category: "",
@@ -56,6 +65,18 @@ const ExpensesPage = () => {
     date: "",
   });
 
+  const categories = [
+    { name: "Bills", percentage: 20, amount: 300, color: "#F97316" }, // bg-orange-500
+    { name: "Shopping", percentage: 30, amount: 250, color: "#FACC15" }, // bg-yellow-400
+    { name: "Health", percentage: 15, amount: 150, color: "#22C55E" }, // bg-green-500
+    { name: "Home", percentage: 10, amount: 200, color: "#2563EB" }, // bg-blue-600
+    { name: "Auto", percentage: 20, amount: 300, color: "#EF4444" }, // bg-red-500
+    { name: "Food", percentage: 25, amount: 350, color: "#15803D" }, // bg-green-700
+    { name: "Entertainment", percentage: 15, amount: 200, color: "#C084FC" }, // bg-purple-400
+  ];
+  const toggleChart = () => {
+    setBar(!bar);
+  };
   const filteredExpenses = recentExpenses.filter((expense) => {
     return (
       (filters.title === "" ||
@@ -67,10 +88,6 @@ const ExpensesPage = () => {
     );
   });
 
-  const [bar, setBar] = useState(true);
-  const toggleChart = () => {
-    setBar(!bar);
-  };
   const d = new Date();
   let year = d.getFullYear();
 
@@ -90,29 +107,41 @@ const ExpensesPage = () => {
           <div className="grid grid-cols-3 gap-6">
             {/* Card Section */}
             <div className="col-span-2 grid grid-cols-2 gap-6">
-              <div className="p-6 bg-[#161A40] rounded-lg shadow-lg">
+              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Expenses</h3>
                 <p className="text-3xl font-bold mt-2">$1,200</p>
               </div>
-              <div className="p-6 bg-[#161A40] rounded-lg shadow-lg">
+              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Transactions</h3>
                 <p className="text-3xl font-bold mt-2">15</p>
               </div>
-              <div className="p-6 bg-[#161A40] rounded-lg shadow-lg">
+              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Average Expense</h3>
                 <p className="text-3xl font-bold mt-2">$80</p>
               </div>
-              <div className="p-6 bg-[#161A40] rounded-lg shadow-lg">
+              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Top Category</h3>
                 <p className="text-3xl font-bold mt-2">Shopping</p>
               </div>
             </div>
 
             {/* Chart Section */}
-            <div className="bg-[#161A40] p-6 rounded-lg shadow-lg">
-              <h3 className="text-lg font-semibold">Daily Expenses</h3>
-              <div className="h-40 bg-gray-800 rounded-lg mt-4">
-                {bar ? <ExpensesVsIncomeBar /> : <ExpensesVsIncomeLine />}
+            <div className="bg-[#161A40] p-6 rounded-3xl shadow-lg">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Expenses by Category</h3>
+                <button
+                  className="px-3 py-1 bg-[#3A3A57] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200"
+                  onClick={toggleChart}
+                >
+                  {bar ? "Line Chart" : "Bar Chart"}
+                </button>
+              </div>
+              <div className="h-40 bg-gray-800 rounded-3xl mt-4">
+                {bar ? (
+                  <ExpensesCategoryBar categories={categories} />
+                ) : (
+                  <ExpensesCategoryLine categories={categories} />
+                )}
               </div>
             </div>
           </div>
@@ -123,23 +152,26 @@ const ExpensesPage = () => {
             <TransactionFilter filters={filters} setFilters={setFilters} />
 
             {/* Transactions Table */}
-            <div className="rounded-lg shadow-lg mt-4">
-              <table className="min-w-full bg-[#161A40] text-gray-300 rounded-lg shadow-lg">
+            <div className="rounded-2xl mt-4">
+              <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl overflow-hidden">
                 <thead>
-                  {/* //202747 3A3A57 202147 272747 */}
-                  <tr className="text-left bg-[#272747]">
+                  {/* //202747 3A3A57 202147 272747 bg-opacity-75 transition-opacity data-[closed]:opacity-0 */}
+                  <tr className="text-left bg-[#3A3A57]">
                     {" "}
-                    <th className="p-4">Title</th>
-                    <th className="p-4">Category</th>
-                    <th className="p-4">Amount</th>
-                    <th className="p-4">Date</th>
-                    <th className="p-4">Created Date</th>
+                    <th className="p-4 font-bold">Title</th>
+                    <th className="p-4 font-bold">Category</th>
+                    <th className="p-4 font-bold">Amount</th>
+                    <th className="p-4 font-bold">Date</th>
+                    <th className="p-4 font-bold">Created Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredExpenses.length > 0 ? (
                     filteredExpenses.map((expense, index) => (
-                      <tr key={index} className="border-b border-gray-700">
+                      <tr
+                        key={index}
+                        className="border-b border-gray-700 hover:bg-[#272747] transition-colors duration-200"
+                      >
                         <td className="p-4">{expense.title}</td>
                         <td className="p-4">{expense.category}</td>
                         <td className="p-4">{expense.amount}$</td>

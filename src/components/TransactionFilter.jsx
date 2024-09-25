@@ -7,9 +7,9 @@ const TransactionFilter = ({ filters, setFilters }) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-[#161A40] rounded-lg shadow-md">
-      <div className="w-full sm:w-1/5">
-        <label className="text-gray-300">Title</label>
+    <div className="flex flex-wrap justify-between p-3 bg-[#161A40] rounded-3xl shadow-md">
+      <div className="w-full sm:w-1/6">
+        <label className="text-gray-300 font-bold">Title</label>
         <input
           type="text"
           name="title"
@@ -18,8 +18,8 @@ const TransactionFilter = ({ filters, setFilters }) => {
           onChange={handleInputChange}
         />
       </div>
-      <div className="w-full sm:w-1/5">
-        <label className="text-gray-300">Category</label>
+      <div className="w-full sm:w-1/6">
+        <label className="text-gray-300 font-bold">Category</label>
         <select
           name="category"
           className="w-full bg-white text-black p-2 rounded-md"
@@ -32,8 +32,8 @@ const TransactionFilter = ({ filters, setFilters }) => {
           <option value="Health">Health</option>
         </select>
       </div>
-      <div className="w-full sm:w-1/5">
-        <label className="text-gray-300">Amount</label>
+      <div className="w-full sm:w-1/6">
+        <label className="text-gray-300 font-bold">Amount</label>
         <input
           type="number"
           name="amount"
@@ -42,8 +42,17 @@ const TransactionFilter = ({ filters, setFilters }) => {
           onChange={handleInputChange}
         />
       </div>
-      <div className="w-full sm:w-1/5">
-        <label className="text-gray-300">Date</label>
+      <div className="w-full sm:w-1/6">
+        <label className="text-gray-300 font-bold">Date</label>
+        <input
+          type="date"
+          name="date"
+          className="w-full bg-white text-black p-2 rounded-md"
+          onChange={handleInputChange}
+        />
+      </div>
+      <div className="w-full sm:w-1/6">
+        <label className="text-gray-300 font-bold">Created Date</label>
         <input
           type="date"
           name="date"

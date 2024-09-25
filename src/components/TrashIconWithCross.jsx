@@ -1,8 +1,10 @@
-import { AiFillDelete, AiOutlineClose } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
+import { VscFilter } from "react-icons/vsc";
+
 const TrashIconWithCross = ({ filtersActive }) => (
   <div className="relative w-6 h-6">
     {/* Trash Icon */}
-    <AiFillDelete className="w-6 h-6 text-gray-400" />
+    <VscFilter className="w-6 h-6 text-gray-400" />
     {/* Red Cross Icon */}
     {filtersActive && (
       <AiOutlineClose

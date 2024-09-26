@@ -1,4 +1,35 @@
+import { useState, useEffect } from "react";
+
 const TransactionFilter = ({ filters, setFilters }) => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found in localStorage");
+          return;
+        }
+        const response = await fetch(
+          "http://localhost:5000/categories/filter?categoryType=expense",
+          {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmY1MWY0ZjZjN2RhMmYxNjNiZGUwODciLCJpYXQiOjE3MjczNTgyNzQsImV4cCI6MTcyNzQ0NDY3NH0.iZcp-6buUug_f0KvR7m9zvqRNxIvC4o-S-2v9qhpe1I",
+            },
+          }
+        );
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
@@ -27,10 +58,12 @@ const TransactionFilter = ({ filters, setFilters }) => {
           value={filters.category}
         >
           <option value="">All</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Auto">Auto</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Health">Health</option>
+          {/* Render categories dynamically from backend */}
+          {categories.map((category) => (
+            <option key={category._id} value={category.title}>
+              {category.title}
+            </option>
+          ))}
         </select>
       </div>
 

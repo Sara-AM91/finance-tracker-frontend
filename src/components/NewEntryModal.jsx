@@ -17,47 +17,54 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
   const [categories, setCategories] = useState([]);
 
   const isDesktop = useMediaQuery("(min-width: 768px)"); // Always called, no condition
-
   useEffect(() => {
     if (form.type) {
       const fetchCategories = async () => {
         try {
-          // Fetch the token from localStorage (if it exists)
           const token = localStorage.getItem("token");
+          let headers = {};
 
-          // Define headers object
-          const headers = token
-            ? {
-                Authorization: `Bearer ${token}`, // Add token if it exists
-              }
-            : {}; // No headers if there's no token
-
-          // Send request with or without the token in the Authorization header
-          const response = await fetch(
-            `http://localhost:5000/categories/filter?categoryType=${form.type}`,
-            {
-              headers, // Use the headers object, which may or may not include the token
-            }
-          );
-
-          // If the response status is 401, log an error message
-          if (response.status === 401) {
-            console.error(
-              "Not Authorized: Invalid token or missing permissions"
-            );
+          if (token) {
+            headers = {
+              Authorization: `Bearer ${token}`,
+            };
+          } else {
+            console.error("No token found, user is not logged in.");
             return;
           }
 
-          // Process the data from the response
-          const data = await response.json();
-          console.log("Fetched categories:", data);
+          const globalResponse = await fetch(
+            `http://localhost:5000/categories/global?categoryType=${form.type}`
+          );
+          const globalCategories = await globalResponse.json();
 
-          // Set the fetched categories in state
-          if (Array.isArray(data)) {
-            setCategories(data);
-          } else {
-            setCategories([]);
+          let userCategories = [];
+
+          if (token) {
+            const userResponse = await fetch(
+              `http://localhost:5000/categories/filter?categoryType=${form.type}`,
+              { headers }
+            );
+
+            if (userResponse.status === 401) {
+              console.error("User not authorized to fetch categories.");
+            } else {
+              userCategories = await userResponse.json();
+            }
           }
+
+          // Combine global and user categories and filter duplicates by `_id`
+          const allCategories = [
+            ...globalCategories,
+            ...userCategories.filter(
+              (userCategory) =>
+                !globalCategories.some(
+                  (globalCategory) => globalCategory._id === userCategory._id
+                )
+            ),
+          ];
+
+          setCategories(allCategories);
         } catch (error) {
           console.error("Failed to fetch categories", error);
           setCategories([]);
@@ -178,7 +185,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                                 className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
                                 value={form.category}
                                 onChange={handleChange}
-                                disabled={!!defaultCategory} // Disable if there's a default category
+                                //disabled={!!defaultCategory} // Disable if there's a default category
                                 required
                               >
                                 {!defaultCategory && (
@@ -186,9 +193,9 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                                 )}
                                 {/* Add conditional check before mapping categories */}
                                 {categories.length > 0 &&
-                                  categories.map((category) => (
+                                  categories.map((category, index) => (
                                     <option
-                                      key={category._id}
+                                      key={`${category._id}-${index}`}
                                       value={category._id}
                                     >
                                       {category.title}

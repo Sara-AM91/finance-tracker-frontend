@@ -3,7 +3,6 @@ import loginImg from "../assets/LoginPage.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { Alert } from "daisyui";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -15,6 +14,7 @@ const SignUpPage = () => {
   const [emailError, setEmailError] = useState();
   const [passwordError, setPasswordError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(true);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(true);
   const [strength, setStrength] = useState(0);
   const [feedback, setFeedback] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -126,6 +126,9 @@ const SignUpPage = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
 
   const handleConfirmPasswordChange = (e) => {
     const newConfirmPassword = e.target.value;
@@ -199,7 +202,7 @@ const SignUpPage = () => {
         setAlertVisible(true);
 
         setTimeout(() => {
-          navigate("/home");
+          navigate("/dashboard");
         }, 3000);
       }
     } catch (err) {
@@ -355,8 +358,8 @@ const SignUpPage = () => {
                 />
 
                 <FontAwesomeIcon
-                  icon={passwordVisible ? faEyeSlash : faEye}
-                  onClick={togglePasswordVisibility}
+                  icon={confirmPasswordVisible ? faEyeSlash : faEye}
+                  onClick={toggleConfirmPasswordVisibility}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400"
                 />
               </div>

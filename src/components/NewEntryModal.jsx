@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mui/material";
 
 const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
@@ -6,15 +6,74 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
     user: "",
     title: "",
     type: "",
-    category: "", // category field was missing
+    category: "",
     description: "",
     amount: "",
     date: "",
     invoice: "",
   });
 
-  //Always call hooks at the top level
+  const [types, setTypes] = useState([]);
+  const [categories, setCategories] = useState([]);
+
   const isDesktop = useMediaQuery("(min-width: 768px)"); // Always called, no condition
+  useEffect(() => {
+    if (form.type) {
+      const fetchCategories = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          let headers = {};
+
+          if (token) {
+            headers = {
+              Authorization: `Bearer ${token}`,
+            };
+          } else {
+            console.error("No token found, user is not logged in.");
+            return;
+          }
+
+          const globalResponse = await fetch(
+            `http://localhost:5000/categories/global?categoryType=${form.type}`
+          );
+          const globalCategories = await globalResponse.json();
+
+          let userCategories = [];
+
+          if (token) {
+            const userResponse = await fetch(
+              `http://localhost:5000/categories/filter?categoryType=${form.type}`,
+              { headers }
+            );
+
+            if (userResponse.status === 401) {
+              console.error("User not authorized to fetch categories.");
+            } else {
+              userCategories = await userResponse.json();
+            }
+          }
+
+          // Combine global and user categories and filter duplicates by `_id`
+          const allCategories = [
+            ...globalCategories,
+            ...userCategories.filter(
+              (userCategory) =>
+                !globalCategories.some(
+                  (globalCategory) => globalCategory._id === userCategory._id
+                )
+            ),
+          ];
+
+          setCategories(allCategories);
+        } catch (error) {
+          console.error("Failed to fetch categories", error);
+          setCategories([]);
+        }
+      };
+
+      fetchCategories();
+    }
+  }, [form.type]);
 
   // Handle form input change
   const handleChange = (e) => {
@@ -29,6 +88,9 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
       setForm((prev) => ({ ...prev, amount: amount }));
     }
   };
+  const filteredCategories = categories.filter(
+    (category) => category.categoryType === form.type.toLowerCase()
+  );
 
   const handleSubmit = () => {
     // Your form submission logic
@@ -95,20 +157,23 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                               <select
                                 id="type"
                                 name="type"
-                                onChange={handleChange}
-                                value={defaultCategory || ""}
-                                disabled={!!defaultCategory}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    category: "", // Reset category when type changes
+                                  }));
+                                }}
+                                value={form.type}
                                 required
-                                className="bg-[#161a40] border-b border-indigo-300 text-white text-sm  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  placeholder-gray-400"
+                                className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
                               >
-                                {" "}
-                                {!defaultCategory && (
-                                  <option value="">Choose a Type</option>
-                                )}
-                                <option value="EXP">Expenses</option>
-                                <option value="INC">Income</option>
+                                <option value="">Choose a Type</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
                               </select>
                             </div>
+                            {/* Select Category based on Type */}
                             <div className="flex-grow">
                               <label
                                 htmlFor="category"
@@ -117,16 +182,25 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                               <select
                                 id="category"
                                 name="category"
-                                className="bg-[#161a40] border-b border-indigo-300 text-white text-sm  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
+                                className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
                                 value={form.category}
                                 onChange={handleChange}
+                                //disabled={!!defaultCategory} // Disable if there's a default category
                                 required
                               >
-                                <option value="">Choose a Category</option>
-                                <option value="US">United States</option>
-                                <option value="CA">Canada</option>
-                                <option value="FR">France</option>
-                                <option value="DE">Germany</option>
+                                {!defaultCategory && (
+                                  <option value="">Select Category</option>
+                                )}
+                                {/* Add conditional check before mapping categories */}
+                                {categories.length > 0 &&
+                                  categories.map((category, index) => (
+                                    <option
+                                      key={`${category._id}-${index}`}
+                                      value={category._id}
+                                    >
+                                      {category.title}
+                                    </option>
+                                  ))}
                               </select>
                             </div>
                           </div>

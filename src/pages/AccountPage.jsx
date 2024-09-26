@@ -1,4 +1,38 @@
+import { useEffect, useState } from "react";
+
 const AccountPage = () => {
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const storedToken = JSON.parse(localStorage.getItem("user"));
+
+      try {
+        const response = await fetch("http://localhost:5000/user", {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Something went wrong");
+        }
+
+        const result = await response.json();
+        setUser(result);
+        // console.log(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const [lastName, setLastname] = useState("");
+  const [firstName, setFirstname] = useState("");
+  const [email, setEmail] = useState("");
+  const [picture, setPicture] = useState("");
+
   return (
     <div className="flex flex-col w-full gap-4 lg:flex-row">
       <div className="bg-[#161A40] p-4 rounded-3xl text-xl text-white flex-grow">
@@ -11,15 +45,18 @@ const AccountPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
-                src="https://via.placeholder.com/100"
+                src={user.profilePic}
+                value={picture}
+                onChange={(e) => {
+                  setPicture(e.target.value);
+                }}
                 alt="Profile"
                 className="w-24 h-24 rounded-full border-4 border-white"
               />
               <div className="ml-4">
-                <p className="text-xl font-semibold">Julianne Moore</p>
-                <a href="#" className="text-blue-500 underline text-sm">
-                  View Profile
-                </a>
+                <p className="text-xl font-semibold">
+                  {user.firstName} {user.lastName}
+                </p>
               </div>
             </div>
             <button className="bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-600">
@@ -36,16 +73,24 @@ const AccountPage = () => {
               <label className="block text-sm mb-2">First name</label>
               <input
                 type="text"
-                placeholder="First name"
-                className="w-full p-3 bg-gray-200 text-gray-900 rounded-md"
+                placeholder={user.firstName}
+                value={firstName}
+                onChange={(e) => {
+                  setFirstname(e.target.value);
+                }}
+                className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
               />
             </div>
             <div>
               <label className="block text-sm mb-2">Last name</label>
               <input
                 type="text"
-                placeholder="Last name"
-                className="w-full p-3 bg-gray-200 text-gray-900 rounded-md"
+                placeholder={user.lastName}
+                value={lastName}
+                onChange={(e) => {
+                  setLastname(e.target.value);
+                }}
+                className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
               />
             </div>
           </div>
@@ -55,8 +100,12 @@ const AccountPage = () => {
             <label className="block text-sm mb-2">Email</label>
             <input
               type="email"
-              placeholder="Email"
-              className="w-full p-3 bg-gray-200 text-gray-900 rounded-md"
+              placeholder={user.email}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
             />
           </div>
         </div>
@@ -90,21 +139,6 @@ const AccountPage = () => {
           <button className=" mt-5 mb-2 float-end text-white py-2 px-3 bg-orange-500 rounded-lg ">
             Delete
           </button>
-          <p class="inline-flex items-center rounded-full bg-rose-100 px-4 py-1 text-rose-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="mr-2 h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            Proceed with caution
-          </p>
         </div>
       </div>
     </div>

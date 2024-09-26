@@ -5,7 +5,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
   const [form, setForm] = useState({
     user: "",
     title: "",
-    type: "",
+    type: defaultCategory ? defaultCategory.toLowerCase() : "",
     category: "",
     description: "",
     amount: "",
@@ -53,7 +53,6 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
             }
           }
 
-          // Combine global and user categories and filter duplicates by `_id`
           const allCategories = [
             ...globalCategories,
             ...userCategories.filter(
@@ -64,7 +63,12 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
             ),
           ];
 
-          setCategories(allCategories);
+          const sortedCategories = [
+            ...allCategories.filter((category) => category.title !== "Other"),
+            ...allCategories.filter((category) => category.title === "Other"),
+          ];
+
+          setCategories(sortedCategories);
         } catch (error) {
           console.error("Failed to fetch categories", error);
           setCategories([]);
@@ -75,11 +79,16 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
     }
   }, [form.type]);
 
-  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (defaultCategory) {
+      setForm((prev) => ({ ...prev, type: defaultCategory.toLowerCase() }));
+    }
+  }, [defaultCategory]);
 
   const onAmountChange = (e) => {
     const amount = e.target.value;
@@ -93,7 +102,6 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
   );
 
   const handleSubmit = () => {
-    // Your form submission logic
     console.log(form);
   };
   if (!open) return null;
@@ -161,10 +169,11 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                                   handleChange(e);
                                   setForm((prev) => ({
                                     ...prev,
-                                    category: "", // Reset category when type changes
+                                    category: "",
                                   }));
                                 }}
                                 value={form.type}
+                                disabled={!!defaultCategory}
                                 required
                                 className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
                               >
@@ -185,13 +194,9 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                                 className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
                                 value={form.category}
                                 onChange={handleChange}
-                                //disabled={!!defaultCategory} // Disable if there's a default category
                                 required
                               >
-                                {!defaultCategory && (
-                                  <option value="">Select Category</option>
-                                )}
-                                {/* Add conditional check before mapping categories */}
+                                <option value="">Select Category</option>
                                 {categories.length > 0 &&
                                   categories.map((category, index) => (
                                     <option

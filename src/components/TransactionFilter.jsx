@@ -15,8 +15,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           "http://localhost:5000/categories/filter?categoryType=expense",
           {
             headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmY1MWY0ZjZjN2RhMmYxNjNiZGUwODciLCJpYXQiOjE3MjczNTgyNzQsImV4cCI6MTcyNzQ0NDY3NH0.iZcp-6buUug_f0KvR7m9zvqRNxIvC4o-S-2v9qhpe1I",
+              Authorization: `Bearer ${token}`,
             },
           }
         );

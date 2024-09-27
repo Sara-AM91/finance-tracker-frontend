@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Sidebar = () => {
@@ -51,7 +51,10 @@ const Sidebar = () => {
         <div className="py-4">
           <ul className="space-y-4 pt-4">
             <li>
-              <Link className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-4 py-2">
+              <Link
+                to="/account"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-4 py-2"
+              >
                 <img
                   src="https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
                   className="h-10 w-10 rounded-full"
@@ -64,9 +67,7 @@ const Sidebar = () => {
               >
                 <span className="ml-3">Dashboard</span>
               </Link>
-              <Link className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2">
-                <span className="ml-3">Settings</span>
-              </Link>
+
               <Link
                 to="/expenses"
                 className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"

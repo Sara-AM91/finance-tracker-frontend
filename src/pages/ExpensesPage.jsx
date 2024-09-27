@@ -155,10 +155,10 @@ const ExpensesPage = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] text-white">
+    <div className="h-screen w-screen flex flex-col text-white">
       <div className="flex flex-grow">
         {/* Main Content */}
-        <div className="flex-grow p-6 space-y-6 overflow-hidden">
+        <div className="flex-grow space-y-6 overflow-hidden">
           {/* Cards and Chart Section */}
           <div className="grid grid-cols-3 gap-6">
             {/* Card Section */}

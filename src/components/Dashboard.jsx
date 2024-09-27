@@ -1,7 +1,8 @@
 import { useState } from "react";
 import ExpensesVsIncomeBar from "./charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
-import BasicPie from "./charts/BasicPie";
+import IncomePie from "./charts/IncomePie";
+import ExpensesPie from "./charts/ExpensesPie";
 import ProgressBar from "./charts/ProgressBar";
 import TransactionsList from "./TransactionsList";
 import NewEntryModal from "./NewEntryModal";
@@ -80,7 +81,7 @@ const Dashboard = () => {
             <h1 className="text-xl">Sources Income</h1>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
-                <BasicPie />
+                <IncomePie />
               </div>
             </div>
           </div>
@@ -89,7 +90,7 @@ const Dashboard = () => {
             <h1 className="text-xl">Sources Expenses</h1>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
-                <BasicPie />
+                <ExpensesPie />
               </div>
             </div>
           </div>

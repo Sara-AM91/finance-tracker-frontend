@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import TransactionFilter from "../components/TransactionFilter";
 import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
 import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
@@ -17,81 +17,49 @@ const ExpensesPage = () => {
     createdDate: "",
   });
 
-  // Pass the filters to useTransactions hook to get filtered data
   const { transactions, loading, error } = useTransactions(filters);
+
   const formattedTransactions = transactions.map((transaction) => ({
     ...transaction,
-    category: transaction.category || { title: "Unknown" }, // Fallback for missing categories
+    category: transaction.category || { title: "Unknown" },
   }));
 
-  // const [expenses, setExpenses] = useState([
-  //   {
-  //     id: 1,
-  //     title: "Groceries",
-  //     date: "2024-09-20",
-  //     amount: "50.00",
-  //     category: "Shopping",
-  //     createdDate: "2024-09-20",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Gas",
-  //     date: "Sep 19, 2024",
-  //     amount: "30,00",
-  //     category: "Auto",
-  //     createdDate: "2024-09-20",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Movie Tickets",
-  //     date: "2024-09-18",
-  //     amount: "15,00",
-  //     category: "Entertainment",
-  //     createdDate: "2024-09-18",
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "Doctor Visit",
-  //     date: "2024-09-17",
-  //     amount: "90,00",
-  //     category: "Health",
-  //     createdDate: "2024-09-20",
-  //   },
-  //   {
-  //     id: 5,
-  //     title: "Doctor Visit",
-  //     date: "2024-09-17",
-  //     amount: "90,00",
-  //     category: "Health",
-  //     createdDate: "2024-09-20",
-  //   },
-  //   {
-  //     id: 6,
-  //     title: "Groceries",
-  //     date: "2024-09-14",
-  //     amount: "50,00",
-  //     category: "Shopping",
-  //     createdDate: "2024-09-20",
-  //   },
-  //   {
-  //     id: 7,
-  //     title: "Groceries",
-  //     date: "2024-09-20",
-  //     amount: "50,00",
-  //     category: "Shopping",
-  //     createdDate: "2024-09-20",
-  //   },
-  // ]);
+  const totalExpenses = useMemo(
+    () =>
+      transactions
+        .filter((t) => t.type === "expense")
+        .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
+        .toFixed(2),
+    [transactions]
+  );
+  const totalTransactions = transactions.length;
 
-  // const categories = [
-  //   { name: "Bills", percentage: 20, amount: 300, color: "#F97316" }, // bg-orange-500
-  //   { name: "Shopping", percentage: 30, amount: 250, color: "#FACC15" }, // bg-yellow-400
-  //   { name: "Health", percentage: 15, amount: 150, color: "#22C55E" }, // bg-green-500
-  //   { name: "Home", percentage: 10, amount: 200, color: "#2563EB" }, // bg-blue-600
-  //   { name: "Auto", percentage: 20, amount: 300, color: "#EF4444" }, // bg-red-500
-  //   { name: "Food", percentage: 25, amount: 350, color: "#15803D" }, // bg-green-700
-  //   { name: "Entertainment", percentage: 15, amount: 200, color: "#C084FC" }, // bg-purple-400
-  // ];
+  const averageExpense = useMemo(() => {
+    const expenseTransactions = transactions.filter(
+      (t) => t.type === "expense"
+    );
+    return expenseTransactions.length > 0
+      ? (totalExpenses / expenseTransactions.length).toFixed(2)
+      : 0;
+  }, [totalExpenses, transactions]);
+
+  const topCategory = useMemo(() => {
+    const categoryMap = {};
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        const categoryTitle = t.category?.title || "Unknown";
+        if (!categoryMap[categoryTitle]) {
+          categoryMap[categoryTitle] = 0;
+        }
+        categoryMap[categoryTitle] += parseFloat(t.amount || 0);
+      });
+
+    const sortedCategories = Object.entries(categoryMap).sort(
+      (a, b) => b[1] - a[1]
+    );
+    return sortedCategories.length > 0 ? sortedCategories[0][0] : "Unknown";
+  }, [transactions]);
   const toggleChart = () => {
     setBar(!bar);
   };
@@ -180,19 +148,19 @@ const ExpensesPage = () => {
             <div className="col-span-2 grid grid-cols-2 gap-6">
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Expenses</h3>
-                <p className="text-3xl font-bold mt-2">$1,200</p>
+                <p className="text-3xl font-bold mt-2">${totalExpenses}</p>
               </div>
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Transactions</h3>
-                <p className="text-3xl font-bold mt-2">15</p>
+                <p className="text-3xl font-bold mt-2">{totalTransactions}</p>
               </div>
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Average Expense</h3>
-                <p className="text-3xl font-bold mt-2">$80</p>
+                <p className="text-3xl font-bold mt-2">${averageExpense}</p>
               </div>
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Top Category</h3>
-                <p className="text-3xl font-bold mt-2">Shopping</p>
+                <p className="text-3xl font-bold mt-2">{topCategory}</p>
               </div>
             </div>
 

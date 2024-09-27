@@ -9,6 +9,7 @@ import NewEntryModal from "./NewEntryModal";
 import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave.png";
 import plus from "../assets/plus.png";
+import { useOutletContext } from "react-router-dom";
 
 const Dashboard = () => {
   const [bar, setBar] = useState(true);
@@ -16,6 +17,8 @@ const Dashboard = () => {
   const [maxExp, setMaxExp] = useState({ month: "June", amount: "1600" });
   const [maxInc, setMaxInc] = useState({ month: "April", amount: "2500" });
   const [open, setOpen] = useState(false);
+
+  const { transactions } = useOutletContext();
 
   const toggleChart = () => {
     setBar(!bar);
@@ -111,7 +114,7 @@ const Dashboard = () => {
           </div>
           <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center grow">
             <h1 className="text-xl">Recent Transactions</h1>
-            <TransactionsList />
+            <TransactionsList transactions={transactions} />
           </div>
           <div
             className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl flex justify-center items-center max-h-12 cursor-pointer"

@@ -1,8 +1,34 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import { useState, useEffect } from "react";
 
 const MainLayout = () => {
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token").replace(/['"]+/g, "");
+      try {
+        const response = await fetch("http://localhost:5000/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Something went wrong");
+        }
+
+        const result = await response.json();
+        setUser(result);
+        // console.log(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-full">
       {/* First Background Curve */}
@@ -24,8 +50,8 @@ const MainLayout = () => {
       <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
         <Header />
         <div className="flex flex-grow gap-6 h-full">
-          <Sidebar />
-          <Outlet /> {/* Dashboard content */}
+          <Sidebar user={user} />
+          <Outlet context={{ user }} /> {/* Dashboard content */}
         </div>
       </div>
     </div>

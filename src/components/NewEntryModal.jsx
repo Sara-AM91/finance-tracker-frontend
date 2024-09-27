@@ -21,13 +21,15 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
     if (form.type) {
       const fetchCategories = async () => {
         try {
-          const token = localStorage.getItem("token");
+          const token = localStorage.getItem("token").replace(/['"]+/g, ""); //Remove extra quotes
+          console.log("Token", token);
           let headers = {};
 
           if (token) {
             headers = {
               Authorization: `Bearer ${token}`,
             };
+            console.log("headers", headers);
           } else {
             console.error("No token found, user is not logged in.");
             return;

@@ -104,7 +104,8 @@ const LoginPage = () => {
       }
 
       if (res.ok) {
-        localStorage.setItem("token", JSON.stringify(data.token));
+        localStorage.setItem("token", data.token);
+        console.log("String", typeof data.token);
         setIsLoading(false);
         //alert("Loged in!");
         navigate("/dashboard");

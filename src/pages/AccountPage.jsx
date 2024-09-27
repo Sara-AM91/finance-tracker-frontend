@@ -59,66 +59,67 @@ const AccountPage = () => {
                 </p>
               </div>
             </div>
-            <button className="bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-600">
+            <button className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base">
               Upload
             </button>
           </div>
         </div>
-
         <div className="mt-8 ">
-          <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
+          <div className="bg-[#161A40] w-full  p-8 rounded-3xl shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm mb-2">First name</label>
-              <input
-                type="text"
-                placeholder={user.firstName}
-                value={firstName}
-                onChange={(e) => {
-                  setFirstname(e.target.value);
-                }}
-                className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm mb-2">First name</label>
+                <input
+                  type="text"
+                  placeholder={user.firstName}
+                  value={firstName}
+                  onChange={(e) => {
+                    setFirstname(e.target.value);
+                  }}
+                  className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-2">Last name</label>
+                <input
+                  type="text"
+                  placeholder={user.lastName}
+                  value={lastName}
+                  onChange={(e) => {
+                    setLastname(e.target.value);
+                  }}
+                  className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm mb-2">Last name</label>
-              <input
-                type="text"
-                placeholder={user.lastName}
-                value={lastName}
-                onChange={(e) => {
-                  setLastname(e.target.value);
-                }}
-                className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
-              />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm mb-2">Email</label>
+                <input
+                  type="email"
+                  placeholder={user.email}
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                  className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button className="bg-gray-600 py-2 px-4 rounded-lg mr-4 hover:bg-gray-500 text-base">
+                Cancel
+              </button>
+              <button className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg  text-base">
+                Save
+              </button>
             </div>
           </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label className="block text-sm mb-2">Email</label>
-            <input
-              type="email"
-              placeholder={user.email}
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
-            />
-          </div>
-        </div>
-        <div className="mt-6 flex justify-end">
-          <button className="bg-gray-600 py-2 px-4 rounded-lg mr-4 hover:bg-gray-500">
-            Cancel
-          </button>
-          <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-400">
-            Save
-          </button>
-        </div>
+        </div>{" "}
       </div>
-
       <div className=" flex flex-col sm:flex-row lg:flex-col gap-4">
         <div className="bg-[#161A40] p-4 rounded-3xl max-w-[32rem]">
           <h2 className="text-xl text-white">Change Password</h2>

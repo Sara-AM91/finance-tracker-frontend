@@ -46,7 +46,7 @@ const Dashboard = () => {
                   <div className="h-5 w-12 bg-[#08D59C] rounded-md"></div>
                 </div>
                 <button
-                  className="text-xs font-semibold border border-solid border-cyan-700"
+                  className="px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
                   onClick={toggleChart}
                 >
                   {bar ? "Line Chart" : "Bar Chart"}

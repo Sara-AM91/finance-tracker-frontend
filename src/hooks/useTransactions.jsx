@@ -1,33 +1,66 @@
 import { useState, useEffect } from "react";
+//USE LIKE THIS:
+// const filters = { type: "expense" };
+// const {
+//   transactions,
+// loading: transactionsLoading,
+//error: transactionsError,
+//} = useTransactions({ filters });
 
-const useTransactions = () => {
+//OR:
+//const {
+//   transactions,
+// loading: transactionsLoading,
+//error: transactionsError,
+//} = useTransactions({ type: "expenses" });
+
+//NO FILTER: useTransactions({})
+
+const useTransactions = (filters = {}) => {
+  // Filters are passed as an object
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token").replace(/['"]+/g, "");
+    const fetchTransactions = async () => {
+      const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
+      if (!token) {
+        setError("No token found, user is not authenticated");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch("http://localhost:5000/transactions", {
+        // Construct query parameters based on filters and use the second endpoint if there is no filter used
+        const queryParams = new URLSearchParams(filters).toString();
+        const url = queryParams
+          ? `http://localhost:5000/transactions?${queryParams}`
+          : `http://localhost:5000/transactions`;
+
+        const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
         if (!response.ok) {
-          throw new Error("Something went wrong");
+          throw new Error("Failed to fetch transactions");
         }
 
         const result = await response.json();
+        console.log("Transactions Data:", result.transactions);
+
         setTransactions(result.transactions);
-        //console.log("Transactiosn:", result.transactions);
       } catch (err) {
+        console.error("Failed to fetch transactions:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchTransactions();
   }, []);
 
   return { transactions, loading, error };

@@ -2,8 +2,6 @@ import ListItem from "./ListItem";
 import data from "./data.json";
 
 const TransactionsList = ({ transactions }) => {
-  //console.log("Transactions FROM LIST:", transactions);
-  //console.log("Type FROM LIST:", typeof transactions);
   const lastFive = transactions.slice(0, 5);
 
   return (

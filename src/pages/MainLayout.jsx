@@ -6,11 +6,12 @@ import useTransactions from "../hooks/useTransactions";
 
 const MainLayout = () => {
   const { user, loading: userLoading, error: userError } = useUser();
+  const filters = { type: "expense" };
   const {
     transactions,
     loading: transactionsLoading,
     error: transactionsError,
-  } = useTransactions();
+  } = useTransactions({ filters });
 
   if (userLoading || transactionsLoading) {
     return <p>Loading...</p>;

@@ -21,7 +21,7 @@ const App = () => {
         {/* Wrap Dashboard and Expenses with MainLayout */}
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/expenses" element={<ExpensesPage />} />{" "}
+          <Route path="/expenses" element={<ExpensesPage />} />
           <Route path="/account" element={<AccountPage />} />
         </Route>
 

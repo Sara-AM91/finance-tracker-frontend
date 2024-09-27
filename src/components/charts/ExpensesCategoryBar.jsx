@@ -126,7 +126,10 @@ const ExpensesCategoryBar = ({ categories, onBarClick }) => {
     }
   };
   return (
-    <div style={{ width: "100%", height: "100%" }} className="px-4">
+    <div
+      style={{ width: "100%", height: "100%", backgroundColor: "#161A40" }}
+      className="px-4"
+    >
       <Bar
         ref={chartRef}
         data={chartData}

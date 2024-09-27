@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 
 const AccountPage = () => {
   const [user, setUser] = useState({});
+  const [lastName, setLastname] = useState("");
+  const [firstName, setFirstname] = useState("");
+  const [email, setEmail] = useState("");
+  const [picture, setPicture] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const storedToken = JSON.parse(localStorage.getItem("user"));
-
+      const token = localStorage.getItem("token").replace(/['"]+/g, "");
       try {
         const response = await fetch("http://localhost:5000/user", {
           headers: {
-            Authorization: `Bearer ${storedToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (!response.ok) {
@@ -19,6 +22,10 @@ const AccountPage = () => {
 
         const result = await response.json();
         setUser(result);
+        setFirstname(result.firstName);
+        setLastname(result.lastName);
+        setEmail(result.email);
+        setPicture(result.profilePic);
         // console.log(result);
       } catch (error) {
         console.error(error);
@@ -27,11 +34,6 @@ const AccountPage = () => {
 
     fetchData();
   }, []);
-
-  const [lastName, setLastname] = useState("");
-  const [firstName, setFirstname] = useState("");
-  const [email, setEmail] = useState("");
-  const [picture, setPicture] = useState("");
 
   return (
     <div className="flex flex-col w-full gap-4 lg:flex-row">
@@ -73,7 +75,6 @@ const AccountPage = () => {
                 <label className="block text-sm mb-2">First name</label>
                 <input
                   type="text"
-                  placeholder={user.firstName}
                   value={firstName}
                   onChange={(e) => {
                     setFirstname(e.target.value);
@@ -110,9 +111,6 @@ const AccountPage = () => {
               </div>
             </div>
             <div className="mt-6 flex justify-end">
-              <button className="bg-gray-600 py-2 px-4 rounded-lg mr-4 hover:bg-gray-500 text-base">
-                Cancel
-              </button>
               <button className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg  text-base">
                 Save
               </button>

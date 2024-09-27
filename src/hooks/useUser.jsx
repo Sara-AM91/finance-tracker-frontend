@@ -19,7 +19,7 @@ const useUser = () => {
 
         const result = await response.json();
         setUser(result);
-        // console.log(result);
+        console.log(result);
       } catch (error) {
         console.error(error);
         setError(error.message);

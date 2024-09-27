@@ -18,8 +18,8 @@ const useTransactions = () => {
         }
 
         const result = await response.json();
-        setTransactions(result);
-        console.log("Transactiosn:", result);
+        setTransactions(result.transactions);
+        //console.log("Transactiosn:", result.transactions);
       } catch (err) {
         setError(err.message);
       } finally {

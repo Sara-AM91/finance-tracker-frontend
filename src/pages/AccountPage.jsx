@@ -1,39 +1,23 @@
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 const AccountPage = () => {
-  const [user, setUser] = useState({});
+  //const [user, setUser] = useState({});
   const [lastName, setLastname] = useState("");
   const [firstName, setFirstname] = useState("");
   const [email, setEmail] = useState("");
   const [picture, setPicture] = useState("");
+  const { user } = useOutletContext();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token").replace(/['"]+/g, "");
-      try {
-        const response = await fetch("http://localhost:5000/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Something went wrong");
-        }
-
-        const result = await response.json();
-        setUser(result);
-        setFirstname(result.firstName);
-        setLastname(result.lastName);
-        setEmail(result.email);
-        setPicture(result.profilePic);
-        // console.log(result);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
+    if (user) {
+      console.log("USER", user);
+      setFirstname(user.firstName);
+      setLastname(user.lastName);
+      setEmail(user.email);
+      setPicture(user.profilePic);
+    }
+  }, [user]);
 
   return (
     <div className="flex flex-col w-full gap-4 lg:flex-row">
@@ -53,7 +37,7 @@ const AccountPage = () => {
                   setPicture(e.target.value);
                 }}
                 alt="Profile"
-                className="w-24 h-24 rounded-full border-4 border-white"
+                className="w-24 h-24 rounded-full  bg-[#161A40] shadow-lg"
               />
               <div className="ml-4">
                 <p className="text-xl font-semibold">
@@ -91,7 +75,7 @@ const AccountPage = () => {
                   onChange={(e) => {
                     setLastname(e.target.value);
                   }}
-                  className="w-full p-3 bg-gray-300 text-gray-700 rounded-md text-base"
+                  className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
                 />
               </div>
             </div>
@@ -106,7 +90,7 @@ const AccountPage = () => {
                   onChange={(e) => {
                     setEmail(e.target.value);
                   }}
-                  className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
+                  className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
                 />
               </div>
             </div>

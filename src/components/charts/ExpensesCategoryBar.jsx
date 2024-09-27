@@ -1,5 +1,5 @@
 // components/charts/ExpensesCategoryBar.js
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,32 +23,56 @@ ChartJS.register(
   ChartDataLabels
 );
 
-const ExpensesCategoryBar = ({ categories, onBarClick }) => {
+const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
   const chartRef = useRef(null);
+  const expenseTransactions = useMemo(
+    () => transactions.filter((transaction) => transaction.type === "expense"),
+    [transactions]
+  );
 
-  const xLabels = categories.map((category) => category.name);
-  const yData = categories.map((category) => category.amount);
-  const barColors = categories.map((category) => category.color);
-  const percentages = categories.map((category) => category.percentage);
+  const categoryData = useMemo(() => {
+    const categoryMap = {};
 
+    expenseTransactions.forEach((transaction) => {
+      const categoryTitle = transaction.category?.title || "Unknown";
+      if (!categoryMap[categoryTitle]) {
+        categoryMap[categoryTitle] = { amount: 0 };
+      }
+      categoryMap[categoryTitle].amount += parseFloat(transaction.amount) || 0;
+    });
+
+    return categoryMap;
+  }, [expenseTransactions]);
+
+  const xLabels = Object.keys(categoryData);
+  const yData = xLabels.map((category) =>
+    categoryData[category].amount.toFixed(2)
+  );
+
+  // Define colors for each category (optional)
+  const categoryColors = {
+    // Shopping: "#FACC15",
+    // Healthcare: "#22C55E",
+    // Auto: "#22C55E",
+    // Entertainment: "#FF208B",
+    // Rent: "#175481",
+    // Bills: "#F97316",
+    // Transportation: "#7F3BCB",
+    // "Utilities & Bills": "#F36713",
+  };
+
+  const barColors = xLabels.map(
+    (category) => categoryColors[category] || "#EB2139"
+  );
+
+  // Step 5: Define chart data and options
   const chartData = {
     labels: xLabels,
     datasets: [
       {
         label: "Amount",
         data: yData,
-        backgroundColor: (context) => {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-
-          if (!chartArea) {
-            return barColors;
-          }
-
-          return yData.map((_, index) =>
-            createGradient(ctx, chartArea, barColors[index])
-          );
-        },
+        backgroundColor: barColors,
         borderRadius: 20,
         hoverBackgroundColor: barColors,
       },
@@ -71,39 +95,31 @@ const ExpensesCategoryBar = ({ categories, onBarClick }) => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       datalabels: {
         anchor: "end",
         align: "end",
-        formatter: (value, context) => {
-          const percentage = percentages[context.dataIndex];
-          return `${percentage}%`;
-        },
+        formatter: (value) => `${value}$`,
         color: "#fff",
-        font: {
-          weight: "bold",
-        },
+        font: { weight: "bold" },
+        clip: true, // Clip labels that overflow
+        display: false, // Only show labels above 100
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        grid: {
-          color: "#343756",
-        },
-        ticks: {
-          color: "#B7B7B7",
-        },
+        ticks: { color: "#B7B7B7" },
+        grid: { color: "#343756" },
       },
       x: {
-        grid: {
-          color: "#343756",
-        },
         ticks: {
           color: "#B7B7B7",
+          autoSkip: false, // Do not skip labels automatically
+          maxRotation: 45, // Rotate labels to prevent overlap
+          minRotation: 45,
         },
+        grid: { color: "#343756" },
       },
     },
   };
@@ -126,10 +142,7 @@ const ExpensesCategoryBar = ({ categories, onBarClick }) => {
     }
   };
   return (
-    <div
-      style={{ width: "100%", height: "100%", backgroundColor: "#161A40" }}
-      className="px-4"
-    >
+    <div style={{ width: "100%", height: "120%", backgroundColor: "#161A40" }}>
       <Bar
         ref={chartRef}
         data={chartData}

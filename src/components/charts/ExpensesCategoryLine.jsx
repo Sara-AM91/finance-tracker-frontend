@@ -79,7 +79,10 @@ const ExpensesCategoryLine = ({ categories }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "90%" }} className="px-4">
+    <div
+      style={{ width: "100%", height: "90%", backgroundColor: "#161A40" }}
+      className="px-4"
+    >
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

@@ -79,7 +79,7 @@ const AccountPage = () => {
                   onChange={(e) => {
                     setFirstname(e.target.value);
                   }}
-                  className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
+                  className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
                 />
               </div>
               <div>
@@ -91,7 +91,7 @@ const AccountPage = () => {
                   onChange={(e) => {
                     setLastname(e.target.value);
                   }}
-                  className="w-full p-3 bg-gray-200 text-gray-900 rounded-md text-base"
+                  className="w-full p-3 bg-gray-300 text-gray-700 rounded-md text-base"
                 />
               </div>
             </div>

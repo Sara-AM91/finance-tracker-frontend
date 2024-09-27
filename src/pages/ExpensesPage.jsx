@@ -186,13 +186,13 @@ const ExpensesPage = () => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Expenses by Category</h3>
                 <button
-                  className="px-3 py-1 bg-[#3A3A57] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200"
+                  className="px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
                   onClick={toggleChart}
                 >
                   {bar ? "Line Chart" : "Bar Chart"}
                 </button>
               </div>
-              <div className="h-40 bg-gray-800 rounded-3xl mt-4">
+              <div className="h-40 rounded-3xl mt-4">
                 {bar ? (
                   <ExpensesCategoryBar
                     categories={categories}
@@ -214,12 +214,12 @@ const ExpensesPage = () => {
               <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl overflow-hidden">
                 <thead>
                   <tr className="text-left bg-[#3A3A57]">
-                    <th className="p-4 font-bold">Title</th>
-                    <th className="p-4 font-bold">Category</th>
-                    <th className="p-4 font-bold">Amount</th>
-                    <th className="p-4 font-bold">Date</th>
-                    <th className="p-4 font-bold">Created Date</th>
-                    <th className="p-4 font-bold text-right">
+                    <th className="p-4 font-bold bg-[#293458]">Title</th>
+                    <th className="p-4 font-bold bg-[#293458]">Category</th>
+                    <th className="p-4 font-bold bg-[#293458]">Amount</th>
+                    <th className="p-4 font-bold bg-[#293458]">Date</th>
+                    <th className="p-4 font-bold bg-[#293458]">Created Date</th>
+                    <th className="p-4 font-bold text-right bg-[#293458]">
                       <button
                         onClick={clearFilters}
                         aria-label="Clear filters"
@@ -238,7 +238,7 @@ const ExpensesPage = () => {
                     filteredExpenses.map((expense, index) => (
                       <tr
                         key={index}
-                        className="border-b border-gray-700 hover:bg-[#272747] transition-colors duration-200"
+                        className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 "
                       >
                         <td className="p-4">{expense.title}</td>
                         <td className="p-4">{expense.category}</td>

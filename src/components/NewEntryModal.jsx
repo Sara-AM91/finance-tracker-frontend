@@ -117,7 +117,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div className="">
+          <div className=" w-[420px]">
             <div
               transition="true"
               className="relative transform overflow-hidden rounded-xl text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
@@ -148,7 +148,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
                 </div>
 
                 <div className="px-4 pb-4 pt-12 sm:p-6 sm:pb-4 relative z-10 mt-6 sm:mt-16">
-                  <div className="sm:flex sm:items-start">
+                  <div className="sm:flex sm:items-start justify-center">
                     <div className="mt-3 text-center sm:mx-6 sm:mt-0 sm:text-left">
                       <div className="text-lg font-semibold leading-6 text-white">
                         Add New Transaction

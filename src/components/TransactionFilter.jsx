@@ -42,7 +42,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           type="text"
           name="title"
           placeholder="Search by title"
-          className="w-full bg-white text-black p-2 rounded-md"
+          className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
           value={filters.title}
         />
@@ -52,7 +52,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
         <label className="text-gray-300 font-bold">Category</label>
         <select
           name="category"
-          className="w-full bg-white text-black p-2 rounded-md"
+          className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
           value={filters.category}
         >
@@ -72,7 +72,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           type="number"
           name="amount"
           placeholder="Search by amount"
-          className="w-full bg-white text-black p-2 rounded-md"
+          className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
           value={filters.amount}
         />
@@ -83,7 +83,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
         <input
           type="date"
           name="date"
-          className="w-full bg-white text-black p-2 rounded-md"
+          className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
           value={filters.date}
         />
@@ -94,7 +94,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
         <input
           type="date"
           name="createdDate"
-          className="w-full bg-white text-black p-2 rounded-md"
+          className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
           value={filters.createdDate}
         />

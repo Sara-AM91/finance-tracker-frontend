@@ -2,32 +2,24 @@ import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { useState, useEffect } from "react";
+import useUser from "../hooks/useUser";
+import useTransactions from "../hooks/useTransactions";
 
 const MainLayout = () => {
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token").replace(/['"]+/g, "");
-      try {
-        const response = await fetch("http://localhost:5000/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Something went wrong");
-        }
+  const { user, loading: userLoading, error: userError } = useUser();
+  const {
+    transactions,
+    loading: transactionsLoading,
+    error: transactionsError,
+  } = useTransactions();
 
-        const result = await response.json();
-        setUser(result);
-        // console.log(result);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  if (userLoading || transactionsLoading) {
+    return <p>Loading...</p>;
+  }
 
-    fetchData();
-  }, []);
+  if (userError || transactionsError) {
+    return <p>Error: {userError || transactionsError}</p>;
+  }
 
   return (
     <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-full">
@@ -51,7 +43,7 @@ const MainLayout = () => {
         <Header />
         <div className="flex flex-grow gap-6 h-full">
           <Sidebar user={user} />
-          <Outlet context={{ user }} /> {/* Dashboard content */}
+          <Outlet context={{ user, transactions }} /> {/* Dashboard content */}
         </div>
       </div>
     </div>

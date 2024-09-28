@@ -1,48 +1,67 @@
 import { PieChart, PiePlot } from "@mui/x-charts/PieChart";
-import { ResponsiveChartContainer } from "@mui/x-charts";
-import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import FilterCategory from "../FilterCategory";
+import * as d3 from "d3-scale-chromatic"; // Importing D3 for dynamic color scales
 
-export default function IncomePie() {
+export default function IncomePie({ transactions }) {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Filter transactions for income
+    const dataInc = FilterCategory(transactions, "income");
+
+    // Prepare the data for the chart
+    const data = dataInc.map(({ category, totalAmount }) => ({
+      value: totalAmount,
+      label: category, // Assuming you use category.title in your data
+    }));
+
+    const sorted = data.sort((a, b) => b.value - a.value);
+
+    const firstFour = sorted.splice(0, 5);
+    // console.log(firstFour);
+    setData(firstFour);
+  }, [transactions]);
+
+  const coolColors = data.map((_, index) =>
+    d3.interpolateCool(index / data.length)
+  );
+
   return (
     <div className="flex justify-center items-center pt-3 ">
       <PieChart
         sx={(theme) => ({
           [`.css-1mhcdve-MuiPieArc-root`]: {
-            stroke: "#161A40",
+            stroke: "#161A40", // Chart border stroke
           },
           "& .MuiChartsLegend-series text": {
             fontSize: "1em !important",
-            fill: "#FFFFFF !important",
+            fill: "#FFFFFF !important", // Change legend text color
           },
         })}
-        colors={["#F36713", "#FF208B", "#FF9883", "#EB2139"]}
+        colors={coolColors} // Use cool color interpolation
         series={[
           {
-            data: [
-              { id: 0, value: 10, label: "series A" },
-              { id: 1, value: 15, label: "series B" },
-              { id: 2, value: 20, label: "series C" },
-              { id: 3, value: 30, label: "series D" },
-            ],
+            data: data,
             innerRadius: 50,
             outerRadius: 100,
             paddingAngle: 5,
             cornerRadius: 5,
-            //startAngle: -45,
-            //endAngle: 225,
-            cx: "50%",
-            cy: "50%",
+            cx: "50%", // X center position of the pie chart
+            cy: "50%", // Y center position of the pie chart
           },
         ]}
         slotProps={{
           legend: {
             direction: "column",
-            position: { vertical: "middle", horizontal: "right" },
+            position: { vertical: "middle", horizontal: "right" }, // Legend on the right
             padding: 2,
+            itemSpacing: 10, // Space between legend items
           },
         }}
         width={400}
-        height={200}
+        height={300} // Increased height to accommodate the legend
+        legendPosition="right" // Ensure legend stays on the right
       />
     </div>
   );

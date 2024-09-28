@@ -5,7 +5,7 @@ const ListItem = ({ action, lastFive }) => {
     <div
       className={`px-3 py-5 flex items-center justify-between ${
         first !== 0 ? "border-t border-solid border-gray-700" : ""
-      } cursor-pointer hover:bg-gray-200`}
+      } cursor-pointer hover:bg-[#293458]`}
     >
       <div className="flex items-center">
         <img

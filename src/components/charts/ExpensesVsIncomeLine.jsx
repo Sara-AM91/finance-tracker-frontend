@@ -24,16 +24,35 @@ ChartJS.register(
   Legend
 );
 
-const ExpensesVsIncomeLine = () => {
+const ExpensesVsIncomeLine = ({ transactions }) => {
   const chartRef = useRef(null);
 
-  const uData = [
-    4000, 3000, 2000, 2780, 1890, 2390, 3490, 4000, 3000, 2000, 2780, 1890,
-  ];
-  const pData = [
-    2400, 1398, 4800, 3908, 4800, 3800, 4300, 2400, 1398, 2800, 3908, 4800,
-  ];
+  const months = Array(12)
+    .fill(0)
+    .map((_, i) => i); // [0, 1, 2, ..., 11]
 
+  const groupedByMonth = months.map((month) => {
+    const incomeForMonth = transactions
+      .filter(
+        (t) => new Date(t.date).getMonth() === month && t.type === "income"
+      )
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const expenseForMonth = transactions
+      .filter(
+        (t) => new Date(t.date).getMonth() === month && t.type === "expense"
+      )
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    return { incomeForMonth, expenseForMonth };
+  });
+
+  //console.log(groupedByMonth, transactions);
+  const incomeData = groupedByMonth.map((g) => g.incomeForMonth);
+  const expenseData = groupedByMonth.map((g) => g.expenseForMonth);
+
+  const uData = incomeData;
+  const pData = expenseData;
   const xLabels = [
     "Jan",
     "Feb",

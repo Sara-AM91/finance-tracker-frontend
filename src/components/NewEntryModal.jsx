@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mui/material";
 
-const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
+const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
   const [form, setForm] = useState({
     user: "",
     title: "",

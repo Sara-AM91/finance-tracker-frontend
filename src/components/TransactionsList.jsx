@@ -1,13 +1,36 @@
 import ListItem from "./ListItem";
-import data from "./data.json";
 
 const TransactionsList = ({ transactions }) => {
-  const lastFive = transactions.slice(0, 5);
+  const sorted = [...transactions].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  ); // Sort in descending order
+
+  // Get the last five transactions after sorting
+  const lastFive = sorted.slice(0, 5);
+
+  // Group transactions by date
+  const groupedTransactions = lastFive.reduce((acc, transaction) => {
+    const date = transaction.date.split("T")[0]; // Extract the date part (YYYY-MM-DD) using split method
+
+    // Initialize the date key if it doesn't exist
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+
+    // Push the transaction into the corresponding date group
+    acc[date].push(transaction);
+    return acc;
+  }, {});
 
   return (
     <div className="w-full mx-auto p-4 overflow-auto">
-      {lastFive.map((action) => (
-        <ListItem key={action._id} action={action} lastFive={lastFive} />
+      {Object.entries(groupedTransactions).map(([date, actions]) => (
+        <div key={date} className="mb-4">
+          <h3 className="text-lg font-bold">{date}</h3>
+          {actions.map((action) => (
+            <ListItem key={action._id} action={action} lastFive={lastFive} />
+          ))}
+        </div>
       ))}
     </div>
   );

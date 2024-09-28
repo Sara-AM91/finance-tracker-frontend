@@ -49,7 +49,7 @@ const useTransactions = (filters = {}) => {
         }
 
         const result = await response.json();
-        console.log("Transactions Data:", result.transactions);
+        //console.log("Transactions Data:", result.transactions);
 
         setTransactions(result.transactions);
       } catch (err) {

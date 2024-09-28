@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import ExpensesVsIncomeBar from "./charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
 import IncomePie from "./charts/IncomePie";
@@ -10,22 +10,60 @@ import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave.png";
 import plus from "../assets/plus.png";
 import { useOutletContext } from "react-router-dom";
+import CalculateBalance from "./CalculateBalance";
 
 const Dashboard = () => {
-  const [bar, setBar] = useState(true);
-  const [balance, setBalance] = useState(14500.65);
+  const [isBarChart, setIsBarChart] = useState(true);
+  const [balance, setBalance] = useState(0);
   const [maxExp, setMaxExp] = useState({ month: "June", amount: "1600" });
   const [maxInc, setMaxInc] = useState({ month: "April", amount: "2500" });
   const [open, setOpen] = useState(false);
+  const [year, setYear] = useState(null);
 
-  const { transactions } = useOutletContext();
+  const { transactions, addTransaction } = useOutletContext();
+
+  // Automatically set the default year to the latest year from transactions
+  //this helps data load when component mounts without having to reselect year
+  useEffect(() => {
+    if (transactions.length > 0) {
+      const years = transactions.map(({ date }) =>
+        new Date(date).getFullYear()
+      );
+      const latestYear = Math.max(...years);
+      setYear(latestYear);
+    }
+  }, [transactions]);
+
+  // Memoize the unique years and transactions filtered by the selected year
+  const [uniqueYears, yearlyTransactions] = useMemo(() => {
+    const unique = Array.from(
+      new Set(transactions.map(({ date }) => new Date(date).getFullYear()))
+    );
+    const filteredTransactions = year
+      ? transactions.filter(
+          (el) => new Date(el.date).getFullYear() === parseInt(year)
+        )
+      : [];
+    return [unique, filteredTransactions];
+  }, [transactions, year]);
+
+  // Ensure data shows when the page first loads by triggering the initial year set
+  useEffect(() => {
+    if (uniqueYears.length > 0 && !year) {
+      setYear(uniqueYears[0]); // Set the default year when the component mounts
+    }
+  }, [uniqueYears, year]);
 
   const toggleChart = () => {
-    setBar(!bar);
+    setIsBarChart(!isBarChart);
   };
 
-  const d = new Date();
-  let year = d.getFullYear();
+  useEffect(() => {
+    const { balance, income, expense } = CalculateBalance(transactions);
+    setBalance(balance); // Update the balance in state
+    console.log("Income:", income);
+    console.log("Expense:", expense);
+  }, [transactions]);
 
   return (
     <div className="h-full flex flex-col">
@@ -33,11 +71,30 @@ const Dashboard = () => {
       <div className="grid grid-cols-6 gap-4 flex-grow">
         {/* Left Grid (Income & Expenses + Other items) */}
         <div className="col-span-4 grid grid-cols-4 gap-4 h-full">
-          <div className="col-span-3 bg-[#161A40] p-4 text-white rounded-3xl flex flex-col">
+          <div className="col-span-3 bg-[#161A40] p-4 text-white rounded-3xl flex flex-col ">
             <div className="flex justify-between">
               <div>
                 <h1 className="text-xl">Income & Expenses</h1>
-                <h2>{year}</h2>
+                <h2>
+                  <select
+                    id="year"
+                    name="year"
+                    aria-label="Select Year"
+                    className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
+                    value={year || ""}
+                    onChange={(e) => setYear(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>
+                      Select Year
+                    </option>
+                    {uniqueYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </h2>
               </div>
               <div className="flex gap-6 items-center">
                 <div className="flex gap-2 items-center">
@@ -52,13 +109,21 @@ const Dashboard = () => {
                   className="px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
                   onClick={toggleChart}
                 >
-                  {bar ? "Line Chart" : "Bar Chart"}
+                  {isBarChart ? "Line Chart" : "Bar Chart"}
                 </button>
               </div>
             </div>
             <div className="flex-grow flex items-center justify-center">
               <div className="w-full h-full">
-                {bar ? <ExpensesVsIncomeBar /> : <ExpensesVsIncomeLine />}
+                {isBarChart ? (
+                  <ExpensesVsIncomeBar
+                    transactions={yearlyTransactions}
+                    setMaxInc={setMaxInc}
+                    setMaxExp={setMaxExp}
+                  />
+                ) : (
+                  <ExpensesVsIncomeLine transactions={yearlyTransactions} />
+                )}
               </div>
             </div>
           </div>
@@ -84,7 +149,7 @@ const Dashboard = () => {
             <h1 className="text-xl">Sources Income</h1>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
-                <IncomePie />
+                <IncomePie transactions={yearlyTransactions} />
               </div>
             </div>
           </div>
@@ -93,7 +158,7 @@ const Dashboard = () => {
             <h1 className="text-xl">Sources Expenses</h1>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
-                <ExpensesPie />
+                <ExpensesPie transactions={yearlyTransactions} />
               </div>
             </div>
           </div>
@@ -109,7 +174,7 @@ const Dashboard = () => {
           <div className="flex-3 text-white rounded-3xl overflow-auto p-8">
             <div className="">
               <h1 className="text-4xl text-right">Available Balance</h1>
-              <p className="text-6xl text-[#08D59C] text-right">{balance}</p>
+              <p className="text-6xl text-[#08D59C] text-right">{balance}€</p>
             </div>
           </div>
           <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center grow">
@@ -124,7 +189,11 @@ const Dashboard = () => {
           >
             <img src={plus} className="max-h-12" />
           </div>
-          <NewEntryModal open={open} setOpen={setOpen} />
+          <NewEntryModal
+            open={open}
+            setOpen={setOpen}
+            addTransaction={addTransaction}
+          />
         </div>
       </div>
     </div>

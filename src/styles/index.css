@@ -2,42 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+.swipe {
+  position: relative;
+  width: fit-content;
 }
 
-.wave {
+.swipe::after {
+  display: block;
+  content: "";
   position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  height: 70px;
+  top: 0;
+  left: 0;
+  right: 100%;
   width: 100%;
-  background: dodgerblue;
-  z-index: -1;
+  height: 100%;
+  background-color: #161a40;
+  animation: swipe 0.5s forwards;
 }
-.wave::before {
-  content: "";
-  display: block;
-  position: absolute;
-  border-radius: 100% 90%;
-  width: 51%;
-  height: 75px;
-  background-color: white;
-  right: 0px;
-  top: 35px;
-}
-.wave::after {
-  content: "";
-  display: block;
-  position: absolute;
-  border-radius: 100% 90%;
-  width: 51%;
-  height: 75px;
-  background-color: dodgerblue;
-  left: -8px;
-  top: 25px;
+
+@keyframes swipe {
+  0% {
+    right: 0;
+    left: 0;
+    width: 100%;
+  }
+  50% {
+    right: 0;
+    left: 0;
+    width: 100%;
+  }
+  100% {
+    right: 0;
+    left: 100%;
+    width: 0%;
+  }
 }

@@ -54,6 +54,10 @@ export const TransactionProvider = ({ children }) => {
     fetchTransactions();
   };
 
+  const addTransaction = (newTransaction) => {
+    setTransactions((prev) => [...prev, newTransaction]);
+  };
+
   return (
     <TransactionContext.Provider
       value={{
@@ -63,6 +67,7 @@ export const TransactionProvider = ({ children }) => {
         setTransactions,
         refreshTransactions,
         setFilters,
+        addTransaction,
       }}
     >
       {children}

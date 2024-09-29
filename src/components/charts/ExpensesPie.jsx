@@ -46,7 +46,6 @@ export default function ExpensesPie({ transactions }) {
             cornerRadius: 5,
             cx: "50%", // X center position of the pie chart
             cy: "50%", // Y center position of the pie chart
-            arcLabel: (item) => `${item.value}€`,
           },
         ]}
         slotProps={{

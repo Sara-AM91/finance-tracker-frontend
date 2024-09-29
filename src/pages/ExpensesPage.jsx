@@ -4,10 +4,18 @@ import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
 import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
 import TrashIconWithCross from "../components/TrashIconWithCross";
 import NewEntryModal from "../components/NewEntryModal";
+import EditEntryModal from "../components/EditEntryModal";
 import useTransactions from "../hooks/useTransactions";
+import { useTransactionContext } from "../contexts/TransactionContext"; // Use the new context
+
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import { formatDateForInput } from "../utils/dateUtils";
 
 const ExpensesPage = () => {
   const [bar, setBar] = useState(true);
+  const [openNewEntryModal, setOpenNewEntryModal] = useState(false);
+  const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
+  const [entryToEdit, setEntryToEdit] = useState(null);
 
   const [filters, setFilters] = useState({
     title: "",
@@ -17,7 +25,7 @@ const ExpensesPage = () => {
     createdDate: "",
   });
 
-  const { transactions, loading, error } = useTransactions(filters);
+  const { transactions, loading, error } = useTransactionContext(filters);
 
   const formattedTransactions = transactions.map((transaction) => ({
     ...transaction,
@@ -135,8 +143,17 @@ const ExpensesPage = () => {
     );
   });
 
-  const [open, setOpen] = useState(false);
+  //const [open, setOpen] = useState(false);
+  const handleEdit = (expense) => {
+    console.log("In edit");
+    setEntryToEdit(expense); // Set the transaction data to be edited
+    setOpenEditEntryModal(true); // Open the EditEntryModal
+  };
 
+  const handleDelete = (expenseId) => {
+    console.log("Delete:", expenseId);
+    // Add your delete logic here if needed
+  };
   return (
     <div className="h-screen w-screen flex flex-col text-white">
       <div className="flex flex-grow">
@@ -234,15 +251,48 @@ const ExpensesPage = () => {
                         <td className="p-4">
                           {parseFloat(expense.amount).toFixed(2)}$
                         </td>
-                        <td className="p-4">{expense.date}</td>
+                        <td className="p-4">
+                          {formatDateForInput(expense.date)}
+                        </td>{" "}
                         <td className="p-4">{expense.createdDate}</td>
-                        <td className="p-4"></td>{" "}
-                        {/* Empty cell for alignment */}
+                        {/* Action Button inside each row */}
+                        <td className="p-4 text-right  right-4 top-4">
+                          {/* Action Menu */}
+                          <Menu
+                            as="div"
+                            className="relative inline-block text-left"
+                          >
+                            <MenuButton className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none">
+                              ⋮
+                            </MenuButton>
+                            <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
+                              <div className="py-1">
+                                <MenuItem
+                                  as="button"
+                                  className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
+                                  // onClick={() =>
+                                  //   console.log("Edit:", expense._id)
+                                  // }
+                                  onClick={() => handleEdit(expense)}
+                                >
+                                  Edit
+                                </MenuItem>
+                                <MenuItem
+                                  as="button"
+                                  className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-700 hover:bg-red-200 data-[active=true]:bg-red-200"
+                                  onClick={() => handleDelete(expense._id)}
+                                >
+                                  Delete
+                                </MenuItem>
+                              </div>
+                            </MenuItems>
+                          </Menu>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td className="p-4 text-center" colSpan="6">
+                      <td className="p-4 text-center" colSpan="5">
                         No transactions found.
                       </td>
                     </tr>
@@ -256,7 +306,7 @@ const ExpensesPage = () => {
           {/* Floating "+" Button */}
           <button
             className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenNewEntryModal(true)}
           >
             +
           </button>
@@ -264,7 +314,20 @@ const ExpensesPage = () => {
       </div>
 
       {/* Modal Section */}
-      <NewEntryModal open={open} setOpen={setOpen} defaultCategory="Expense" />
+      <NewEntryModal
+        open={openNewEntryModal}
+        setOpen={setOpenNewEntryModal}
+        defaultCategory="Expense"
+      />
+
+      {/* Edit Entry Modal */}
+      {entryToEdit && (
+        <EditEntryModal
+          open={openEditEntryModal}
+          setOpen={setOpenEditEntryModal}
+          entry={entryToEdit}
+        />
+      )}
     </div>
   );
 };

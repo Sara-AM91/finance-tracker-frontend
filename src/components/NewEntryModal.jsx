@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mui/material";
+import { useOutletContext } from "react-router-dom";
 
-const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
+const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
+  const { user } = useOutletContext();
+  //console.log(user);
   const [form, setForm] = useState({
-    user: "",
+    user: user._id,
     title: "",
     type: defaultCategory ? defaultCategory.toLowerCase() : "",
     category: "",
@@ -22,7 +25,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
       const fetchCategories = async () => {
         try {
           const token = localStorage.getItem("token").replace(/['"]+/g, ""); //Remove extra quotes
-          console.log("Token", token);
+          //.log("Token", token);
           let headers = {};
 
           if (token) {
@@ -103,10 +106,49 @@ const NewEntryModal = ({ open, setOpen, defaultCategory }) => {
     (category) => category.categoryType === form.type.toLowerCase()
   );
 
-  const handleSubmit = () => {
-    console.log(form);
-  };
   if (!open) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
+    if (!token) {
+      setError("No token found, user is not authenticated");
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("user", form.user);
+    formData.append("type", form.type);
+    formData.append("category", form.category);
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("amount", form.amount);
+    formData.append("date", form.date);
+    formData.append("invoice", form.invoice);
+
+    try {
+      const res = await fetch("http://localhost:5000/transactions", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      //console.log(data);
+
+      addTransaction(data.transaction);
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+    setOpen(false);
+  };
 
   return (
     <div className="relative z-10">

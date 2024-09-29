@@ -23,6 +23,7 @@
     "@mui/x-date-pickers": "^7.18.0",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "d3-scale-chromatic": "^3.1.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",

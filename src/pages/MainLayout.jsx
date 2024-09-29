@@ -4,15 +4,32 @@ import Sidebar from "../components/Sidebar";
 import useUser from "../hooks/useUser";
 import useTransactions from "../hooks/useTransactions";
 import { TransactionProvider } from "../contexts/TransactionContext";
+import { useEffect, useState } from "react";
 
 const MainLayout = () => {
-  const { user, loading: userLoading, error: userError } = useUser();
-  const filters = { type: "expense" };
+  //get data from custom hooks
+  const { user: userData, loading: userLoading, error: userError } = useUser();
   const {
-    transactions,
+    transactions: initialTransactions,
     loading: transactionsLoading,
     error: transactionsError,
-  } = useTransactions({ filters });
+  } = useTransactions({});
+
+  //put data into states to manage them in the whole application and pass it down
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    if (initialTransactions.length) {
+      setTransactions(initialTransactions);
+    }
+  }, [initialTransactions]);
+
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    if (userData) {
+      setUser(userData);
+    }
+  }, [userData]);
 
   if (userLoading || transactionsLoading) {
     return <p>Loading...</p>;
@@ -21,6 +38,13 @@ const MainLayout = () => {
   if (userError || transactionsError) {
     return <p>Error: {userError || transactionsError}</p>;
   }
+
+  const addTransaction = (newTransaction) => {
+    setTransactions((prev) => {
+      const updatedTransactions = [...prev, newTransaction];
+      return updatedTransactions; // Update the transactions state
+    });
+  };
 
   return (
     <TransactionProvider>
@@ -41,13 +65,12 @@ const MainLayout = () => {
         ></div>
 
         {/* Content Wrapper */}
-        <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
-          <Header />
-          <div className="flex flex-grow gap-6 h-full">
-            <Sidebar user={user} />
-            <Outlet context={{ user, transactions }} />{" "}
-            {/* Dashboard content */}
-          </div>
+      <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
+        <Header />
+        <div className="flex flex-grow gap-6 h-full">
+          <Sidebar user={user} />
+          <Outlet context={{ user, setUser, transactions, addTransaction }} />
+          {/* Dashboard content */}
         </div>
       </div>
     </TransactionProvider>

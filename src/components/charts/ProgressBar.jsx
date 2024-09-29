@@ -21,12 +21,6 @@ const ProgressBar = ({ balance }) => {
       (parseFloat(balance).toFixed(2) / parseFloat(goal)).toFixed(2) * 100
     );
     setValue(progress);
-    console.log(
-      "Goal:",
-      parseFloat(goal).toFixed(2),
-      "Balance:",
-      parseFloat(balance).toFixed(2)
-    );
   }, [goal, balance]);
 
   useEffect(() => {
@@ -47,7 +41,7 @@ const ProgressBar = ({ balance }) => {
         {/* Progress bar */}
         <div className="flex flex-col items-end w-full gap-2">
           <p>
-            {balance}/{goal}
+            {balance}€/{goal}€
           </p>
           <div className="w-full bg-gray-400 h-4 rounded-r-full overflow-hidden">
             <div

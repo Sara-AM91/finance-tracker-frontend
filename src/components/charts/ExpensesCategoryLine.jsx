@@ -1,5 +1,4 @@
-// components/charts/ExpensesCategoryLine.js
-import { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,32 +22,56 @@ ChartJS.register(
   Legend
 );
 
-const ExpensesCategoryLine = ({ categories }) => {
+const ExpensesCategoryLine = ({ transactions }) => {
   const chartRef = useRef(null);
 
-  // Extract labels and data from categories
-  const xLabels = categories.map((category) => category.name);
-  const yData = categories.map((category) => category.amount);
-  const lineColors = categories.map((category) => category.color);
+  // Step 1: Filter transactions to only include expenses
+  const expenseTransactions = useMemo(
+    () => transactions.filter((transaction) => transaction.type === "expense"),
+    [transactions]
+  );
 
-  // Create chart data
+  // Step 2: Aggregate the expenses by category
+  const categoryData = useMemo(() => {
+    const categoryMap = {};
+
+    expenseTransactions.forEach((transaction) => {
+      const categoryTitle = transaction.category?.title || "Unknown";
+      if (!categoryMap[categoryTitle]) {
+        categoryMap[categoryTitle] = { amount: 0 };
+      }
+      categoryMap[categoryTitle].amount += parseFloat(transaction.amount) || 0;
+    });
+
+    return categoryMap;
+  }, [expenseTransactions]);
+
+  // Step 3: Extract labels and data for the line chart
+  const xLabels = Object.keys(categoryData);
+  const yData = xLabels.map((category) =>
+    categoryData[category].amount.toFixed(2)
+  );
+
+  // Define the color scheme for the line (optional)
+  const lineColor = "#C52222";
+
+  // Create the chart data
   const chartData = {
     labels: xLabels,
     datasets: [
       {
         label: "Amount",
         data: yData,
-        borderColor: lineColors,
-        backgroundColor: lineColors,
+        borderColor: lineColor, //Set line color
+        backgroundColor: lineColor,
         fill: false,
-        tension: 0.4,
+        tension: 0.4, //Make the line slightly curved
         pointRadius: 5,
         pointHoverRadius: 7,
       },
     ],
   };
 
-  // Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -79,10 +102,7 @@ const ExpensesCategoryLine = ({ categories }) => {
   };
 
   return (
-    <div
-      style={{ width: "100%", height: "90%", backgroundColor: "#161A40" }}
-      className="px-4"
-    >
+    <div style={{ width: "100%", height: "100%", backgroundColor: "#161A40" }}>
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

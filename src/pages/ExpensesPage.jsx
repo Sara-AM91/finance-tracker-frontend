@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import TransactionFilter from "../components/TransactionFilter";
 import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
 import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
 import TrashIconWithCross from "../components/TrashIconWithCross";
 import NewEntryModal from "../components/NewEntryModal";
+import useTransactions from "../hooks/useTransactions";
+
 const ExpensesPage = () => {
   const [bar, setBar] = useState(true);
 
@@ -15,74 +17,49 @@ const ExpensesPage = () => {
     createdDate: "",
   });
 
-  const [expenses, setExpenses] = useState([
-    {
-      id: 1,
-      title: "Groceries",
-      date: "2024-09-20",
-      amount: "50.00",
-      category: "Shopping",
-      createdDate: "2024-09-20",
-    },
-    {
-      id: 2,
-      title: "Gas",
-      date: "Sep 19, 2024",
-      amount: "30,00",
-      category: "Auto",
-      createdDate: "2024-09-20",
-    },
-    {
-      id: 3,
-      title: "Movie Tickets",
-      date: "2024-09-18",
-      amount: "15,00",
-      category: "Entertainment",
-      createdDate: "2024-09-18",
-    },
-    {
-      id: 4,
-      title: "Doctor Visit",
-      date: "2024-09-17",
-      amount: "90,00",
-      category: "Health",
-      createdDate: "2024-09-20",
-    },
-    {
-      id: 5,
-      title: "Doctor Visit",
-      date: "2024-09-17",
-      amount: "90,00",
-      category: "Health",
-      createdDate: "2024-09-20",
-    },
-    {
-      id: 6,
-      title: "Groceries",
-      date: "2024-09-14",
-      amount: "50,00",
-      category: "Shopping",
-      createdDate: "2024-09-20",
-    },
-    {
-      id: 7,
-      title: "Groceries",
-      date: "2024-09-20",
-      amount: "50,00",
-      category: "Shopping",
-      createdDate: "2024-09-20",
-    },
-  ]);
+  const { transactions, loading, error } = useTransactions(filters);
 
-  const categories = [
-    { name: "Bills", percentage: 20, amount: 300, color: "#F97316" }, // bg-orange-500
-    { name: "Shopping", percentage: 30, amount: 250, color: "#FACC15" }, // bg-yellow-400
-    { name: "Health", percentage: 15, amount: 150, color: "#22C55E" }, // bg-green-500
-    { name: "Home", percentage: 10, amount: 200, color: "#2563EB" }, // bg-blue-600
-    { name: "Auto", percentage: 20, amount: 300, color: "#EF4444" }, // bg-red-500
-    { name: "Food", percentage: 25, amount: 350, color: "#15803D" }, // bg-green-700
-    { name: "Entertainment", percentage: 15, amount: 200, color: "#C084FC" }, // bg-purple-400
-  ];
+  const formattedTransactions = transactions.map((transaction) => ({
+    ...transaction,
+    category: transaction.category || { title: "Unknown" },
+  }));
+
+  const totalExpenses = useMemo(
+    () =>
+      transactions
+        .filter((t) => t.type === "expense")
+        .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
+        .toFixed(2),
+    [transactions]
+  );
+  const totalTransactions = transactions.length;
+
+  const averageExpense = useMemo(() => {
+    const expenseTransactions = transactions.filter(
+      (t) => t.type === "expense"
+    );
+    return expenseTransactions.length > 0
+      ? (totalExpenses / expenseTransactions.length).toFixed(2)
+      : 0;
+  }, [totalExpenses, transactions]);
+
+  const topCategory = useMemo(() => {
+    const categoryMap = {};
+    transactions
+      .filter((t) => t.type === "expense")
+      .forEach((t) => {
+        const categoryTitle = t.category?.title || "Unknown";
+        if (!categoryMap[categoryTitle]) {
+          categoryMap[categoryTitle] = 0;
+        }
+        categoryMap[categoryTitle] += parseFloat(t.amount || 0);
+      });
+
+    const sortedCategories = Object.entries(categoryMap).sort(
+      (a, b) => b[1] - a[1]
+    );
+    return sortedCategories.length > 0 ? sortedCategories[0][0] : "Unknown";
+  }, [transactions]);
   const toggleChart = () => {
     setBar(!bar);
   };
@@ -124,25 +101,31 @@ const ExpensesPage = () => {
     return Object.values(filters).some((value) => value !== "");
   };
 
-  const filteredExpenses = expenses.filter((expense) => {
+  const filteredExpenses = transactions.filter((transaction) => {
     const matchesTitle =
       filters.title === "" ||
-      expense.title.toLowerCase().includes(filters.title.toLowerCase());
+      transaction.title.toLowerCase().includes(filters.title.toLowerCase());
 
     const matchesCategory =
-      filters.category === "" || expense.category === filters.category;
+      filters.category === "" ||
+      transaction.category?.title === filters.category;
 
+    // Convert `amount` to string and handle accordingly
     const matchesAmount =
       filters.amount === "" ||
-      parseFloat(expense.amount.replace(",", ".")) ===
-        parseFloat(filters.amount);
+      parseFloat(
+        typeof transaction.amount === "string"
+          ? transaction.amount.replace(",", ".")
+          : transaction.amount
+      ) === parseFloat(filters.amount);
 
     const matchesDate =
-      filters.date === "" || compareDates(expense.date, filters.date);
+      filters.date === "" || compareDates(transaction.date, filters.date);
 
     const matchesCreatedDate =
       filters.createdDate === "" ||
-      compareDates(expense.createdDate, filters.createdDate);
+      compareDates(transaction.createdDate, filters.createdDate);
+
     return (
       matchesTitle &&
       matchesCategory &&
@@ -165,19 +148,19 @@ const ExpensesPage = () => {
             <div className="col-span-2 grid grid-cols-2 gap-6">
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Expenses</h3>
-                <p className="text-3xl font-bold mt-2">$1,200</p>
+                <p className="text-3xl font-bold mt-2">${totalExpenses}</p>
               </div>
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Transactions</h3>
-                <p className="text-3xl font-bold mt-2">15</p>
+                <p className="text-3xl font-bold mt-2">{totalTransactions}</p>
               </div>
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Average Expense</h3>
-                <p className="text-3xl font-bold mt-2">$80</p>
+                <p className="text-3xl font-bold mt-2">${averageExpense}</p>
               </div>
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Top Category</h3>
-                <p className="text-3xl font-bold mt-2">Shopping</p>
+                <p className="text-3xl font-bold mt-2">{topCategory}</p>
               </div>
             </div>
 
@@ -195,11 +178,11 @@ const ExpensesPage = () => {
               <div className="h-40 rounded-3xl mt-4">
                 {bar ? (
                   <ExpensesCategoryBar
-                    categories={categories}
+                    transactions={formattedTransactions}
                     onBarClick={handleBarClick}
                   />
                 ) : (
-                  <ExpensesCategoryLine categories={categories} />
+                  <ExpensesCategoryLine transactions={formattedTransactions} />
                 )}
               </div>
             </div>
@@ -238,11 +221,19 @@ const ExpensesPage = () => {
                     filteredExpenses.map((expense, index) => (
                       <tr
                         key={index}
-                        className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 "
+                        className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200"
                       >
                         <td className="p-4">{expense.title}</td>
-                        <td className="p-4">{expense.category}</td>
-                        <td className="p-4">{expense.amount}$</td>
+                        <td className="p-4">
+                          {/* Safely handle null or undefined categories */}
+                          {expense.category &&
+                          typeof expense.category === "object"
+                            ? expense.category.title
+                            : expense.category || "Unknown"}
+                        </td>
+                        <td className="p-4">
+                          {parseFloat(expense.amount).toFixed(2)}$
+                        </td>
                         <td className="p-4">{expense.date}</td>
                         <td className="p-4">{expense.createdDate}</td>
                         <td className="p-4"></td>{" "}
@@ -258,6 +249,7 @@ const ExpensesPage = () => {
                   )}
                 </tbody>
               </table>
+              ;
             </div>
           </div>
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useMediaQuery } from "@mui/material";
 import { formatDateForInput } from "../utils/dateUtils";
-import { useTransactionContext } from "../contexts/TransactionContext"; // Import context
+import { useTransactionContext } from "../contexts/TransactionContext";
+import { useAlert } from "../contexts/AlertContext";
 
 const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
   const [form, setForm] = useState({
@@ -16,10 +16,10 @@ const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
   });
 
   const { refreshTransactions } = useTransactionContext();
-  //const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  //const isDesktop = useMediaQuery("(min-width: 768px)"); //Always called, no condition
+  const { showAlert } = useAlert();
+
   useEffect(() => {
     if (open && entry) {
       //Update form values when entry changes
@@ -140,17 +140,19 @@ const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
       );
 
       if (response.ok) {
-        refreshTransactions();
-        setOpen(false);
-        //
         const updatedEntry = await response.json();
         console.log("Transaction updated successfully:", updatedEntry);
-        //
+        refreshTransactions(); // Update transactions list
+        setOpen(false); // Close modal
+        showAlert("success", "Transaction updated successfully!"); // Show success alert
       } else {
-        console.error("Failed to update transaction:", response.statusText);
+        setIsLoading(false);
+        setError("Failed to update transaction.");
+        showAlert("error", "Failed to update transaction.");
       }
     } catch (error) {
       console.error("Error during transaction update:", error);
+      showAlert("error", "An unexpected error occurred.");
     }
   };
 

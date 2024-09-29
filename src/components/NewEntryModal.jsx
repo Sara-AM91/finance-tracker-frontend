@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
+import { useTransactionContext } from "../contexts/TransactionContext"; // Import context
 
 const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
   const { user } = useOutletContext();
@@ -15,6 +16,8 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
     date: "",
     invoice: "",
   });
+
+  const { refreshTransactions } = useTransactionContext();
 
   const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -147,6 +150,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
     } catch (error) {
       console.error("Error creating product:", error);
     }
+    refreshTransactions();
     setOpen(false);
   };
 

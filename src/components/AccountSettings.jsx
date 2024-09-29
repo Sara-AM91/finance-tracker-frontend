@@ -4,7 +4,7 @@ const AccountSettings = ({ setUser, user }) => {
   const [lastName, setLastname] = useState("");
   const [firstName, setFirstname] = useState("");
   const [email, setEmail] = useState("");
-  const [picture, setPicture] = useState("");
+  const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -78,6 +78,7 @@ const AccountSettings = ({ setUser, user }) => {
       const data = await res.json();
       console.log("Updated user:", data.user);
       setUser(data.user);
+      setPicture(null);
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -110,23 +111,31 @@ const AccountSettings = ({ setUser, user }) => {
               </p>
             </div>
           </div>
-          <button
-            disabled={loading}
-            onClick={handlePictureSubmit}
-            className={
-              loading
-                ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed py-2 px-4 rounded-lg  text-base"
-                : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg  text-base"
-            }
-          >
-            Upload
-          </button>
-          <input
-            type="file"
-            onChange={(e) => {
-              setPicture(e.target.files[0]);
-            }}
-          />
+          <div className="flex flex-col gap-3">
+            <input
+              type="file"
+              onChange={(e) => {
+                // Ensure we are setting the picture state with the first file selected
+                if (e.target.files.length > 0) {
+                  setPicture(e.target.files[0]);
+                } else {
+                  setPicture(null); // Clear picture if no file is selected
+                }
+              }}
+              className="text-xs"
+            />
+            <button
+              disabled={loading || !picture} // Disable if loading or no picture
+              onClick={handlePictureSubmit}
+              className={
+                loading || !picture
+                  ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed py-2 px-4 rounded-lg text-base"
+                  : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
+              }
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
       <div className="mt-8 ">
@@ -176,7 +185,7 @@ const AccountSettings = ({ setUser, user }) => {
           <div className="mt-6 flex justify-end">
             <button
               onClick={handleDetailsSubmit}
-              className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg  text-base"
+              className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
             >
               Save
             </button>

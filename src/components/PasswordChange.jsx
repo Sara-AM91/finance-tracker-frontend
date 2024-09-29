@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNavigate } from "react-router-dom";
 
 const PasswordChange = ({ setUser }) => {
   const [loading, setLoading] = useState(false);
@@ -13,6 +14,8 @@ const PasswordChange = ({ setUser }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const navigate = useNavigate();
+
   const passwordSubmit = async () => {
     const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
     if (!token) {
@@ -22,10 +25,9 @@ const PasswordChange = ({ setUser }) => {
     }
 
     const body = { currentPassword, newPassword, confirmPassword };
-    console.log("body:", body);
 
     try {
-      const res = await fetch("http://localhost:5000/user/profile/details", {
+      const res = await fetch("http://localhost:5000/user/profile/password", {
         method: "PUT",
         body: JSON.stringify(body),
         headers: {
@@ -39,8 +41,9 @@ const PasswordChange = ({ setUser }) => {
       }
 
       const data = await res.json();
-      console.log("Updated user:", data.user);
+
       setUser(data.user);
+      navigate("/login");
     } catch (error) {
       console.error("Error updating user:", error);
     }

@@ -11,7 +11,7 @@ const AccountPage = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("USER", user);
+      //  console.log("USER", user);
       setFirstname(user.firstName);
       setLastname(user.lastName);
       setEmail(user.email);
@@ -47,6 +47,39 @@ const AccountPage = () => {
       setPicture(data.profilePic);
     } catch (error) {
       console.error("Error creating product:", error);
+    }
+  };
+
+  const handleDetailsSubmit = async () => {
+    const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
+    if (!token) {
+      setError("No token found, user is not authenticated");
+      setLoading(false);
+      return;
+    }
+
+    const body = { firstName, lastName, email };
+    console.log("body:", body);
+
+    try {
+      const res = await fetch("http://localhost:5000/user/profile/details", {
+        method: "PUT",
+        body: JSON.stringify(body), // Convert body to JSON string
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Set correct Content-Type header
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Updated user:", data.user);
+      setUser(data.user); // Update user state in the frontend
+    } catch (error) {
+      console.error("Error updating user:", error);
     }
   };
 
@@ -131,7 +164,10 @@ const AccountPage = () => {
               </div>
             </div>
             <div className="mt-6 flex justify-end">
-              <button className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg  text-base">
+              <button
+                onClick={handleDetailsSubmit}
+                className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg  text-base"
+              >
                 Save
               </button>
             </div>

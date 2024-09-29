@@ -1,7 +1,6 @@
 import { PieChart, PiePlot } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
 import FilterCategory from "../../utils/FilterCategory";
-import * as d3 from "d3-scale-chromatic"; // Importing D3 for dynamic color scales
 
 export default function IncomePie({ transactions }) {
   const [data, setData] = useState([]);

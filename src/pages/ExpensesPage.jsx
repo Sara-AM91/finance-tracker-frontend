@@ -277,7 +277,10 @@ const ExpensesPage = () => {
                             as="div"
                             className="relative inline-block text-left"
                           >
-                            <MenuButton className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none">
+                            <MenuButton
+                              className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               ⋮
                             </MenuButton>
                             <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
@@ -288,14 +291,20 @@ const ExpensesPage = () => {
                                   // onClick={() =>
                                   //   console.log("Edit:", expense._id)
                                   // }
-                                  onClick={() => handleEdit(expense)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEdit(expense);
+                                  }}
                                 >
                                   Edit
                                 </MenuItem>
                                 <MenuItem
                                   as="button"
                                   className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-700 hover:bg-red-200 data-[active=true]:bg-red-200"
-                                  onClick={() => handleDelete(expense._id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(expense._id);
+                                  }}
                                 >
                                   Delete
                                 </MenuItem>
@@ -314,7 +323,6 @@ const ExpensesPage = () => {
                   )}
                 </tbody>
               </table>
-              ;
             </div>
           </div>
           {/* View Entry Modal */}

@@ -3,9 +3,9 @@ import TransactionFilter from "../components/TransactionFilter";
 import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
 import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
 import TrashIconWithCross from "../components/TrashIconWithCross";
+import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
 import EditEntryModal from "../components/EditEntryModal";
-import useTransactions from "../hooks/useTransactions";
 import { useTransactionContext } from "../contexts/TransactionContext"; // Use the new context
 
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
@@ -15,6 +15,8 @@ const ExpensesPage = () => {
   const [bar, setBar] = useState(true);
   const [openNewEntryModal, setOpenNewEntryModal] = useState(false);
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
+  const [openViewModal, setOpenViewModal] = useState(false);
+
   const [entryToEdit, setEntryToEdit] = useState(null);
 
   const [filters, setFilters] = useState({
@@ -143,17 +145,29 @@ const ExpensesPage = () => {
     );
   });
 
+  const handleRowClick = (expense) => {
+    setEntryToEdit(expense);
+    setOpenViewModal(true); // Directly set openViewModal to true
+  };
+
+  const handleEditFromViewModal = () => {
+    setOpenViewModal(false);
+    setTimeout(() => {
+      setOpenEditEntryModal(true);
+    }, 0);
+  };
+
   //const [open, setOpen] = useState(false);
   const handleEdit = (expense) => {
     console.log("In edit");
-    setEntryToEdit(expense); // Set the transaction data to be edited
-    setOpenEditEntryModal(true); // Open the EditEntryModal
+    setEntryToEdit(expense);
+    setOpenEditEntryModal(true);
   };
 
   const handleDelete = (expenseId) => {
     console.log("Delete:", expenseId);
-    // Add your delete logic here if needed
   };
+
   return (
     <div className="h-screen w-screen flex flex-col text-white">
       <div className="flex flex-grow">
@@ -238,7 +252,8 @@ const ExpensesPage = () => {
                     filteredExpenses.map((expense, index) => (
                       <tr
                         key={index}
-                        className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200"
+                        className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
+                        onClick={() => handleRowClick(expense)}
                       >
                         <td className="p-4">{expense.title}</td>
                         <td className="p-4">
@@ -302,7 +317,15 @@ const ExpensesPage = () => {
               ;
             </div>
           </div>
-
+          {/* View Entry Modal */}
+          {entryToEdit && (
+            <ViewEntryModal
+              open={openViewModal}
+              setOpen={setOpenViewModal}
+              entry={entryToEdit}
+              onEdit={handleEditFromViewModal}
+            />
+          )}
           {/* Floating "+" Button */}
           <button
             className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"

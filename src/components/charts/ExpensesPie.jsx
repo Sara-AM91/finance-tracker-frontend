@@ -7,7 +7,7 @@ export default function ExpensesPie({ transactions }) {
   const [data, setData] = useState([]);
   useEffect(() => {
     const dataExp = FilterCategory(transactions, "expense");
-    console.log(dataExp);
+
     const data = dataExp.map(({ category, totalAmount }) => ({
       value: totalAmount,
       label: category,
@@ -57,7 +57,7 @@ export default function ExpensesPie({ transactions }) {
         }}
         width={400}
         height={300} // Increased height to accommodate the legend
-        legendPosition="right" // Ensure legend stays on the right
+        legendposition="right" // Ensure legend stays on the right
       />
     </div>
   );

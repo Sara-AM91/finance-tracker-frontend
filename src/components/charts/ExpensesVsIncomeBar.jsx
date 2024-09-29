@@ -48,7 +48,7 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
         (t) => new Date(t.date).getMonth() === month && t.type === "income"
       )
       .reduce((sum, t) => sum + t.amount, 0);
-    console.log(incomeForMonth);
+
     const expenseForMonth = transactions
       .filter(
         (t) => new Date(t.date).getMonth() === month && t.type === "expense"
@@ -61,10 +61,10 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
   const incomeData = groupedByMonth.map((g) => g.incomeForMonth);
   const expenseData = groupedByMonth.map((g) => g.expenseForMonth);
 
-  const uData = incomeData;
-  const pData = expenseData;
+  const uData = expenseData;
+  const pData = incomeData;
 
-  const expenseMax = Math.max(...incomeData);
+  const expenseMax = Math.max(...expenseData);
   const maxExpenseMonthIndex = expenseData.indexOf(expenseMax);
   const maxExpense = {
     amount: expenseMax,
@@ -72,7 +72,7 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
   };
 
   const incomeMax = Math.max(...incomeData);
-  const maxIncomeMonthIndex = expenseData.indexOf(incomeMax);
+  const maxIncomeMonthIndex = incomeData.indexOf(incomeMax);
   const maxIncome = {
     amount: incomeMax,
     month: monthNames[maxIncomeMonthIndex],

@@ -51,8 +51,8 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
   const incomeData = groupedByMonth.map((g) => g.incomeForMonth);
   const expenseData = groupedByMonth.map((g) => g.expenseForMonth);
 
-  const uData = incomeData;
-  const pData = expenseData;
+  const uData = expenseData;
+  const pData = incomeData;
   const xLabels = [
     "Jan",
     "Feb",

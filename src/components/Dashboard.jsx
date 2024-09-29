@@ -15,12 +15,17 @@ import CalculateBalance from "./CalculateBalance";
 const Dashboard = () => {
   const [isBarChart, setIsBarChart] = useState(true);
   const [balance, setBalance] = useState(0);
-  const [maxExp, setMaxExp] = useState({ month: "June", amount: "1600" });
-  const [maxInc, setMaxInc] = useState({ month: "April", amount: "2500" });
+  const [maxInc, setMaxInc] = useState({});
+  const [maxExp, setMaxExp] = useState({});
+
   const [open, setOpen] = useState(false);
   const [year, setYear] = useState(null);
 
   const { transactions, addTransaction } = useOutletContext();
+
+  useEffect(() => {
+    console.log("Transactions updated in Dashboard:", transactions);
+  }, [transactions]); // This should log whenever transactions state changes
 
   // Automatically set the default year to the latest year from transactions
   //this helps data load when component mounts without having to reselect year
@@ -59,10 +64,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const { balance, income, expense } = CalculateBalance(transactions);
+    const { balance } = CalculateBalance(transactions);
     setBalance(balance); // Update the balance in state
-    console.log("Income:", income);
-    console.log("Expense:", expense);
   }, [transactions]);
 
   return (

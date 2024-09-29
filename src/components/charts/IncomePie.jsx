@@ -61,7 +61,7 @@ export default function IncomePie({ transactions }) {
         }}
         width={400}
         height={300} // Increased height to accommodate the legend
-        legendPosition="right" // Ensure legend stays on the right
+        legendposition="right" // Ensure legend stays on the right
       />
     </div>
   );

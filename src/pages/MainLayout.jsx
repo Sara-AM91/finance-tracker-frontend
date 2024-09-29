@@ -38,9 +38,11 @@ const MainLayout = () => {
     return <p>Error: {userError || transactionsError}</p>;
   }
 
-  //function to add a new transaction
   const addTransaction = (newTransaction) => {
-    setTransactions((prev) => [...prev, newTransaction]);
+    setTransactions((prev) => {
+      const updatedTransactions = [...prev, newTransaction];
+      return updatedTransactions; // Update the transactions state
+    });
   };
 
   return (

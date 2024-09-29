@@ -2,9 +2,9 @@ import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import useUser from "../hooks/useUser";
-import useTransactions from "../hooks/useTransactions";
 import { useEffect, useState } from "react";
 import { useTransactionContext } from "../contexts/TransactionContext";
+import GlobalAlert from "../components/GlobalAlert "; // Import GlobalAlert
 
 const MainLayout = () => {
   const { user: userData, loading: userLoading, error: userError } = useUser();
@@ -47,7 +47,8 @@ const MainLayout = () => {
         className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-l from-[#121428] to-[#000036] z-0"
         style={{ clipPath: "ellipse(80% 60% at 50% 100%)" }}
       ></div>
-
+      {/* Include Global Alert at top level */}
+      <GlobalAlert />
       {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
         <Header />

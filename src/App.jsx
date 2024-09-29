@@ -7,30 +7,33 @@ import Dashboard from "./components/Dashboard";
 import ExpensesPage from "./pages/ExpensesPage";
 import AccountPage from "./pages/AccountPage";
 import { TransactionProvider } from "./contexts/TransactionContext";
+import { AlertProvider } from "./contexts/AlertContext";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <TransactionProvider>
-        <Routes>
-          {/* Redirect root path to login page */}
-          <Route path="/" element={<Navigate to="/login" />} />
+      <AlertProvider>
+        <TransactionProvider>
+          <Routes>
+            {/* Redirect root path to login page */}
+            <Route path="/" element={<Navigate to="/login" />} />
 
-          {/* Login and Signup routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+            {/* Login and Signup routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
 
-          {/* Wrap Dashboard and Expenses with MainLayout */}
-          <Route element={<MainLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/expenses" element={<ExpensesPage />} />
-            <Route path="/account" element={<AccountPage />} />
-          </Route>
+            {/* Wrap Dashboard and Expenses with MainLayout */}
+            <Route element={<MainLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/expenses" element={<ExpensesPage />} />
+              <Route path="/account" element={<AccountPage />} />
+            </Route>
 
-          {/* Optional: handle unknown routes by redirecting */}
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      </TransactionProvider>
+            {/* Optional: handle unknown routes by redirecting */}
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </TransactionProvider>
+      </AlertProvider>
     </BrowserRouter>
   );
 };

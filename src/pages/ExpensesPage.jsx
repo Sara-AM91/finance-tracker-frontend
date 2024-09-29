@@ -28,7 +28,6 @@ const ExpensesPage = () => {
   });
 
   const { transactions, loading, error } = useTransactionContext(filters);
-
   const formattedTransactions = transactions.map((transaction) => ({
     ...transaction,
     category: transaction.category || { title: "Unknown" },
@@ -288,9 +287,6 @@ const ExpensesPage = () => {
                                 <MenuItem
                                   as="button"
                                   className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
-                                  // onClick={() =>
-                                  //   console.log("Edit:", expense._id)
-                                  // }
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleEdit(expense);
@@ -334,6 +330,21 @@ const ExpensesPage = () => {
               onEdit={handleEditFromViewModal}
             />
           )}
+          {/* Modal Section */}
+          <NewEntryModal
+            open={openNewEntryModal}
+            setOpen={setOpenNewEntryModal}
+            defaultCategory="Expense"
+          />
+
+          {/* Edit Entry Modal */}
+          {entryToEdit && (
+            <EditEntryModal
+              open={openEditEntryModal}
+              setOpen={setOpenEditEntryModal}
+              entry={entryToEdit}
+            />
+          )}
           {/* Floating "+" Button */}
           <button
             className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"
@@ -343,22 +354,6 @@ const ExpensesPage = () => {
           </button>
         </div>
       </div>
-
-      {/* Modal Section */}
-      <NewEntryModal
-        open={openNewEntryModal}
-        setOpen={setOpenNewEntryModal}
-        defaultCategory="Expense"
-      />
-
-      {/* Edit Entry Modal */}
-      {entryToEdit && (
-        <EditEntryModal
-          open={openEditEntryModal}
-          setOpen={setOpenEditEntryModal}
-          entry={entryToEdit}
-        />
-      )}
     </div>
   );
 };

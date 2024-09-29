@@ -7,7 +7,7 @@ const AccountPage = () => {
   const [firstName, setFirstname] = useState("");
   const [email, setEmail] = useState("");
   const [picture, setPicture] = useState("");
-  const { user } = useOutletContext();
+  const { user, setUser } = useOutletContext();
 
   useEffect(() => {
     if (user) {
@@ -18,6 +18,37 @@ const AccountPage = () => {
       setPicture(user.profilePic);
     }
   }, [user]);
+
+  const handlePictureSubmit = async () => {
+    const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
+    if (!token) {
+      setError("No token found, user is not authenticated");
+      setLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("profilePic", picture);
+
+    try {
+      const res = await fetch("http://localhost:5000/user/profile/picture", {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      setUser(data.user);
+      console.log("Updated user:", data);
+      setPicture(data.profilePic);
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col w-full gap-4 lg:flex-row">
@@ -32,10 +63,6 @@ const AccountPage = () => {
             <div className="flex items-center">
               <img
                 src={user.profilePic}
-                value={picture}
-                onChange={(e) => {
-                  setPicture(e.target.value);
-                }}
                 alt="Profile"
                 className="w-24 h-24 rounded-full  bg-[#161A40] shadow-lg"
               />
@@ -45,9 +72,18 @@ const AccountPage = () => {
                 </p>
               </div>
             </div>
-            <button className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base">
+            <button
+              onClick={handlePictureSubmit}
+              className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
+            >
               Upload
             </button>
+            <input
+              type="file"
+              onChange={(e) => {
+                setPicture(e.target.files[0]);
+              }}
+            />
           </div>
         </div>
         <div className="mt-8 ">
@@ -59,7 +95,7 @@ const AccountPage = () => {
                 <label className="block text-sm mb-2">First name</label>
                 <input
                   type="text"
-                  value={firstName}
+                  value={firstName || ""}
                   onChange={(e) => {
                     setFirstname(e.target.value);
                   }}
@@ -71,7 +107,7 @@ const AccountPage = () => {
                 <input
                   type="text"
                   placeholder={user.lastName}
-                  value={lastName}
+                  value={lastName || ""}
                   onChange={(e) => {
                     setLastname(e.target.value);
                   }}
@@ -86,7 +122,7 @@ const AccountPage = () => {
                 <input
                   type="email"
                   placeholder={user.email}
-                  value={email}
+                  value={email || ""}
                   onChange={(e) => {
                     setEmail(e.target.value);
                   }}

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels"; // Import the plugin
 
 // Register chart.js components
 ChartJS.register(
@@ -17,7 +18,8 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartDataLabels
 );
 
 const monthNames = [
@@ -67,14 +69,14 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
   const expenseMax = Math.max(...expenseData);
   const maxExpenseMonthIndex = expenseData.indexOf(expenseMax);
   const maxExpense = {
-    amount: expenseMax,
+    amount: expenseMax.toFixed(2),
     month: monthNames[maxExpenseMonthIndex],
   };
 
   const incomeMax = Math.max(...incomeData);
   const maxIncomeMonthIndex = incomeData.indexOf(incomeMax);
   const maxIncome = {
-    amount: incomeMax,
+    amount: incomeMax.toFixed(2),
     month: monthNames[maxIncomeMonthIndex],
   };
 
@@ -98,74 +100,45 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
     "Dec",
   ];
 
-  // Create chart data with gradient fill
   const chartData = {
     labels: xLabels,
     datasets: [
       {
         label: "Income",
         data: pData,
-        backgroundColor: (context) => {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-
-          if (!chartArea) {
-            return null;
-          }
-          return pData.map((value) =>
-            createGradient(ctx, chartArea, "#01FFB9", "#01FFB9", 1)
-          );
-        },
-        //text B7B7B7
-        borderRadius: 20,
-        hoverBackgroundColor: "#01FFB9",
+        backgroundColor: pData.map(() => "rgba(1, 255, 185, 0.5)"), // Semi-transparent fill
+        borderColor: "#01FFB9",
+        borderWidth: 3,
+        borderRadius: 15,
       },
       {
         label: "Expenses",
         data: uData,
-        backgroundColor: (context) => {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-
-          if (!chartArea) {
-            return null;
-          }
-          return uData.map((value) =>
-            createGradient(ctx, chartArea, "#F36712", "#F36712", 1)
-          );
-        },
-        borderRadius: 20,
-        hoverBackgroundColor: "rgba(243,103,18,1)",
+        backgroundColor: uData.map(() => "rgba(243, 103, 18, 0.5)"), // Semi-transparent fill
+        borderColor: "#F36712",
+        borderWidth: 3,
+        borderRadius: 15,
       },
     ],
   };
 
-  // Gradient function
-  const createGradient = (ctx, chartArea, color1, color2) => {
-    const gradient = ctx.createLinearGradient(
-      0,
-      chartArea.top,
-      0,
-      chartArea.bottom
-    );
-    gradient.addColorStop(0, `${color1}`); // Full opacity at the top
-    gradient.addColorStop(0.7, `${color2}`); // Mostly opaque in the middle
-    gradient.addColorStop(1, `${color2}00`); // Transparent at the bottom
-    return gradient;
-  };
-
-  // Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
-        position: "top",
+        display: false, // Ensure legend is not displayed
       },
       title: {
         display: false,
         text: "Income vs Expenses",
+      },
+      datalabels: {
+        color: "white",
+        anchor: "end",
+        align: "top",
+        offset: 5,
+        formatter: (value) => (value > 0 ? value : ""),
       },
     },
     scales: {
@@ -182,7 +155,6 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
       },
     },
   };
-
   return (
     <div style={{ width: "100%", height: "90%" }} className="px-4">
       <Bar ref={chartRef} data={chartData} options={options} />

@@ -1,5 +1,5 @@
 import { PieChart } from "@mui/x-charts/PieChart";
-import FilterCategory from "../FilterCategory";
+import FilterCategory from "../../utils/FilterCategory";
 import { useEffect, useState } from "react";
 import * as d3 from "d3-scale-chromatic";
 
@@ -19,9 +19,10 @@ export default function ExpensesPie({ transactions }) {
     setData(firstFour);
   }, [transactions]);
 
-  const warmColors = data
-    .map((_, index) => d3.interpolateWarm(index / data.length))
-    .reverse();
+  const customColors = ["#F36712", "#FF7F50", "#FF4500", "#FF1493", "#FF69B4"];
+  const colors = data.map(
+    (_, index) => customColors[index % customColors.length]
+  );
 
   return (
     <div className="flex justify-center items-center pt-3 ">
@@ -35,7 +36,7 @@ export default function ExpensesPie({ transactions }) {
             fill: "#FFFFFF !important", // Change legend text color
           },
         })}
-        colors={warmColors} // Use cool color interpolation
+        colors={colors} // Use cool color interpolation
         series={[
           {
             data: data,

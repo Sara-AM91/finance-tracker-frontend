@@ -10,7 +10,7 @@ import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave.png";
 import plus from "../assets/plus.png";
 import { useOutletContext } from "react-router-dom";
-import CalculateBalance from "./CalculateBalance";
+import CalculateBalance from "../utils/CalculateBalance";
 
 const Dashboard = () => {
   const [isBarChart, setIsBarChart] = useState(true);

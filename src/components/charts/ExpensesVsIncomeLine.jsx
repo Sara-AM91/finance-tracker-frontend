@@ -11,6 +11,7 @@ import {
   PointElement,
   Filler,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels"; // Import the plugin
 
 // Register chart.js components
 ChartJS.register(
@@ -21,7 +22,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartDataLabels
 );
 
 const ExpensesVsIncomeLine = ({ transactions }) => {
@@ -126,6 +128,15 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
       title: {
         display: false,
         text: "Income vs Expenses",
+      },
+      datalabels: {
+        color: "white", // Change text color to white
+        anchor: "end", // Position labels at the end of the bars
+        align: "top", // Align the labels at the bottom of the anchor
+        offset: 5, // Space between the bar and the label
+
+        // Custom function to determine when to show the label
+        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
       },
     },
     scales: {

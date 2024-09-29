@@ -23,7 +23,9 @@ const ListItem = ({ action, lastFive }) => {
         </div>
       </div>
       <p
-        className={action.type === "income" ? "text-teal-400" : "text-rose-600"}
+        className={
+          action.type === "income" ? "text-[#08D59C]" : "text-[#FF4500]"
+        }
       >
         {action.type === "income" ? `+${action.amount}€` : `-${action.amount}€`}
       </p>

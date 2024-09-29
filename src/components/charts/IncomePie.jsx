@@ -1,6 +1,6 @@
 import { PieChart, PiePlot } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
-import FilterCategory from "../FilterCategory";
+import FilterCategory from "../../utils/FilterCategory";
 import * as d3 from "d3-scale-chromatic"; // Importing D3 for dynamic color scales
 
 export default function IncomePie({ transactions }) {
@@ -23,10 +23,10 @@ export default function IncomePie({ transactions }) {
     setData(firstFour);
   }, [transactions]);
 
-  const coolColors = data.map((_, index) =>
-    d3.interpolateCool(index / data.length)
+  const customColors = ["#01FFB9", "#007F7F", "#00BFFF", "#4B0082", "#3CB371"];
+  const colors = data.map(
+    (_, index) => customColors[index % customColors.length]
   );
-
   return (
     <div className="flex justify-center items-center pt-3 ">
       <PieChart
@@ -39,7 +39,7 @@ export default function IncomePie({ transactions }) {
             fill: "#FFFFFF !important", // Change legend text color
           },
         })}
-        colors={coolColors} // Use cool color interpolation
+        colors={colors} // Use cool color interpolation
         series={[
           {
             data: data,

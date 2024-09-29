@@ -65,12 +65,13 @@ const MainLayout = () => {
         ></div>
 
         {/* Content Wrapper */}
-      <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
-        <Header />
-        <div className="flex flex-grow gap-6 h-full">
-          <Sidebar user={user} />
-          <Outlet context={{ user, setUser, transactions, addTransaction }} />
-          {/* Dashboard content */}
+        <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
+          <Header />
+          <div className="flex flex-grow gap-6 h-full">
+            <Sidebar user={user} />
+            <Outlet context={{ user, setUser, transactions, addTransaction }} />
+            {/* Dashboard content */}
+          </div>
         </div>
       </div>
     </TransactionProvider>

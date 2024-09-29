@@ -7,7 +7,7 @@ import ProgressBar from "./charts/ProgressBar";
 import TransactionsList from "./TransactionsList";
 import NewEntryModal from "./NewEntryModal";
 import greenWave from "../assets/greenWave2.png";
-import redWave from "../assets/redWave.png";
+import redWave from "../assets/redWave2.png";
 import plus from "../assets/plus.png";
 import { useOutletContext } from "react-router-dom";
 import CalculateBalance from "../utils/CalculateBalance";
@@ -17,15 +17,11 @@ const Dashboard = () => {
   const [balance, setBalance] = useState(0);
   const [maxInc, setMaxInc] = useState({});
   const [maxExp, setMaxExp] = useState({});
-
+  const [animate, setAnimate] = useState(false);
   const [open, setOpen] = useState(false);
   const [year, setYear] = useState(null);
 
   const { transactions, addTransaction } = useOutletContext();
-
-  useEffect(() => {
-    console.log("Transactions updated in Dashboard:", transactions);
-  }, [transactions]); // This should log whenever transactions state changes
 
   // Automatically set the default year to the latest year from transactions
   //this helps data load when component mounts without having to reselect year
@@ -67,6 +63,17 @@ const Dashboard = () => {
     const { balance } = CalculateBalance(transactions);
     setBalance(balance); // Update the balance in state
   }, [transactions]);
+
+  useEffect(() => {
+    if (year) {
+      setAnimate(true);
+      const timer = setTimeout(() => {
+        setAnimate(false);
+      }, 500); // Animation duration
+
+      return () => clearTimeout(timer); // Cleanup
+    }
+  }, [year]);
 
   return (
     <div className="h-full flex flex-col">
@@ -136,14 +143,19 @@ const Dashboard = () => {
             <div className="flex flex-col items-center">
               <p className="text-lg">Max. Income</p>
               <p className="text-3xl">{maxInc.amount}</p>
-              <img src={greenWave} />
+              <div className={animate ? "swipe swipe--delay" : ""}>
+                <img src={greenWave} />
+              </div>
+
               <p className="text-lg">{maxInc.month}</p>
             </div>
 
             <div className="flex flex-col items-center">
               <p className="text-lg">Max. Expenses</p>
               <p className="text-3xl">{maxExp.amount}</p>
-              <img src={redWave} />
+              <div className={animate ? "swipe swipe--delay" : ""}>
+                <img src={redWave} className=" my-3" alt="Red Wave" />
+              </div>
               <p className="text-lg">{maxExp.month}</p>
             </div>
           </div>

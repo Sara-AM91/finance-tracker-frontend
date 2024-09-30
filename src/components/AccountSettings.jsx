@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+import { CiMail } from "react-icons/ci";
+import { CiPhone } from "react-icons/ci";
+import { useAlert } from "../contexts/AlertContext"; // Import useAlert
+import GlobalAlert from "./GlobalAlert ";
 
 const AccountSettings = ({ setUser, user }) => {
   const [lastName, setLastname] = useState("");
@@ -6,6 +10,19 @@ const AccountSettings = ({ setUser, user }) => {
   const [email, setEmail] = useState("");
   const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState(null);
+  const [country, setCountry] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const [emailError, setEmailError] = useState(null);
+  const [existingEmailError, setExistingEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState(null);
+
+  const [error, setError] = useState(null);
+
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (user) {
@@ -14,6 +31,11 @@ const AccountSettings = ({ setUser, user }) => {
       setLastname(user.lastName);
       setEmail(user.email);
       setPicture(user.profilePic);
+      setAddress(user.address);
+      setCity(user.city);
+      setZipCode(user.zipCode);
+      setCountry(user.country);
+      setPhone(user.phone);
     }
   }, [user]);
 
@@ -37,12 +59,14 @@ const AccountSettings = ({ setUser, user }) => {
         },
       });
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        const errorData = await res.text(); // Define errorData to hold the error response
+        showAlert("error", "Profile picture upload failed.");
+        throw new Error(errorData.error || "Profile picture upload failed."); // Use errorData for error messages
       }
       const data = await res.json();
       setUser(data.user);
-      console.log("Updated user:", data);
       setPicture(data.profilePic);
+      showAlert("success", "Profile Picture successfully created");
     } catch (error) {
       console.error("Error creating product:", error);
     } finally {
@@ -58,8 +82,16 @@ const AccountSettings = ({ setUser, user }) => {
       return;
     }
 
-    const body = { firstName, lastName, email };
-    console.log("body:", body);
+    const body = {
+      firstName,
+      lastName,
+      email,
+      address,
+      city,
+      zipCode,
+      country,
+      phone,
+    };
 
     try {
       const res = await fetch("http://localhost:5000/user/profile/details", {
@@ -72,26 +104,59 @@ const AccountSettings = ({ setUser, user }) => {
       });
 
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        if (data.error) {
+          // Check if the error is related to the current password
+          if (data.error.includes("Email already exists")) {
+            setExistingEmailError("Email already exists");
+          } else {
+            setExistingEmailError("");
+          }
+        }
+        return;
       }
 
       const data = await res.json();
-      console.log("Updated user:", data.user);
+
       setUser(data.user);
       setPicture(null);
     } catch (error) {
       console.error("Error updating user:", error);
     }
   };
+
+  const validateEmail = (email) => {
+    return !!String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
+
+  const validatePhone = (phone) => {
+    return !!String(phone).match(
+      /^[\+]?(\d{1,3})?\W?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{0,9}$/im
+    );
+  };
+
+  useEffect(() => {
+    if (email && !validateEmail(email)) {
+      setEmailError("Please provide a valid email address");
+    } else {
+      setEmailError("");
+    }
+
+    if (phone && !validatePhone(phone)) {
+      setPhoneError("Please provide a valid email");
+    } else {
+      setPhoneError("");
+    }
+  }, [email, phone]);
+
   return (
-    <div className="bg-[#161A40] p-4 rounded-3xl text-xl text-white flex-grow">
-      <h2 className="text-xl text-white">Account Settings</h2>
-      <p className="text-left text-base text-gray-400 mt-3">
-        Feel free to check our your account and your current account settings,
-        such as Name, Profile Picture and more.
-      </p>
-      <div className="bg-[#161A40] w-full  p-8 rounded-3xl shadow-lg">
-        <div className="flex items-center justify-between">
+    <>
+      <div className="w-full rounded-3xl shadow-lg p-5 ">
+        <div className="flex lg:items-center items-start justify-between flex-col lg:flex-row">
           <div className="flex items-center">
             {loading ? (
               <div className="h-24 w-24 flex justify-center items-center">
@@ -106,7 +171,7 @@ const AccountSettings = ({ setUser, user }) => {
             )}
 
             <div className="ml-4">
-              <p className="text-xl font-semibold">
+              <p className="text-2xl font-semibold">
                 {user.firstName} {user.lastName}
               </p>
             </div>
@@ -138,13 +203,13 @@ const AccountSettings = ({ setUser, user }) => {
           </div>
         </div>
       </div>
-      <div className="mt-8 ">
-        <div className="bg-[#161A40] w-full  p-8 rounded-3xl shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="mt-8 w-full">
+        <div>
+          <h2 className="text-xl text-white mb-4">Full Name</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm mb-2">First name</label>
+              <label className="block text-xs">First name</label>
               <input
                 type="text"
                 value={firstName || ""}
@@ -155,7 +220,7 @@ const AccountSettings = ({ setUser, user }) => {
               />
             </div>
             <div>
-              <label className="block text-sm mb-2">Last name</label>
+              <label className="block text-xs">Last name</label>
               <input
                 type="text"
                 placeholder={user.lastName}
@@ -167,32 +232,133 @@ const AccountSettings = ({ setUser, user }) => {
               />
             </div>
           </div>
+        </div>
+        <div className="h-[2px] w-full bg-[#1a243d] mt-10"></div>
+        <div className="mt-10">
+          <h2 className="text-xl text-white">Contact Email</h2>
+          <p className="text-sm mb-4">
+            Your email address is used to login to this plattform
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+            <div className="relative">
+              <label className="block text-xs">Email</label>
+              <div className="relative">
+                {/* Mail icon centered on the left */}
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <CiMail size={25} />
+                </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                {/* Input field */}
+                <input
+                  type="email"
+                  placeholder={user.email}
+                  value={email || ""}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full py-3 pr-12 pl-12 bg-[#293458] text-white rounded-md text-base"
+                />
+              </div>
+              {emailError && (
+                <div className="absolute">
+                  <p className="text-red-500 text-xs mt-2">{emailError}</p>
+                </div>
+              )}
+              {existingEmailError && (
+                <div className="absolute">
+                  <p className="text-red-500 text-xs mt-2">
+                    {existingEmailError}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="h-[2px] w-full bg-[#1a243d] mt-10"></div>
+        <div className="mt-10">
+          <h2 className="text-xl text-white">Address</h2>
+          <p className="text-sm mb-4">Feel free to add your address</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
             <div>
-              <label className="block text-sm mb-2">Email</label>
+              <label className="block text-xs">Address</label>
               <input
-                type="email"
-                placeholder={user.email}
-                value={email || ""}
+                type="text"
+                value={address || ""}
                 onChange={(e) => {
-                  setEmail(e.target.value);
+                  setAddress(e.target.value);
+                }}
+                className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
+              />
+            </div>
+            <div>
+              <label className="block text-xs">City</label>
+              <input
+                type="text"
+                value={city || ""}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                }}
+                className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
+              />
+            </div>
+            <div>
+              <label className="block text-xs">Zip Code</label>
+              <input
+                type="text"
+                value={zipCode || ""}
+                onChange={(e) => {
+                  setZipCode(e.target.value);
+                }}
+                className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
+              />
+            </div>
+            <div>
+              <label className="block text-xs">Country</label>
+              <input
+                type="text"
+                value={country || ""}
+                onChange={(e) => {
+                  setCountry(e.target.value);
                 }}
                 className="w-full p-3 bg-[#293458] text-white rounded-md text-base"
               />
             </div>
           </div>
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={handleDetailsSubmit}
-              className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
-            >
-              Save
-            </button>
+        </div>
+        <div className="h-[2px] w-full bg-[#1a243d] mt-10"></div>
+        <div className="mt-10">
+          <h2 className="text-xl text-white mb-4">Phone Number</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+            <div className="relative">
+              <label className="block text-xs">Phone Number</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <CiPhone size={25} />
+                </div>
+                <input
+                  type="tel"
+                  value={phone || ""}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full py-3 pr-12 pl-12 bg-[#293458] text-white rounded-md text-base"
+                />
+              </div>
+              {phoneError && (
+                <div className="absolute">
+                  <p className="text-red-500 text-xs mt-2">{phoneError}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={handleDetailsSubmit}
+            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
+          >
+            Save
+          </button>
+        </div>
       </div>
-    </div>
+      <GlobalAlert />
+    </>
   );
 };
 

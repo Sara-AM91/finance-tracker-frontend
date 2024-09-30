@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
+import { useTransactionContext } from "../contexts/TransactionContext";
 
 const TransactionFilter = ({ filters, setFilters }) => {
   const [categories, setCategories] = useState([]);
+  const [localFilters, setLocalFilters] = useState({
+    title: "",
+    category: "",
+    amount: "",
+    date: "",
+    createdDate: "",
+  });
+
+  //Update global filters whenever local filter changes
+  useEffect(() => {
+    setFilters(localFilters);
+  }, [localFilters]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -38,7 +51,17 @@ const TransactionFilter = ({ filters, setFilters }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+    console.log(`Input Change Detected: ${name} = ${value}`);
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value || "" }));
+  };
+
+  //Define default values for `filters` object to avoid `undefined` values
+  const defaultFilters = {
+    title: "",
+    category: "",
+    amount: "",
+    date: "",
+    createdDate: "",
   };
 
   return (
@@ -51,7 +74,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           placeholder="Search by title"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.title}
+          value={filters.title || defaultFilters.title}
         />
       </div>
 
@@ -61,10 +84,9 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="category"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.category}
+          value={filters.category || defaultFilters.category}
         >
           <option value="">All</option>
-          {/* Render categories dynamically from backend */}
           {categories.map((category) => (
             <option key={category._id} value={category.title}>
               {category.title}
@@ -81,7 +103,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           placeholder="Search by amount"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.amount}
+          value={filters.amount || defaultFilters.amount}
         />
       </div>
 
@@ -92,7 +114,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="date"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.date}
+          value={filters.date || defaultFilters.date}
         />
       </div>
 
@@ -103,7 +125,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="createdDate"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.createdDate}
+          value={filters.createdDate || ""}
         />
       </div>
     </div>

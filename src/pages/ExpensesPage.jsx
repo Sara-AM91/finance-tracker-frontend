@@ -26,8 +26,7 @@ const ExpensesPage = () => {
     date: "",
     createdDate: "",
   });
-
-  const { transactions, loading, error } = useTransactionContext(filters);
+  const { transactions, loading, error } = useTransactionContext();
   const formattedTransactions = transactions.map((transaction) => ({
     ...transaction,
     category: transaction.category || { title: "Unknown" },
@@ -77,17 +76,28 @@ const ExpensesPage = () => {
   let year = d.getFullYear();
 
   const compareDates = (expenseDateStr, filterDateStr) => {
+    if (!expenseDateStr || !filterDateStr) return false;
+
     const expenseDate = new Date(expenseDateStr);
     const filterDate = new Date(filterDateStr);
+
+    // Check for invalid dates
     if (isNaN(expenseDate.getTime()) || isNaN(filterDate.getTime())) {
       console.error("Invalid date format:", expenseDateStr, filterDateStr);
       return false;
     }
-    return (
-      expenseDate.getFullYear() === filterDate.getFullYear() &&
-      expenseDate.getMonth() === filterDate.getMonth() &&
-      expenseDate.getDate() === filterDate.getDate()
+
+    // Format both dates to YYYY-MM-DD for comparison
+    const formattedExpenseDate = expenseDate.toISOString().split("T")[0];
+    const formattedFilterDate = filterDate.toISOString().split("T")[0];
+    console.log(
+      "Formatted Expense Date:",
+      formattedExpenseDate,
+      "Formatted Filter Date:",
+      formattedFilterDate
     );
+
+    return formattedExpenseDate === formattedFilterDate;
   };
 
   const handleBarClick = (categoryName) => {
@@ -109,17 +119,19 @@ const ExpensesPage = () => {
   const areFiltersActive = () => {
     return Object.values(filters).some((value) => value !== "");
   };
+  console.log("areFiltersActive", areFiltersActive);
 
-  const filteredExpenses = transactions.filter((transaction) => {
+  const filteredExpenses = transactions.filter((transaction, index) => {
+    console.log(`Transaction #${index}:`, transaction);
+
     const matchesTitle =
       filters.title === "" ||
-      transaction.title.toLowerCase().includes(filters.title.toLowerCase());
+      transaction.title?.toLowerCase().includes(filters.title.toLowerCase());
 
     const matchesCategory =
       filters.category === "" ||
       transaction.category?.title === filters.category;
 
-    // Convert `amount` to string and handle accordingly
     const matchesAmount =
       filters.amount === "" ||
       parseFloat(
@@ -133,7 +145,7 @@ const ExpensesPage = () => {
 
     const matchesCreatedDate =
       filters.createdDate === "" ||
-      compareDates(transaction.createdDate, filters.createdDate);
+      compareDates(transaction.createdAt, filters.createdDate);
 
     return (
       matchesTitle &&
@@ -143,6 +155,8 @@ const ExpensesPage = () => {
       matchesCreatedDate
     );
   });
+
+  console.log("filteredExpenses", filteredExpenses);
 
   const handleRowClick = (expense) => {
     setEntryToEdit(expense);
@@ -268,7 +282,11 @@ const ExpensesPage = () => {
                         <td className="p-4">
                           {formatDateForInput(expense.date)}
                         </td>{" "}
-                        <td className="p-4">{expense.createdDate}</td>
+                        <td className="p-4">
+                          {expense.createdAt
+                            ? formatDateForInput(expense.createdAt)
+                            : "N/A"}
+                        </td>
                         {/* Action Button inside each row */}
                         <td className="p-4 text-right  right-4 top-4">
                           {/* Action Menu */}

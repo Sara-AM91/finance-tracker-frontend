@@ -8,21 +8,21 @@ import TrashIconWithCross from "../components/TrashIconWithCross";
 import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
 import EditEntryModal from "../components/EditEntryModal";
-import { useTransactionContext } from "../contexts/TransactionContext"; // Use the new context
+import { useTransactionContext } from "../contexts/TransactionContext";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
 
 const ExpensesPage = () => {
-  //State for toggling between Bar and Line chart
+  // State for toggling between Bar and Line chart
   const [bar, setBar] = useState(true);
 
-  //States for modals (New Entry, Edit Entry, View Entry)
+  // States for modals (New Entry, Edit Entry, View Entry)
   const [openNewEntryModal, setOpenNewEntryModal] = useState(false);
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [entryToEdit, setEntryToEdit] = useState(null);
 
-  //Filters state for filtering transactions
+  // Local filters state for filtering transactions
   const [filters, setFilters] = useState({
     title: "",
     category: "",
@@ -31,105 +31,102 @@ const ExpensesPage = () => {
     createdDate: "",
   });
 
-  //Fetch transactions from context
-  const { transactions, loading, error } = useTransactionContext();
+  // Fetch transactions from context
+  const { transactions = [], loading, error } = useTransactionContext();
 
-  //Pagination State
+  // Ensure filters have default values
+  const filtersWithDefaults = {
+    title: filters.title || "",
+    category: filters.category || "",
+    amount: filters.amount || "",
+    date: filters.date || "",
+    createdDate: filters.createdDate || "",
+  };
+
+  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 6; //Number of transactions to display per page
+  const transactionsPerPage = 6; // Number of transactions to display per page
 
-  //Effect to reset currentPage to 1 whenever filters change
+  // Reset currentPage to 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
 
-  //Calculate indices for slicing the filtered transactions array
+  // Calculate indices for slicing the filtered transactions array
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
 
-  //Change page handler
-  const handlePageChange = (event, value) => {
-    console.log("Page changed to:", value);
-    setCurrentPage(value);
-  };
+  // Filter transactions to only include expenses
+  const expenseTransactions = transactions.filter((t) => t.type === "expense");
 
-  //Format transactions to ensure categories have a default value
-  const formattedTransactions = transactions.map((transaction) => ({
+  // Format transactions to ensure categories have a default value
+  const formattedTransactions = expenseTransactions.map((transaction) => ({
     ...transaction,
-    category: transaction.category || { title: "Unknown" },
+    category: transaction.category ?? { title: "Unknown" },
   }));
 
-  //Calculate total expenses using useMemo for performance optimization
+  // Calculate total expenses using useMemo for performance optimization
   const totalExpenses = useMemo(
     () =>
-      transactions
-        .filter((t) => t.type === "expense")
+      expenseTransactions
         .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
         .toFixed(2),
-    [transactions]
+    [expenseTransactions]
   );
 
-  //Total number of transactions
-  const totalTransactions = transactions.length;
+  // Total number of transactions
+  const totalTransactions = expenseTransactions.length;
 
-  //Calculate average expense
+  // Calculate average expense
   const averageExpense = useMemo(() => {
-    const expenseTransactions = transactions.filter(
-      (t) => t.type === "expense"
-    );
     return expenseTransactions.length > 0
       ? (totalExpenses / expenseTransactions.length).toFixed(2)
       : 0;
-  }, [totalExpenses, transactions]);
+  }, [totalExpenses, expenseTransactions]);
 
-  //Determine top category by total amount spent
+  // Determine top category by total amount spent
   const topCategory = useMemo(() => {
     const categoryMap = {};
-    transactions
-      .filter((t) => t.type === "expense")
-      .forEach((t) => {
-        const categoryTitle = t.category?.title || "Unknown";
-        if (!categoryMap[categoryTitle]) {
-          categoryMap[categoryTitle] = 0;
-        }
-        categoryMap[categoryTitle] += parseFloat(t.amount || 0);
-      });
+    expenseTransactions.forEach((t) => {
+      const categoryTitle = t.category?.title || "Unknown";
+      if (!categoryMap[categoryTitle]) {
+        categoryMap[categoryTitle] = 0;
+      }
+      categoryMap[categoryTitle] += parseFloat(t.amount || 0);
+    });
 
     const sortedCategories = Object.entries(categoryMap).sort(
       (a, b) => b[1] - a[1]
     );
     return sortedCategories.length > 0 ? sortedCategories[0][0] : "Unknown";
-  }, [transactions]);
+  }, [expenseTransactions]);
 
-  //Function to toggle between Bar and Line chart
+  // Function to toggle between Bar and Line chart
   const toggleChart = () => {
     setBar(!bar);
   };
 
-  // const d = new Date();
-  // let year = d.getFullYear();
-
-  //Function to compare dates for filtering
+  // Function to compare dates for filtering
   const compareDates = (expenseDateStr, filterDateStr) => {
     if (!expenseDateStr || !filterDateStr) return false;
 
     const expenseDate = new Date(expenseDateStr);
     const filterDate = new Date(filterDateStr);
 
-    //Check for invalid dates
+    // Check for invalid dates
     if (isNaN(expenseDate.getTime()) || isNaN(filterDate.getTime())) {
       console.error("Invalid date format:", expenseDateStr, filterDateStr);
       return false;
     }
 
-    //Format both dates to YYYY-MM-DD for comparison
+    // Format both dates to YYYY-MM-DD for comparison
     const formattedExpenseDate = expenseDate.toISOString().split("T")[0];
     const formattedFilterDate = filterDate.toISOString().split("T")[0];
 
     return formattedExpenseDate === formattedFilterDate;
   };
 
-  //Handle clicks on chart bars to set category filter
+  // Handle clicks on chart bars to set category filter
   const handleBarClick = (categoryName) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -137,7 +134,7 @@ const ExpensesPage = () => {
     }));
   };
 
-  //Function to clear all filters
+  // Function to clear all filters
   const clearFilters = () => {
     setFilters({
       title: "",
@@ -148,37 +145,40 @@ const ExpensesPage = () => {
     });
   };
 
-  //Check if any filters are active
+  // Check if any filters are active
   const areFiltersActive = () => {
     return Object.values(filters).some((value) => value !== "");
   };
 
-  //Filter transactions based on filters
-  const filteredExpenses = transactions.filter((transaction, index) => {
-    console.log(`Transaction #${index}:`, transaction);
+  // Filter transactions based on local filters
+  const filteredExpenses = formattedTransactions.filter((transaction) => {
+    const transactionTitleLower = (transaction.title || "").toLowerCase();
+    const filtersTitleLower = (filtersWithDefaults.title || "").toLowerCase();
 
     const matchesTitle =
-      filters.title === "" ||
-      transaction.title?.toLowerCase().includes(filters.title.toLowerCase());
+      filtersTitleLower === "" ||
+      transactionTitleLower.includes(filtersTitleLower);
 
+    const transactionCategoryTitle = transaction.category?.title || "Unknown";
     const matchesCategory =
-      filters.category === "" ||
-      transaction.category?.title === filters.category;
+      filtersWithDefaults.category === "" ||
+      transactionCategoryTitle === filtersWithDefaults.category;
+
+    //Convert amounts to strings for comparison
+    const transactionAmountStr = (transaction.amount || "").toString();
+    const filterAmountStr = filtersWithDefaults.amount;
 
     const matchesAmount =
-      filters.amount === "" ||
-      parseFloat(
-        typeof transaction.amount === "string"
-          ? transaction.amount.replace(",", ".")
-          : transaction.amount
-      ) === parseFloat(filters.amount);
+      filtersWithDefaults.amount === "" ||
+      transactionAmountStr.startsWith(filterAmountStr);
 
     const matchesDate =
-      filters.date === "" || compareDates(transaction.date, filters.date);
+      filtersWithDefaults.date === "" ||
+      compareDates(transaction.date, filtersWithDefaults.date);
 
     const matchesCreatedDate =
-      filters.createdDate === "" ||
-      compareDates(transaction.createdAt, filters.createdDate);
+      filtersWithDefaults.createdDate === "" ||
+      compareDates(transaction.createdAt, filtersWithDefaults.createdDate);
 
     return (
       matchesTitle &&
@@ -189,29 +189,29 @@ const ExpensesPage = () => {
     );
   });
 
-  //Apply pagination to filtered expenses
+  // Apply pagination to filtered expenses
   const currentTransactions = filteredExpenses.slice(
     indexOfFirstTransaction,
     indexOfLastTransaction
   );
 
-  //Calculate total number of pages based on filtered expenses
+  // Calculate total number of pages based on filtered expenses
   const totalPages = Math.ceil(filteredExpenses.length / transactionsPerPage);
 
-  //Ensure currentPage is within valid range (especially after filtering)
+  // Ensure currentPage is within valid range (especially after filtering)
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
 
-  //Handle row click to open View Entry modal
+  // Handle row click to open View Entry modal
   const handleRowClick = (expense) => {
     setEntryToEdit(expense);
-    setOpenViewModal(true); // Directly set openViewModal to true
+    setOpenViewModal(true);
   };
 
-  //Handle edit action from View Entry modal
+  // Handle edit action from View Entry modal
   const handleEditFromViewModal = () => {
     setOpenViewModal(false);
     setTimeout(() => {
@@ -219,16 +219,32 @@ const ExpensesPage = () => {
     }, 0);
   };
 
-  //Handle edit action
+  // Handle edit action
   const handleEdit = (expense) => {
-    console.log("In edit");
     setEntryToEdit(expense);
     setOpenEditEntryModal(true);
   };
 
-  // const handleDelete = (expenseId) => {
-  //   console.log("Delete:", expenseId);
-  // };
+  // Handle delete action (functionality to be implemented)
+  const handleDelete = (expenseId) => {
+    console.log("Delete:", expenseId);
+    // Implement delete functionality here
+  };
+
+  // Handle page change in pagination
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Show loading state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Show error state
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col text-white">
@@ -239,18 +255,22 @@ const ExpensesPage = () => {
           <div className="grid grid-cols-3 gap-6">
             {/* Card Section */}
             <div className="col-span-2 grid grid-cols-2 gap-6">
+              {/* Total Expenses Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Expenses</h3>
                 <p className="text-3xl font-bold mt-2">${totalExpenses}</p>
               </div>
+              {/* Total Transactions Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Transactions</h3>
                 <p className="text-3xl font-bold mt-2">{totalTransactions}</p>
               </div>
+              {/* Average Expense Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Average Expense</h3>
                 <p className="text-3xl font-bold mt-2">${averageExpense}</p>
               </div>
+              {/* Top Category Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Top Category</h3>
                 <p className="text-3xl font-bold mt-2">{topCategory}</p>
@@ -319,25 +339,21 @@ const ExpensesPage = () => {
                       >
                         <td className="p-4">{expense.title}</td>
                         <td className="p-4">
-                          {/* Safely handle null or undefined categories */}
-                          {expense.category &&
-                          typeof expense.category === "object"
-                            ? expense.category.title
-                            : expense.category || "Unknown"}
+                          {expense.category?.title || "Unknown"}
                         </td>
                         <td className="p-4">
                           {parseFloat(expense.amount).toFixed(2)}$
                         </td>
                         <td className="p-4">
                           {formatDateForInput(expense.date)}
-                        </td>{" "}
+                        </td>
                         <td className="p-4">
                           {expense.createdAt
                             ? formatDateForInput(expense.createdAt)
                             : "N/A"}
                         </td>
                         {/* Action Button inside each row */}
-                        <td className="p-4 text-right  right-4 top-4">
+                        <td className="p-4 text-right right-4 top-4">
                           {/* Action Menu */}
                           <Menu
                             as="div"
@@ -379,7 +395,7 @@ const ExpensesPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td className="p-4 text-center" colSpan="5">
+                      <td className="p-4 text-center" colSpan="6">
                         No transactions found.
                       </td>
                     </tr>
@@ -387,13 +403,13 @@ const ExpensesPage = () => {
                 </tbody>
               </table>
             </div>
-            {/* MUI Pagination Component */}
+            {/* Pagination Component */}
             <div className="flex justify-center mt-4">
               <Stack spacing={2}>
                 <Pagination
-                  count={totalPages} // Total number of pages
-                  page={currentPage} // Current active page
-                  onChange={handlePageChange} // Handler for page change
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
                   variant="outlined"
                   shape="rounded"
                   className="custom-pagination"
@@ -401,6 +417,7 @@ const ExpensesPage = () => {
               </Stack>
             </div>
           </div>
+
           {/* View Entry Modal */}
           {entryToEdit && (
             <ViewEntryModal
@@ -410,13 +427,12 @@ const ExpensesPage = () => {
               onEdit={handleEditFromViewModal}
             />
           )}
-          {/* Modal Section */}
+          {/* New Entry Modal */}
           <NewEntryModal
             open={openNewEntryModal}
             setOpen={setOpenNewEntryModal}
             defaultCategory="Expense"
           />
-
           {/* Edit Entry Modal */}
           {entryToEdit && (
             <EditEntryModal

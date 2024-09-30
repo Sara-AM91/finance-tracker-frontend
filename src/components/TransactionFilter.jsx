@@ -20,7 +20,14 @@ const TransactionFilter = ({ filters, setFilters }) => {
           }
         );
         const data = await response.json();
-        setCategories(data);
+        // Ensure "Other" is at the end of the array
+        const sortedCategories = data.sort((a, b) => {
+          if (a.title === "Other") return 1;
+          if (b.title === "Other") return -1;
+          return a.title.localeCompare(b.title);
+        });
+
+        setCategories(sortedCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }

@@ -108,7 +108,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
       </div>
 
       <div className="w-full sm:w-1/6">
-        <label className="text-gray-300 font-bold">Date</label>
+        <label className="text-gray-300 font-bold">Transaction Date</label>
         <input
           type="date"
           name="date"

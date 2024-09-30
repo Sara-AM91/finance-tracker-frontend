@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import TransactionFilter from "../components/TransactionFilter";
 import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
 import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
@@ -7,18 +9,20 @@ import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
 import EditEntryModal from "../components/EditEntryModal";
 import { useTransactionContext } from "../contexts/TransactionContext"; // Use the new context
-
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
 
 const ExpensesPage = () => {
+  //State for toggling between Bar and Line chart
   const [bar, setBar] = useState(true);
+
+  //States for modals (New Entry, Edit Entry, View Entry)
   const [openNewEntryModal, setOpenNewEntryModal] = useState(false);
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
-
   const [entryToEdit, setEntryToEdit] = useState(null);
 
+  //Filters state for filtering transactions
   const [filters, setFilters] = useState({
     title: "",
     category: "",
@@ -26,12 +30,36 @@ const ExpensesPage = () => {
     date: "",
     createdDate: "",
   });
+
+  //Fetch transactions from context
   const { transactions, loading, error } = useTransactionContext();
+
+  //Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const transactionsPerPage = 6; //Number of transactions to display per page
+
+  //Effect to reset currentPage to 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  //Calculate indices for slicing the filtered transactions array
+  const indexOfLastTransaction = currentPage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+
+  //Change page handler
+  const handlePageChange = (event, value) => {
+    console.log("Page changed to:", value);
+    setCurrentPage(value);
+  };
+
+  //Format transactions to ensure categories have a default value
   const formattedTransactions = transactions.map((transaction) => ({
     ...transaction,
     category: transaction.category || { title: "Unknown" },
   }));
 
+  //Calculate total expenses using useMemo for performance optimization
   const totalExpenses = useMemo(
     () =>
       transactions
@@ -40,8 +68,11 @@ const ExpensesPage = () => {
         .toFixed(2),
     [transactions]
   );
+
+  //Total number of transactions
   const totalTransactions = transactions.length;
 
+  //Calculate average expense
   const averageExpense = useMemo(() => {
     const expenseTransactions = transactions.filter(
       (t) => t.type === "expense"
@@ -51,6 +82,7 @@ const ExpensesPage = () => {
       : 0;
   }, [totalExpenses, transactions]);
 
+  //Determine top category by total amount spent
   const topCategory = useMemo(() => {
     const categoryMap = {};
     transactions
@@ -68,44 +100,44 @@ const ExpensesPage = () => {
     );
     return sortedCategories.length > 0 ? sortedCategories[0][0] : "Unknown";
   }, [transactions]);
+
+  //Function to toggle between Bar and Line chart
   const toggleChart = () => {
     setBar(!bar);
   };
 
-  const d = new Date();
-  let year = d.getFullYear();
+  // const d = new Date();
+  // let year = d.getFullYear();
 
+  //Function to compare dates for filtering
   const compareDates = (expenseDateStr, filterDateStr) => {
     if (!expenseDateStr || !filterDateStr) return false;
 
     const expenseDate = new Date(expenseDateStr);
     const filterDate = new Date(filterDateStr);
 
-    // Check for invalid dates
+    //Check for invalid dates
     if (isNaN(expenseDate.getTime()) || isNaN(filterDate.getTime())) {
       console.error("Invalid date format:", expenseDateStr, filterDateStr);
       return false;
     }
 
-    // Format both dates to YYYY-MM-DD for comparison
+    //Format both dates to YYYY-MM-DD for comparison
     const formattedExpenseDate = expenseDate.toISOString().split("T")[0];
     const formattedFilterDate = filterDate.toISOString().split("T")[0];
-    console.log(
-      "Formatted Expense Date:",
-      formattedExpenseDate,
-      "Formatted Filter Date:",
-      formattedFilterDate
-    );
 
     return formattedExpenseDate === formattedFilterDate;
   };
 
+  //Handle clicks on chart bars to set category filter
   const handleBarClick = (categoryName) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       category: categoryName,
     }));
   };
+
+  //Function to clear all filters
   const clearFilters = () => {
     setFilters({
       title: "",
@@ -116,11 +148,12 @@ const ExpensesPage = () => {
     });
   };
 
+  //Check if any filters are active
   const areFiltersActive = () => {
     return Object.values(filters).some((value) => value !== "");
   };
-  console.log("areFiltersActive", areFiltersActive);
 
+  //Filter transactions based on filters
   const filteredExpenses = transactions.filter((transaction, index) => {
     console.log(`Transaction #${index}:`, transaction);
 
@@ -156,13 +189,29 @@ const ExpensesPage = () => {
     );
   });
 
-  console.log("filteredExpenses", filteredExpenses);
+  //Apply pagination to filtered expenses
+  const currentTransactions = filteredExpenses.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
 
+  //Calculate total number of pages based on filtered expenses
+  const totalPages = Math.ceil(filteredExpenses.length / transactionsPerPage);
+
+  //Ensure currentPage is within valid range (especially after filtering)
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  //Handle row click to open View Entry modal
   const handleRowClick = (expense) => {
     setEntryToEdit(expense);
     setOpenViewModal(true); // Directly set openViewModal to true
   };
 
+  //Handle edit action from View Entry modal
   const handleEditFromViewModal = () => {
     setOpenViewModal(false);
     setTimeout(() => {
@@ -170,16 +219,16 @@ const ExpensesPage = () => {
     }, 0);
   };
 
-  //const [open, setOpen] = useState(false);
+  //Handle edit action
   const handleEdit = (expense) => {
     console.log("In edit");
     setEntryToEdit(expense);
     setOpenEditEntryModal(true);
   };
 
-  const handleDelete = (expenseId) => {
-    console.log("Delete:", expenseId);
-  };
+  // const handleDelete = (expenseId) => {
+  //   console.log("Delete:", expenseId);
+  // };
 
   return (
     <div className="h-screen w-screen flex flex-col text-white">
@@ -261,8 +310,8 @@ const ExpensesPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredExpenses.length > 0 ? (
-                    filteredExpenses.map((expense, index) => (
+                  {currentTransactions.length > 0 ? (
+                    currentTransactions.map((expense, index) => (
                       <tr
                         key={index}
                         className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
@@ -337,6 +386,19 @@ const ExpensesPage = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+            {/* MUI Pagination Component */}
+            <div className="flex justify-center mt-4">
+              <Stack spacing={2}>
+                <Pagination
+                  count={totalPages} // Total number of pages
+                  page={currentPage} // Current active page
+                  onChange={handlePageChange} // Handler for page change
+                  variant="outlined"
+                  shape="rounded"
+                  className="custom-pagination"
+                />
+              </Stack>
             </div>
           </div>
           {/* View Entry Modal */}

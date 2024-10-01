@@ -2,8 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import TransactionFilter from "../components/TransactionFilter";
-import ExpensesCategoryBar from "../components/charts/ExpensesCategoryBar";
-import ExpensesCategoryLine from "../components/charts/ExpensesCategoryLine";
+import IncomesCategoryBar from "../components/charts/IncomesCategoryBar";
+import IncomesCategoryLine from "../components/charts/IncomesCategoryLine";
 import TrashIconWithCross from "../components/TrashIconWithCross";
 import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
@@ -12,17 +12,17 @@ import { useTransactionContext } from "../contexts/TransactionContext";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
 
-const ExpensesPage = () => {
-  // State for toggling between Bar and Line chart
+const IncomesPage = () => {
+  //State for toggling between Bar and Line chart
   const [bar, setBar] = useState(true);
 
-  // States for modals (New Entry, Edit Entry, View Entry)
+  //States for modals (New Entry, Edit Entry, View Entry)
   const [openNewEntryModal, setOpenNewEntryModal] = useState(false);
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [entryToEdit, setEntryToEdit] = useState(null);
 
-  // Local filters state for filtering transactions
+  //Local filters state for filtering transactions
   const [filters, setFilters] = useState({
     title: "",
     category: "",
@@ -31,10 +31,9 @@ const ExpensesPage = () => {
     createdDate: "",
   });
 
-  // Fetch transactions from context
+  //Fetch transactions from context
   const { transactions = [], loading, error } = useTransactionContext();
 
-  // Ensure filters have default values
   const filtersWithDefaults = {
     title: filters.title || "",
     category: filters.category || "",
@@ -43,51 +42,51 @@ const ExpensesPage = () => {
     createdDate: filters.createdDate || "",
   };
 
-  // Pagination State
+  //Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 6; // Number of transactions to display per page
+  const transactionsPerPage = 6; //Number of transactions to display per page
 
-  // Reset currentPage to 1 whenever filters change
+  //Reset currentPage to 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
 
-  // Calculate indices for slicing the filtered transactions array
+  //Calculate indices for slicing the filtered transactions array
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
 
-  // Filter transactions to only include expenses
-  const expenseTransactions = transactions.filter((t) => t.type === "expense");
+  //Filter transactions to only include incomes
+  const incomeTransactions = transactions.filter((t) => t.type === "income");
 
-  // Format transactions to ensure categories have a default value
-  const formattedTransactions = expenseTransactions.map((transaction) => ({
+  //Format transactions to ensure categories have a default value
+  const formattedTransactions = incomeTransactions.map((transaction) => ({
     ...transaction,
     category: transaction.category ?? { title: "Unknown" },
   }));
 
-  // Calculate total expenses using useMemo for performance optimization
+  //Calculate total incomes using useMemo for performance optimization
   const totalExpenses = useMemo(
     () =>
-      expenseTransactions
+      incomeTransactions
         .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
         .toFixed(2),
-    [expenseTransactions]
+    [incomeTransactions]
   );
 
-  // Total number of transactions
-  const totalTransactions = expenseTransactions.length;
+  //Total number of transactions
+  const totalTransactions = incomeTransactions.length;
 
-  // Calculate average expense
+  //Calculate average income
   const averageExpense = useMemo(() => {
-    return expenseTransactions.length > 0
-      ? (totalExpenses / expenseTransactions.length).toFixed(2)
+    return incomeTransactions.length > 0
+      ? (totalExpenses / incomeTransactions.length).toFixed(2)
       : 0;
-  }, [totalExpenses, expenseTransactions]);
+  }, [totalExpenses, incomeTransactions]);
 
-  // Determine top category by total amount spent
+  //Determine top category by total amount spent
   const topCategory = useMemo(() => {
     const categoryMap = {};
-    expenseTransactions.forEach((t) => {
+    incomeTransactions.forEach((t) => {
       const categoryTitle = t.category?.title || "Unknown";
       if (!categoryMap[categoryTitle]) {
         categoryMap[categoryTitle] = 0;
@@ -99,34 +98,34 @@ const ExpensesPage = () => {
       (a, b) => b[1] - a[1]
     );
     return sortedCategories.length > 0 ? sortedCategories[0][0] : "Unknown";
-  }, [expenseTransactions]);
+  }, [incomeTransactions]);
 
-  // Function to toggle between Bar and Line chart
+  //Function to toggle between Bar and Line chart
   const toggleChart = () => {
     setBar(!bar);
   };
 
-  // Function to compare dates for filtering
-  const compareDates = (expenseDateStr, filterDateStr) => {
-    if (!expenseDateStr || !filterDateStr) return false;
+  //Function to compare dates for filtering
+  const compareDates = (incomeDateStr, filterDateStr) => {
+    if (!incomeDateStr || !filterDateStr) return false;
 
-    const expenseDate = new Date(expenseDateStr);
+    const incomeDate = new Date(incomeDateStr);
     const filterDate = new Date(filterDateStr);
 
-    // Check for invalid dates
-    if (isNaN(expenseDate.getTime()) || isNaN(filterDate.getTime())) {
-      console.error("Invalid date format:", expenseDateStr, filterDateStr);
+    //Check for invalid dates
+    if (isNaN(incomeDate.getTime()) || isNaN(filterDate.getTime())) {
+      console.error("Invalid date format:", incomeDateStr, filterDateStr);
       return false;
     }
 
-    // Format both dates to YYYY-MM-DD for comparison
-    const formattedExpenseDate = expenseDate.toISOString().split("T")[0];
+    //Format both dates to YYYY-MM-DD for comparison
+    const formattedIncomeDate = incomeDate.toISOString().split("T")[0];
     const formattedFilterDate = filterDate.toISOString().split("T")[0];
 
-    return formattedExpenseDate === formattedFilterDate;
+    return formattedIncomeDate === formattedFilterDate;
   };
 
-  // Handle clicks on chart bars to set category filter
+  //Handle clicks on chart bars to set category filter
   const handleBarClick = (categoryName) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -134,7 +133,7 @@ const ExpensesPage = () => {
     }));
   };
 
-  // Function to clear all filters
+  //Function to clear all filters
   const clearFilters = () => {
     setFilters({
       title: "",
@@ -145,13 +144,13 @@ const ExpensesPage = () => {
     });
   };
 
-  // Check if any filters are active
+  //Check if any filters are active
   const areFiltersActive = () => {
     return Object.values(filters).some((value) => value !== "");
   };
 
-  // Filter transactions based on local filters
-  const filteredExpenses = formattedTransactions.filter((transaction) => {
+  //Filter transactions based on local filters
+  const filteredIncomes = formattedTransactions.filter((transaction) => {
     const transactionTitleLower = (transaction.title || "").toLowerCase();
     const filtersTitleLower = (filtersWithDefaults.title || "").toLowerCase();
 
@@ -189,29 +188,29 @@ const ExpensesPage = () => {
     );
   });
 
-  // Apply pagination to filtered expenses
-  const currentTransactions = filteredExpenses.slice(
+  //Apply pagination to filtered incomes
+  const currentTransactions = filteredIncomes.slice(
     indexOfFirstTransaction,
     indexOfLastTransaction
   );
 
-  // Calculate total number of pages based on filtered expenses
-  const totalPages = Math.ceil(filteredExpenses.length / transactionsPerPage);
+  //Calculate total number of pages based on filtered incomes
+  const totalPages = Math.ceil(filteredIncomes.length / transactionsPerPage);
 
-  // Ensure currentPage is within valid range (especially after filtering)
+  //Ensure currentPage is within valid range (especially after filtering)
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
 
-  // Handle row click to open View Entry modal
-  const handleRowClick = (expense) => {
-    setEntryToEdit(expense);
+  //Handle row click to open View Entry modal
+  const handleRowClick = (income) => {
+    setEntryToEdit(income);
     setOpenViewModal(true);
   };
 
-  // Handle edit action from View Entry modal
+  //Handle edit action from View Entry modal
   const handleEditFromViewModal = () => {
     setOpenViewModal(false);
     setTimeout(() => {
@@ -219,29 +218,28 @@ const ExpensesPage = () => {
     }, 0);
   };
 
-  // Handle edit action
-  const handleEdit = (expense) => {
-    setEntryToEdit(expense);
+  //Handle edit action
+  const handleEdit = (income) => {
+    setEntryToEdit(income);
     setOpenEditEntryModal(true);
   };
 
-  // Handle delete action (functionality to be implemented)
-  const handleDelete = (expenseId) => {
-    console.log("Delete:", expenseId);
-    // Implement delete functionality here
+  //Handle delete action (functionality to be implemented)
+  const handleDelete = (incomeId) => {
+    console.log("Delete:", incomeId);
   };
 
-  // Handle page change in pagination
+  //Handle page change in pagination
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
-  // Show loading state
+  //Show loading state
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // Show error state
+  //Show error state
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -255,9 +253,9 @@ const ExpensesPage = () => {
           <div className="grid grid-cols-3 gap-6">
             {/* Card Section */}
             <div className="col-span-2 grid grid-cols-2 gap-6">
-              {/* Total Expenses Card */}
+              {/* Total Incomes Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
-                <h3 className="text-lg font-semibold">Total Expenses</h3>
+                <h3 className="text-lg font-semibold">Total Incomes</h3>
                 <p className="text-3xl font-bold mt-2">${totalExpenses}</p>
               </div>
               {/* Total Transactions Card */}
@@ -265,9 +263,9 @@ const ExpensesPage = () => {
                 <h3 className="text-lg font-semibold">Total Transactions</h3>
                 <p className="text-3xl font-bold mt-2">{totalTransactions}</p>
               </div>
-              {/* Average Expense Card */}
+              {/* Average Ixpense Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
-                <h3 className="text-lg font-semibold">Average Expense</h3>
+                <h3 className="text-lg font-semibold">Average Income</h3>
                 <p className="text-3xl font-bold mt-2">${averageExpense}</p>
               </div>
               {/* Top Category Card */}
@@ -280,7 +278,7 @@ const ExpensesPage = () => {
             {/* Chart Section */}
             <div className="bg-[#161A40] p-6 rounded-3xl shadow-lg">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Expenses by Category</h3>
+                <h3 className="text-lg font-semibold">Incomes by Category</h3>
                 <button
                   className="px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
                   onClick={toggleChart}
@@ -290,12 +288,12 @@ const ExpensesPage = () => {
               </div>
               <div className="h-40 rounded-3xl mt-4">
                 {bar ? (
-                  <ExpensesCategoryBar
+                  <IncomesCategoryBar
                     transactions={formattedTransactions}
                     onBarClick={handleBarClick}
                   />
                 ) : (
-                  <ExpensesCategoryLine transactions={formattedTransactions} />
+                  <IncomesCategoryLine transactions={formattedTransactions} />
                 )}
               </div>
             </div>
@@ -307,7 +305,7 @@ const ExpensesPage = () => {
             <TransactionFilter
               filters={filters}
               setFilters={setFilters}
-              type="expense"
+              type="income"
             />
             {/* Transactions Table */}
             <div className="rounded-2xl mt-4">
@@ -335,25 +333,25 @@ const ExpensesPage = () => {
                 </thead>
                 <tbody>
                   {currentTransactions.length > 0 ? (
-                    currentTransactions.map((expense, index) => (
+                    currentTransactions.map((income, index) => (
                       <tr
                         key={index}
                         className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
-                        onClick={() => handleRowClick(expense)}
+                        onClick={() => handleRowClick(income)}
                       >
-                        <td className="p-4">{expense.title}</td>
+                        <td className="p-4">{income.title}</td>
                         <td className="p-4">
-                          {expense.category?.title || "Unknown"}
+                          {income.category?.title || "Unknown"}
                         </td>
                         <td className="p-4">
-                          {parseFloat(expense.amount).toFixed(2)}$
+                          {parseFloat(income.amount).toFixed(2)}$
                         </td>
                         <td className="p-4">
-                          {formatDateForInput(expense.date)}
+                          {formatDateForInput(income.date)}
                         </td>
                         <td className="p-4">
-                          {expense.createdAt
-                            ? formatDateForInput(expense.createdAt)
+                          {income.createdAt
+                            ? formatDateForInput(income.createdAt)
                             : "N/A"}
                         </td>
                         {/* Action Button inside each row */}
@@ -376,7 +374,7 @@ const ExpensesPage = () => {
                                   className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleEdit(expense);
+                                    handleEdit(income);
                                   }}
                                 >
                                   Edit
@@ -386,7 +384,7 @@ const ExpensesPage = () => {
                                   className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-700 hover:bg-red-200 data-[active=true]:bg-red-200"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDelete(expense._id);
+                                    handleDelete(income._id);
                                   }}
                                 >
                                   Delete
@@ -435,7 +433,7 @@ const ExpensesPage = () => {
           <NewEntryModal
             open={openNewEntryModal}
             setOpen={setOpenNewEntryModal}
-            defaultCategory="Expense"
+            defaultCategory="Income"
           />
           {/* Edit Entry Modal */}
           {entryToEdit && (
@@ -458,4 +456,4 @@ const ExpensesPage = () => {
   );
 };
 
-export default ExpensesPage;
+export default IncomesPage;

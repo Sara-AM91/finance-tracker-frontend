@@ -1,20 +1,7 @@
 import { useState, useEffect } from "react";
-import { useTransactionContext } from "../contexts/TransactionContext";
 
-const TransactionFilter = ({ filters, setFilters }) => {
+const TransactionFilter = ({ filters = {}, setFilters, type }) => {
   const [categories, setCategories] = useState([]);
-  const [localFilters, setLocalFilters] = useState({
-    title: "",
-    category: "",
-    amount: "",
-    date: "",
-    createdDate: "",
-  });
-
-  //Update global filters whenever local filter changes
-  useEffect(() => {
-    setFilters(localFilters);
-  }, [localFilters]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -25,7 +12,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           return;
         }
         const response = await fetch(
-          "http://localhost:5000/categories/filter?categoryType=expense",
+          `http://localhost:5000/categories/global?categoryType=${type}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,17 +39,20 @@ const TransactionFilter = ({ filters, setFilters }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     console.log(`Input Change Detected: ${name} = ${value}`);
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value || "" }));
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value || "",
+    }));
   };
 
-  //Define default values for `filters` object to avoid `undefined` values
-  const defaultFilters = {
-    title: "",
-    category: "",
-    amount: "",
-    date: "",
-    createdDate: "",
-  };
+  // Destructure filters with default values
+  const {
+    title = "",
+    category = "",
+    amount = "",
+    date = "",
+    createdDate = "",
+  } = filters;
 
   return (
     <div className="flex flex-wrap justify-between p-3 bg-[#161A40] rounded-3xl shadow-md">
@@ -74,7 +64,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           placeholder="Search by title"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.title || defaultFilters.title}
+          value={title}
         />
       </div>
 
@@ -84,7 +74,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="category"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.category || defaultFilters.category}
+          value={category}
         >
           <option value="">All</option>
           {categories.map((category) => (
@@ -103,7 +93,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           placeholder="Search by amount"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.amount || defaultFilters.amount}
+          value={amount}
         />
       </div>
 
@@ -114,7 +104,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="date"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.date || defaultFilters.date}
+          value={date}
         />
       </div>
 
@@ -125,7 +115,7 @@ const TransactionFilter = ({ filters, setFilters }) => {
           name="createdDate"
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
-          value={filters.createdDate || ""}
+          value={createdDate}
         />
       </div>
     </div>

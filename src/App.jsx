@@ -5,6 +5,7 @@ import SignUpPage from "./pages/SignUpPage";
 import MainLayout from "./pages/MainLayout";
 import Dashboard from "./components/Dashboard";
 import ExpensesPage from "./pages/ExpensesPage";
+import IncomesPage from "./pages/IncomesPage";
 import AccountPage from "./pages/AccountPage";
 import { TransactionProvider } from "./contexts/TransactionContext";
 import { AlertProvider } from "./contexts/AlertContext";
@@ -26,6 +27,7 @@ const App = () => {
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/expenses" element={<ExpensesPage />} />
+              <Route path="/incomes" element={<IncomesPage />} />
               <Route path="/account" element={<AccountPage />} />
             </Route>
 

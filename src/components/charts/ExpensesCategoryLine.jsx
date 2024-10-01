@@ -1,41 +1,27 @@
 import React, { useMemo, useRef } from "react";
 import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS } from "chart.js";
 
-// Register chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+//Import interpolateReds from d3-scale-chromatic
+import { interpolateReds } from "d3-scale-chromatic";
 
-const ExpensesCategoryLine = ({ transactions }) => {
+//Register chart.js components
+ChartJS.register();
+
+const IncomesCategoryLine = ({ transactions }) => {
   const chartRef = useRef(null);
 
-  // Step 1: Filter transactions to only include expenses
-  const expenseTransactions = useMemo(
+  //Step 1: Filter transactions to include only expenses
+  const incomeTransactions = useMemo(
     () => transactions.filter((transaction) => transaction.type === "expense"),
     [transactions]
   );
 
-  // Step 2: Aggregate the expenses by category
+  //Step 2: Aggregate the expenses by category
   const categoryData = useMemo(() => {
     const categoryMap = {};
 
-    expenseTransactions.forEach((transaction) => {
+    incomeTransactions.forEach((transaction) => {
       const categoryTitle = transaction.category?.title || "Unknown";
       if (!categoryMap[categoryTitle]) {
         categoryMap[categoryTitle] = { amount: 0 };
@@ -44,37 +30,75 @@ const ExpensesCategoryLine = ({ transactions }) => {
     });
 
     return categoryMap;
-  }, [expenseTransactions]);
+  }, [incomeTransactions]);
 
-  // Step 3: Extract labels and data for the line chart
+  //Step 3: Extract labels and data for the line chart
   const xLabels = Object.keys(categoryData);
   const yData = xLabels.map((category) =>
-    categoryData[category].amount.toFixed(2)
+    parseFloat(categoryData[category].amount.toFixed(2))
   );
 
-  // Define the color scheme for the line (optional)
-  const lineColor = "#C52222";
+  //Step 4: Generate colors using interpolateReds
+  const colors = yData.map((_, index) => {
+    const t = index / (yData.length - 1); //Normalize index to [0,1]
+    return interpolateReds(t);
+  });
 
-  // Create the chart data
+  //Step 5: Create the chart data
   const chartData = {
     labels: xLabels,
     datasets: [
       {
         label: "Amount",
         data: yData,
-        borderColor: lineColor, //Set line color
-        backgroundColor: lineColor,
+        borderColor: function (context) {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+
+          if (!chartArea) {
+            //This case happens on initial chart load
+            return null;
+          }
+
+          //Create gradient
+          const gradient = ctx.createLinearGradient(
+            chartArea.left,
+            0,
+            chartArea.right,
+            0
+          );
+          colors.forEach((color, index) => {
+            const t = index / (colors.length - 1);
+            gradient.addColorStop(t, color);
+          });
+
+          return gradient;
+        },
+        pointBackgroundColor: colors,
+        pointBorderColor: colors,
         fill: false,
-        tension: 0.4, //Make the line slightly curved
+        tension: 0.4, //Slightly curved line
         pointRadius: 5,
         pointHoverRadius: 7,
+        borderWidth: 3,
       },
     ],
   };
 
+  //Step 6: Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    elements: {
+      line: {
+        borderWidth: 3,
+        tension: 0.4,
+      },
+      point: {
+        radius: 5,
+        hoverRadius: 7,
+      },
+    },
     plugins: {
       legend: {
         display: false,
@@ -108,4 +132,4 @@ const ExpensesCategoryLine = ({ transactions }) => {
   );
 };
 
-export default ExpensesCategoryLine;
+export default IncomesCategoryLine;

@@ -3,7 +3,12 @@ import Cropper from "react-easy-crop";
 import getCroppedImg from "./utils/cropImage";
 import { Cancel, Save } from "@mui/icons-material";
 
-const CropEasy = ({ picture, setOpenCrop, setPicture }) => {
+const CropEasy = ({
+  picture,
+  setOpenCrop,
+  setPicture,
+  handlePictureSubmit,
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -20,8 +25,10 @@ const CropEasy = ({ picture, setOpenCrop, setPicture }) => {
         croppedAreaPixels,
         rotation
       );
-      setPicture(file); // Set the cropped file in the parent state
+      setPicture(null); // Clear the picture state
       setOpenCrop(false); // Close the crop modal
+
+      await handlePictureSubmit(file); // Call the upload function
     } catch (e) {
       console.error("Error while cropping:", e);
     }
@@ -30,10 +37,9 @@ const CropEasy = ({ picture, setOpenCrop, setPicture }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-gray-800 p-4 rounded-md shadow-lg max-w-[600px] h-[550px] w-[90%]">
-        {/* Cropper - Ensuring it occupies full space above the controls */}
         <div className="relative w-full h-80">
           <Cropper
-            image={picture} // Use the image to crop
+            image={picture}
             crop={crop}
             zoom={zoom}
             rotation={rotation}
@@ -42,15 +48,12 @@ const CropEasy = ({ picture, setOpenCrop, setPicture }) => {
             onRotationChange={setRotation}
             onCropChange={setCrop}
             onCropComplete={cropComplete}
-            className="rounded-md absolute inset-0" // Cover the area of the parent
+            className="rounded-md absolute inset-0"
           />
         </div>
 
-        {/* Controls - buttons and sliders */}
         <div className="flex flex-col items-start mt-4">
           <div className="mb-2 w-full">
-            {" "}
-            {/* Full width container */}
             <span className="text-white">Zoom: {Math.round(zoom * 100)}%</span>
             <input
               type="range"
@@ -59,12 +62,10 @@ const CropEasy = ({ picture, setOpenCrop, setPicture }) => {
               step="0.1"
               value={zoom}
               onChange={(e) => setZoom(parseFloat(e.target.value))}
-              className="w-full mt-1 accent-blue-500" // Full width slider
+              className="w-full mt-1 accent-blue-500"
             />
           </div>
           <div className="mb-4 w-full">
-            {" "}
-            {/* Full width container */}
             <span className="text-white">Rotation: {rotation}°</span>
             <input
               type="range"
@@ -72,7 +73,7 @@ const CropEasy = ({ picture, setOpenCrop, setPicture }) => {
               max="360"
               value={rotation}
               onChange={(e) => setRotation(parseInt(e.target.value))}
-              className="w-full mt-1 accent-blue-500" // Full width slider
+              className="w-full mt-1 accent-blue-500"
             />
           </div>
           <div className="flex gap-2">

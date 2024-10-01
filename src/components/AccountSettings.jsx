@@ -25,6 +25,15 @@ const AccountSettings = ({ setUser, user }) => {
 
   const [openCrop, setOpenCrop] = useState(false);
 
+  const handleFileChange = async (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPicture(reader.result); // Set the base64 string
+      setOpenCrop(true); // Open the crop modal after setting the picture
+    };
+  };
+
   const { showAlert } = useAlert();
 
   useEffect(() => {
@@ -42,7 +51,7 @@ const AccountSettings = ({ setUser, user }) => {
     }
   }, [user]);
 
-  const handlePictureSubmit = async () => {
+  const handlePictureSubmit = async (croppedFile) => {
     const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
     if (!token) {
       setError("No token found, user is not authenticated");
@@ -51,7 +60,8 @@ const AccountSettings = ({ setUser, user }) => {
     }
 
     const formData = new FormData();
-    formData.append("profilePic", picture);
+    formData.append("profilePic", croppedFile); // Use the cropped file
+
     setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/user/profile/picture", {
@@ -62,18 +72,18 @@ const AccountSettings = ({ setUser, user }) => {
         },
       });
       if (!res.ok) {
-        const errorData = await res.text(); // Define errorData to hold the error response
+        const errorData = await res.text();
         showAlert("error", "Profile picture upload failed.");
-        throw new Error(errorData.error || "Profile picture upload failed."); // Use errorData for error messages
+        throw new Error(errorData.error || "Profile picture upload failed.");
       }
       const data = await res.json();
       setUser(data.user);
-      setPicture(data.profilePic);
+      setPicture(data.profilePic); // Update the picture in the state
       showAlert("success", "Profile Picture successfully created");
     } catch (error) {
       console.error("Error creating product:", error);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -177,11 +187,10 @@ const AccountSettings = ({ setUser, user }) => {
                   id="file-input"
                   type="file"
                   onChange={(e) => {
-                    // Ensure we are setting the picture state with the first file selected
                     if (e.target.files.length > 0) {
-                      setPicture(e.target.files[0]);
+                      handleFileChange(e.target.files[0]); // Call the new function
                     } else {
-                      setPicture(null); // Clear picture if no file is selected
+                      setPicture(null);
                     }
                   }}
                   className="hidden" // Hide the input
@@ -195,21 +204,6 @@ const AccountSettings = ({ setUser, user }) => {
               </p>
             </div>
           </div>
-
-          {/* Save Button aligned to the right */}
-          <div className="flex flex-col gap-3 mt-4 lg:mt-0 lg:ml-auto">
-            <button
-              disabled={loading || !picture} // Disable if loading or no picture
-              onClick={handlePictureSubmit}
-              className={
-                loading || !picture
-                  ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed py-2 px-4 rounded-lg text-base"
-                  : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
-              }
-            >
-              Save
-            </button>
-          </div>
         </div>
       </div>
 
@@ -218,6 +212,7 @@ const AccountSettings = ({ setUser, user }) => {
           picture={picture}
           setPicture={setPicture}
           setOpenCrop={setOpenCrop}
+          handlePictureSubmit={handlePictureSubmit}
         />
       )}
 

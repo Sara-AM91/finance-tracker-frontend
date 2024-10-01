@@ -3,7 +3,7 @@ import { CiMail } from "react-icons/ci";
 import { CiPhone } from "react-icons/ci";
 import { useAlert } from "../contexts/AlertContext"; // Import useAlert
 import GlobalAlert from "./GlobalAlert ";
-import ImageEditor from "./ImageEditor";
+import CropEasy from "./crop/CropEasy";
 
 const AccountSettings = ({ setUser, user }) => {
   const [lastName, setLastname] = useState("");
@@ -22,6 +22,8 @@ const AccountSettings = ({ setUser, user }) => {
   const [phoneError, setPhoneError] = useState(null);
 
   const [error, setError] = useState(null);
+
+  const [openCrop, setOpenCrop] = useState(false);
 
   const { showAlert } = useAlert();
 
@@ -201,14 +203,16 @@ const AccountSettings = ({ setUser, user }) => {
             >
               Save
             </button>
-            <ImageEditor
-              picture={picture}
-              setPicture={setPicture}
-              handleDetailsSubmit={handleDetailsSubmit}
-            />
           </div>
         </div>
       </div>
+      {openCrop && (
+        <CropEasy
+          picture={picture}
+          setPicture={setPicture}
+          setOpenCrop={setOpenCrop}
+        />
+      )}
 
       <div className="mt-8 w-full">
         <div>

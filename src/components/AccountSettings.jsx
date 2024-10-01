@@ -3,6 +3,7 @@ import { CiMail } from "react-icons/ci";
 import { CiPhone } from "react-icons/ci";
 import { useAlert } from "../contexts/AlertContext"; // Import useAlert
 import GlobalAlert from "./GlobalAlert ";
+import ImageEditor from "./ImageEditor";
 
 const AccountSettings = ({ setUser, user }) => {
   const [lastName, setLastname] = useState("");
@@ -200,6 +201,11 @@ const AccountSettings = ({ setUser, user }) => {
             >
               Save
             </button>
+            <ImageEditor
+              picture={picture}
+              setPicture={setPicture}
+              handleDetailsSubmit={handleDetailsSubmit}
+            />
           </div>
         </div>
       </div>

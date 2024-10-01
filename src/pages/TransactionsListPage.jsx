@@ -26,11 +26,12 @@ const TransactionsListPage = () => {
   });
 
   const [sortConfig, setSortConfig] = useState({
-    key: "title",
-    direction: "asc",
+    key: "date",
+    direction: "desc",
+    color: "red",
   });
   const { transactions = [], loading, error } = useTransactionContext();
-
+  console.log(transactions);
   const [currentPage, setCurrentPage] = useState(1);
   const transactionsPerPage = 20;
 
@@ -38,7 +39,6 @@ const TransactionsListPage = () => {
     setCurrentPage(1);
   }, [filters]);
 
-  // Helper function to compare dates
   const compareDates = (transactionDateStr, filterDateStr) => {
     if (!transactionDateStr || !filterDateStr) return false;
 
@@ -57,17 +57,15 @@ const TransactionsListPage = () => {
     return formattedTransactionDate === formattedFilterDate;
   };
 
-  // Ensure filters have default values
   const filtersWithDefaults = {
     title: filters.title || "",
     category: filters.category || "",
     amount: filters.amount || "",
     date: filters.date || "",
-    createdDate: filters.createdDate || "",
+    createdAt: filters.createdDate || "",
     type: filters.type || "",
   };
 
-  // Filter the transactions based on the filters state
   const filteredTransactions = transactions.filter((transaction) => {
     const transactionTitleLower = (transaction.title || "").toLowerCase();
     const filtersTitleLower = filtersWithDefaults.title.toLowerCase();
@@ -92,8 +90,8 @@ const TransactionsListPage = () => {
       compareDates(transaction.date, filtersWithDefaults.date);
 
     const matchesCreatedDate =
-      filtersWithDefaults.createdDate === "" ||
-      compareDates(transaction.createdAt, filtersWithDefaults.createdDate);
+      filtersWithDefaults.createdAt === "" ||
+      compareDates(transaction.createdAt, filtersWithDefaults.createdAt);
 
     const matchesType =
       filtersWithDefaults.type === "" ||
@@ -109,18 +107,25 @@ const TransactionsListPage = () => {
     );
   });
 
-  // Apply sorting to the filtered transactions
   const sortedTransactions = [...filteredTransactions].sort((a, b) => {
     const { key, direction } = sortConfig;
     const order = direction === "asc" ? 1 : -1;
 
-    const valueA = a[key] ?? "";
-    const valueB = b[key] ?? "";
+    //Handle sorting for the category column specifically
+    let valueA, valueB;
 
-    // Determine the sorting logic based on data type
+    if (key === "category") {
+      valueA = a.category?.title || ""; //Safely access category title
+      valueB = b.category?.title || "";
+    } else {
+      valueA = a[key] ?? "";
+      valueB = b[key] ?? "";
+    }
+
+    //Apply sorting based on data type
     if (key === "amount") {
       return order * (parseFloat(valueA) - parseFloat(valueB));
-    } else if (key === "date" || key === "createdDate") {
+    } else if (key === "date" || key === "createdAt") {
       return order * (new Date(valueA) - new Date(valueB));
     } else {
       return valueA.toString().localeCompare(valueB.toString()) * order;
@@ -139,25 +144,55 @@ const TransactionsListPage = () => {
   );
 
   const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
+    setSortConfig((prevSortConfig) => {
+      // If the same key is clicked, toggle direction
+      const newDirection =
+        prevSortConfig.key === key && prevSortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
+      return { key, direction: newDirection };
+    });
   };
+
+  // Function to determine the color of the sort icon
+  const getIconColor = (key) => {
+    return sortConfig.key === key ? "text-red-500" : "text-gray-400"; // Red if active, gray otherwise
+  };
+  const handleRowClick = (transaction) => {
+    setEntryToEdit(transaction);
+    setOpenViewModal(true);
+  };
+
+  const handleEditFromViewModal = () => {
+    setOpenViewModal(false);
+    setTimeout(() => {
+      setOpenEditEntryModal(true);
+    }, 0);
+  };
+
+  const handleEdit = (transaction) => {
+    setEntryToEdit(transaction);
+    setOpenEditEntryModal(true);
+  };
+  // Handle page change in pagination
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Show loading state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Show error state
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) return "⇅";
     return sortConfig.direction === "asc" ? "▲" : "▼";
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="h-screen w-screen flex flex-col text-white">
@@ -179,37 +214,55 @@ const TransactionsListPage = () => {
                   className="p-4 font-bold bg-[#293458]"
                   onClick={() => handleSort("title")}
                 >
-                  Title {getSortIcon("title")}
+                  Title{" "}
+                  <span className={`${getIconColor("title")}`}>
+                    {getSortIcon("title")}
+                  </span>
                 </th>
                 <th
                   className="p-4 font-bold bg-[#293458]"
                   onClick={() => handleSort("type")}
                 >
-                  Type {getSortIcon("type")}
+                  Type{" "}
+                  <span className={`${getIconColor("type")}`}>
+                    {getSortIcon("type")}
+                  </span>
                 </th>
                 <th
                   className="p-4 font-bold bg-[#293458]"
                   onClick={() => handleSort("category")}
                 >
-                  Category {getSortIcon("category")}
+                  Category{" "}
+                  <span className={`${getIconColor("category")}`}>
+                    {getSortIcon("category")}
+                  </span>
                 </th>
                 <th
                   className="p-4 font-bold bg-[#293458]"
                   onClick={() => handleSort("amount")}
                 >
-                  Amount {getSortIcon("amount")}
+                  Amount{" "}
+                  <span className={`${getIconColor("amount")}`}>
+                    {getSortIcon("amount")}
+                  </span>
                 </th>
                 <th
                   className="p-4 font-bold bg-[#293458]"
                   onClick={() => handleSort("date")}
                 >
-                  Date {getSortIcon("date")}
+                  Date{" "}
+                  <span className={`${getIconColor("date")}`}>
+                    {getSortIcon("date")}
+                  </span>
                 </th>
                 <th
                   className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("createdDate")}
+                  onClick={() => handleSort("createdAt")}
                 >
-                  Created Date {getSortIcon("createdDate")}
+                  Created Date{" "}
+                  <span className={`${getIconColor("createdAt")}`}>
+                    {getSortIcon("createdAt")}
+                  </span>
                 </th>
                 <th className="p-4 font-bold text-right bg-[#293458]">
                   <button
@@ -220,7 +273,7 @@ const TransactionsListPage = () => {
                         category: "",
                         amount: "",
                         date: "",
-                        createdDate: "",
+                        createdAt: "",
                       })
                     }
                     aria-label="Clear filters"
@@ -242,7 +295,7 @@ const TransactionsListPage = () => {
                   <tr
                     key={index}
                     className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
-                    onClick={() => setEntryToEdit(transaction)}
+                    onClick={() => handleRowClick(transaction)}
                   >
                     <td className="p-4">{transaction.title}</td>
                     <td className="p-4">{transaction.type}</td>
@@ -259,6 +312,35 @@ const TransactionsListPage = () => {
                       {transaction.createdAt
                         ? formatDateForInput(transaction.createdAt)
                         : "N/A"}
+                    </td>
+                    {/* Action Button inside each row */}
+                    <td className="p-4 text-right right-4 top-4">
+                      {/* Action Menu */}
+                      <Menu
+                        as="div"
+                        className="relative inline-block text-left"
+                      >
+                        <MenuButton
+                          className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          ⋮
+                        </MenuButton>
+                        <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
+                          <div className="py-1">
+                            <MenuItem
+                              as="button"
+                              className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(transaction);
+                              }}
+                            >
+                              Edit
+                            </MenuItem>
+                          </div>
+                        </MenuItems>
+                      </Menu>
                     </td>
                   </tr>
                 ))
@@ -287,6 +369,32 @@ const TransactionsListPage = () => {
           </Stack>
         </div>
       </div>
+      {/* View Entry Modal */}
+      {entryToEdit && (
+        <ViewEntryModal
+          open={openViewModal}
+          setOpen={setOpenViewModal}
+          entry={entryToEdit}
+          onEdit={handleEditFromViewModal}
+        />
+      )}
+      {/* New Entry Modal */}
+      <NewEntryModal open={openNewEntryModal} setOpen={setOpenNewEntryModal} />
+      {/* Edit Entry Modal */}
+      {entryToEdit && (
+        <EditEntryModal
+          open={openEditEntryModal}
+          setOpen={setOpenEditEntryModal}
+          entry={entryToEdit}
+        />
+      )}
+      {/* Floating "+" Button */}
+      <button
+        className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"
+        onClick={() => setOpenNewEntryModal(true)}
+      >
+        +
+      </button>
     </div>
   );
 };

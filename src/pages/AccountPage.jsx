@@ -6,9 +6,15 @@ import { useOutletContext } from "react-router-dom";
 const AccountPage = () => {
   const { user, setUser } = useOutletContext();
   return (
-    <div className="flex flex-col w-full gap-4 lg:flex-row">
-      <AccountSettings user={user} setUser={setUser} />
-      <div className=" flex flex-col sm:flex-row lg:flex-col gap-4 ">
+    <div className="w-full bg-[#161A40] p-4 rounded-3xl ">
+      <h2 className="text-xl text-white">Account Settings</h2>
+      <p className="text-left text-base text-gray-400 mt-3">
+        Feel free to check our your account and your current account settings,
+        such as Name, Profile Picture and more.
+      </p>
+      <div className="flex flex-col gap-6 px-2 sm:px-10 lg:px-20 mt-10">
+        <AccountSettings user={user} setUser={setUser} />
+
         <PasswordChange setUser={setUser} />
         <DeleteAccount user={user} setUser={setUser} />
       </div>

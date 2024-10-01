@@ -3,7 +3,7 @@ import { CiMail } from "react-icons/ci";
 import { CiPhone } from "react-icons/ci";
 import { useAlert } from "../contexts/AlertContext"; // Import useAlert
 import GlobalAlert from "./GlobalAlert ";
-import ImageEditor from "./ImageEditor";
+import CropEasy from "./crop/CropEasy";
 
 const AccountSettings = ({ setUser, user }) => {
   const [lastName, setLastname] = useState("");
@@ -23,6 +23,17 @@ const AccountSettings = ({ setUser, user }) => {
 
   const [error, setError] = useState(null);
 
+  const [openCrop, setOpenCrop] = useState(false);
+
+  const handleFileChange = async (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPicture(reader.result); // Set the base64 string
+      setOpenCrop(true); // Open the crop modal after setting the picture
+    };
+  };
+
   const { showAlert } = useAlert();
 
   useEffect(() => {
@@ -40,7 +51,7 @@ const AccountSettings = ({ setUser, user }) => {
     }
   }, [user]);
 
-  const handlePictureSubmit = async () => {
+  const handlePictureSubmit = async (croppedFile) => {
     const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
     if (!token) {
       setError("No token found, user is not authenticated");
@@ -49,7 +60,8 @@ const AccountSettings = ({ setUser, user }) => {
     }
 
     const formData = new FormData();
-    formData.append("profilePic", picture);
+    formData.append("profilePic", croppedFile); // Use the cropped file
+
     setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/user/profile/picture", {
@@ -60,18 +72,18 @@ const AccountSettings = ({ setUser, user }) => {
         },
       });
       if (!res.ok) {
-        const errorData = await res.text(); // Define errorData to hold the error response
+        const errorData = await res.text();
         showAlert("error", "Profile picture upload failed.");
-        throw new Error(errorData.error || "Profile picture upload failed."); // Use errorData for error messages
+        throw new Error(errorData.error || "Profile picture upload failed.");
       }
       const data = await res.json();
       setUser(data.user);
-      setPicture(data.profilePic);
+      setPicture(data.profilePic); // Update the picture in the state
       showAlert("success", "Profile Picture successfully created");
     } catch (error) {
       console.error("Error creating product:", error);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -164,11 +176,26 @@ const AccountSettings = ({ setUser, user }) => {
                 <span className="loading loading-ring loading-lg"></span>
               </div>
             ) : (
-              <img
-                src={user.profilePic}
-                alt="Profile"
-                className="w-24 h-24 rounded-full  bg-[#161A40] shadow-lg"
-              />
+              <label htmlFor="file-input" className="cursor-pointer">
+                <img
+                  src={user.profilePic}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full bg-[#161A40] shadow-lg"
+                />
+                {/* Hidden file input */}
+                <input
+                  id="file-input"
+                  type="file"
+                  onChange={(e) => {
+                    if (e.target.files.length > 0) {
+                      handleFileChange(e.target.files[0]); // Call the new function
+                    } else {
+                      setPicture(null);
+                    }
+                  }}
+                  className="hidden" // Hide the input
+                />
+              </label>
             )}
 
             <div className="ml-4">
@@ -177,38 +204,17 @@ const AccountSettings = ({ setUser, user }) => {
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <input
-              type="file"
-              onChange={(e) => {
-                // Ensure we are setting the picture state with the first file selected
-                if (e.target.files.length > 0) {
-                  setPicture(e.target.files[0]);
-                } else {
-                  setPicture(null); // Clear picture if no file is selected
-                }
-              }}
-              className="text-xs"
-            />
-            <button
-              disabled={loading || !picture} // Disable if loading or no picture
-              onClick={handlePictureSubmit}
-              className={
-                loading || !picture
-                  ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed py-2 px-4 rounded-lg text-base"
-                  : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base"
-              }
-            >
-              Save
-            </button>
-            <ImageEditor
-              picture={picture}
-              setPicture={setPicture}
-              handleDetailsSubmit={handleDetailsSubmit}
-            />
-          </div>
         </div>
       </div>
+
+      {openCrop && (
+        <CropEasy
+          picture={picture}
+          setPicture={setPicture}
+          setOpenCrop={setOpenCrop}
+          handlePictureSubmit={handlePictureSubmit}
+        />
+      )}
 
       <div className="mt-8 w-full">
         <div>

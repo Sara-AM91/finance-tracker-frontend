@@ -77,6 +77,12 @@ const Sidebar = ({ user }) => {
               >
                 <span className="ml-3">Incomes</span>
               </Link>
+              <Link
+                to="/transactions-list"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+              >
+                <span className="ml-3">All Transactions</span>
+              </Link>
             </li>
             {/* Add more menu items here */}
           </ul>

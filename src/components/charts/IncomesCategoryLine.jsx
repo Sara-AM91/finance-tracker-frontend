@@ -11,7 +11,7 @@ import {
   Legend,
 } from "chart.js";
 
-// Register chart.js components
+//Register chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,16 +22,16 @@ ChartJS.register(
   Legend
 );
 
-const ExpensesCategoryLine = ({ transactions }) => {
+const IncomesCategoryLine = ({ transactions }) => {
   const chartRef = useRef(null);
 
-  // Step 1: Filter transactions to only include expenses
+  //Step 1: Filter transactions to only include expenses
   const expenseTransactions = useMemo(
-    () => transactions.filter((transaction) => transaction.type === "expense"),
+    () => transactions.filter((transaction) => transaction.type === "income"),
     [transactions]
   );
 
-  // Step 2: Aggregate the expenses by category
+  //Step 2: Aggregate the expenses by category
   const categoryData = useMemo(() => {
     const categoryMap = {};
 
@@ -46,16 +46,16 @@ const ExpensesCategoryLine = ({ transactions }) => {
     return categoryMap;
   }, [expenseTransactions]);
 
-  // Step 3: Extract labels and data for the line chart
+  //Step 3: Extract labels and data for the line chart
   const xLabels = Object.keys(categoryData);
   const yData = xLabels.map((category) =>
     categoryData[category].amount.toFixed(2)
   );
 
-  // Define the color scheme for the line (optional)
+  //Define the color scheme for the line (optional)
   const lineColor = "#C52222";
 
-  // Create the chart data
+  //Create the chart data
   const chartData = {
     labels: xLabels,
     datasets: [
@@ -108,4 +108,4 @@ const ExpensesCategoryLine = ({ transactions }) => {
   );
 };
 
-export default ExpensesCategoryLine;
+export default IncomesCategoryLine;

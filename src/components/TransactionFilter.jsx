@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const TransactionFilter = ({ filters = {}, setFilters }) => {
+const TransactionFilter = ({ filters = {}, setFilters, type }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ const TransactionFilter = ({ filters = {}, setFilters }) => {
           return;
         }
         const response = await fetch(
-          "http://localhost:5000/categories/filter?categoryType=expense",
+          `http://localhost:5000/categories/global?categoryType=${type}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

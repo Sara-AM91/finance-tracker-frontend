@@ -12,6 +12,9 @@ import {
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
+// Import interpolateGreens from d3-scale-chromatic
+import { interpolateGreens } from "d3-scale-chromatic";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,11 +27,14 @@ ChartJS.register(
 
 const IncomesCategoryBar = ({ transactions, onBarClick }) => {
   const chartRef = useRef(null);
+
+  // Filter transactions to include only incomes
   const incomeTransactions = useMemo(
     () => transactions.filter((transaction) => transaction.type === "income"),
     [transactions]
   );
 
+  // Aggregate the incomes by category
   const categoryData = useMemo(() => {
     const categoryMap = {};
 
@@ -43,28 +49,19 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     return categoryMap;
   }, [incomeTransactions]);
 
+  // Extract labels and data for the bar chart
   const xLabels = Object.keys(categoryData);
   const yData = xLabels.map((category) =>
-    categoryData[category].amount.toFixed(2)
+    parseFloat(categoryData[category].amount.toFixed(2))
   );
 
-  //Define colors for each category (optional)
-  const categoryColors = {
-    // Shopping: "#FACC15",
-    // Healthcare: "#22C55E",
-    // Auto: "#22C55E",
-    // Entertainment: "#FF208B",
-    // Rent: "#175481",
-    // Bills: "#F97316",
-    // Transportation: "#7F3BCB",
-    // "Utilities & Bills": "#F36713",
-  };
+  // Generate colors using interpolateGreens
+  const barColors = yData.map((_, index) => {
+    const t = index / (yData.length - 1) || 0; // Normalize index to [0,1]
+    return interpolateGreens(t);
+  });
 
-  const barColors = xLabels.map(
-    (category) => categoryColors[category] || "#EB2139"
-  );
-
-  //Step 5: Define chart data and options
+  // Define chart data
   const chartData = {
     labels: xLabels,
     datasets: [
@@ -78,18 +75,7 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     ],
   };
 
-  const createGradient = (ctx, chartArea, color) => {
-    const gradient = ctx.createLinearGradient(
-      0,
-      chartArea.top,
-      0,
-      chartArea.bottom
-    );
-    gradient.addColorStop(0, color);
-    gradient.addColorStop(1, `${color}00`);
-    return gradient;
-  };
-
+  // Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -101,8 +87,8 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
         formatter: (value) => `${value}$`,
         color: "#fff",
         font: { weight: "bold" },
-        clip: true, //Clip labels that overflow
-        display: false, //Only show labels above 100
+        clip: true,
+        display: false, // Set to true if you want to display data labels
       },
     },
     scales: {
@@ -114,14 +100,16 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
       x: {
         ticks: {
           color: "#B7B7B7",
-          autoSkip: false, //Do not skip labels automatically
-          maxRotation: 45, //Rotate labels to prevent overlap
+          autoSkip: false,
+          maxRotation: 45,
           minRotation: 45,
         },
         grid: { color: "#343756" },
       },
     },
   };
+
+  // Fix the onClick handler
   const onClick = (event) => {
     const chart = chartRef.current;
     if (!chart) return;
@@ -136,10 +124,11 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     if (elements.length) {
       const datasetIndex = elements[0].datasetIndex;
       const index = elements[0].index;
-      const clickedCategory = categories[index].name;
+      const clickedCategory = xLabels[index];
       onBarClick(clickedCategory);
     }
   };
+
   return (
     <div style={{ width: "100%", height: "120%", backgroundColor: "#161A40" }}>
       <Bar

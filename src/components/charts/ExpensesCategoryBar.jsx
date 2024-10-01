@@ -1,5 +1,5 @@
 // components/charts/ExpensesCategoryBar.js
-import React, { useRef, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -12,6 +12,8 @@ import {
 } from "chart.js";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
+//Import interpolateReds from d3-scale-chromatic
+import { interpolateReds } from "d3-scale-chromatic";
 
 ChartJS.register(
   CategoryScale,
@@ -49,23 +51,13 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     categoryData[category].amount.toFixed(2)
   );
 
-  // Define colors for each category (optional)
-  const categoryColors = {
-    // Shopping: "#FACC15",
-    // Healthcare: "#22C55E",
-    // Auto: "#22C55E",
-    // Entertainment: "#FF208B",
-    // Rent: "#175481",
-    // Bills: "#F97316",
-    // Transportation: "#7F3BCB",
-    // "Utilities & Bills": "#F36713",
-  };
+  //Generate colors using interpolateReds
+  const barColors = yData.map((_, index) => {
+    const t = index / (yData.length - 1) || 0; //Normalize index to [0,1]
+    return interpolateReds(t);
+  });
 
-  const barColors = xLabels.map(
-    (category) => categoryColors[category] || "#EB2139"
-  );
-
-  // Step 5: Define chart data and options
+  //Define chart data and options
   const chartData = {
     labels: xLabels,
     datasets: [
@@ -79,17 +71,17 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     ],
   };
 
-  const createGradient = (ctx, chartArea, color) => {
-    const gradient = ctx.createLinearGradient(
-      0,
-      chartArea.top,
-      0,
-      chartArea.bottom
-    );
-    gradient.addColorStop(0, color);
-    gradient.addColorStop(1, `${color}00`);
-    return gradient;
-  };
+  // const createGradient = (ctx, chartArea, color) => {
+  //   const gradient = ctx.createLinearGradient(
+  //     0,
+  //     chartArea.top,
+  //     0,
+  //     chartArea.bottom
+  //   );
+  //   gradient.addColorStop(0, color);
+  //   gradient.addColorStop(1, `${color}00`);
+  //   return gradient;
+  // };
 
   const options = {
     responsive: true,

@@ -166,11 +166,27 @@ const AccountSettings = ({ setUser, user }) => {
                 <span className="loading loading-ring loading-lg"></span>
               </div>
             ) : (
-              <img
-                src={user.profilePic}
-                alt="Profile"
-                className="w-24 h-24 rounded-full  bg-[#161A40] shadow-lg"
-              />
+              <label htmlFor="file-input" className="cursor-pointer">
+                <img
+                  src={user.profilePic}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full bg-[#161A40] shadow-lg"
+                />
+                {/* Hidden file input */}
+                <input
+                  id="file-input"
+                  type="file"
+                  onChange={(e) => {
+                    // Ensure we are setting the picture state with the first file selected
+                    if (e.target.files.length > 0) {
+                      setPicture(e.target.files[0]);
+                    } else {
+                      setPicture(null); // Clear picture if no file is selected
+                    }
+                  }}
+                  className="hidden" // Hide the input
+                />
+              </label>
             )}
 
             <div className="ml-4">
@@ -179,19 +195,9 @@ const AccountSettings = ({ setUser, user }) => {
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <input
-              type="file"
-              onChange={(e) => {
-                // Ensure we are setting the picture state with the first file selected
-                if (e.target.files.length > 0) {
-                  setPicture(e.target.files[0]);
-                } else {
-                  setPicture(null); // Clear picture if no file is selected
-                }
-              }}
-              className="text-xs"
-            />
+
+          {/* Save Button aligned to the right */}
+          <div className="flex flex-col gap-3 mt-4 lg:mt-0 lg:ml-auto">
             <button
               disabled={loading || !picture} // Disable if loading or no picture
               onClick={handlePictureSubmit}
@@ -206,6 +212,7 @@ const AccountSettings = ({ setUser, user }) => {
           </div>
         </div>
       </div>
+
       {openCrop && (
         <CropEasy
           picture={picture}

@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import {
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ArrowsUpDownIcon,
+  ArrowDownCircleIcon,
+  ArrowUpCircleIcon,
+} from "@heroicons/react/24/solid";
 import TransactionFilter from "../components/TransactionFilter";
 import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
@@ -28,7 +35,6 @@ const TransactionsListPage = () => {
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
-    color: "red",
   });
   const { transactions = [], loading, error } = useTransactionContext();
   console.log(transactions);
@@ -190,8 +196,22 @@ const TransactionsListPage = () => {
   }
 
   const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return "⇅";
-    return sortConfig.direction === "asc" ? "▲" : "▼";
+    const className =
+      "w-5 h-5 inline-block ml-1 align-middle transition-colors duration-200";
+
+    const isActive = sortConfig.key === key;
+
+    return isActive ? (
+      sortConfig.direction === "asc" ? (
+        <ChevronUpIcon className={`${className} text-red-500`} />
+      ) : (
+        <ChevronDownIcon className={`${className} text-red-500`} />
+      )
+    ) : (
+      <ArrowsUpDownIcon
+        className={`${className} text-gray-400 group-hover:text-gray-200`}
+      />
+    );
   };
 
   return (
@@ -206,153 +226,158 @@ const TransactionsListPage = () => {
         />
 
         {/* Transactions Table */}
-        <div className="rounded-2xl mt-4 h-[75vh] overflow-y-auto">
-          <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl overflow-hidden">
-            <thead>
-              <tr className="text-left bg-[#3A3A57]">
-                <th
-                  className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("title")}
-                >
-                  Title{" "}
-                  <span className={`${getIconColor("title")}`}>
-                    {getSortIcon("title")}
-                  </span>
-                </th>
-                <th
-                  className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("type")}
-                >
-                  Type{" "}
-                  <span className={`${getIconColor("type")}`}>
-                    {getSortIcon("type")}
-                  </span>
-                </th>
-                <th
-                  className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("category")}
-                >
-                  Category{" "}
-                  <span className={`${getIconColor("category")}`}>
-                    {getSortIcon("category")}
-                  </span>
-                </th>
-                <th
-                  className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("amount")}
-                >
-                  Amount{" "}
-                  <span className={`${getIconColor("amount")}`}>
-                    {getSortIcon("amount")}
-                  </span>
-                </th>
-                <th
-                  className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("date")}
-                >
-                  Date{" "}
-                  <span className={`${getIconColor("date")}`}>
-                    {getSortIcon("date")}
-                  </span>
-                </th>
-                <th
-                  className="p-4 font-bold bg-[#293458]"
-                  onClick={() => handleSort("createdAt")}
-                >
-                  Created Date{" "}
-                  <span className={`${getIconColor("createdAt")}`}>
-                    {getSortIcon("createdAt")}
-                  </span>
-                </th>
-                <th className="p-4 font-bold text-right bg-[#293458]">
-                  <button
-                    onClick={() =>
-                      setFilters({
-                        type: "",
-                        title: "",
-                        category: "",
-                        amount: "",
-                        date: "",
-                        createdAt: "",
-                      })
-                    }
-                    aria-label="Clear filters"
-                    title="Clear filters"
-                    className="inline-flex items-center cursor-pointer"
+        <div className="rounded-2xl mt-4 h-[75vh] relative">
+          <div className="h-full overflow-y-auto">
+            <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl">
+              <thead>
+                <tr className="text-left bg-[#3A3A57]">
+                  <th
+                    className="p-4 font-bold sticky top-0 z-10 bg-[#293458] rounded-tl-2xl w-1/6"
+                    onClick={() => handleSort("title")}
                   >
-                    <TrashIconWithCross
-                      filtersActive={Object.values(filters).some(
-                        (val) => val !== ""
-                      )}
-                    />
-                  </button>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentTransactions.length > 0 ? (
-                currentTransactions.map((transaction, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
-                    onClick={() => handleRowClick(transaction)}
+                    Title{" "}
+                    <span className={`${getIconColor("title")}`}>
+                      {getSortIcon("title")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 z-10 bg-[#293458] w-1/6"
+                    onClick={() => handleSort("type")}
                   >
-                    <td className="p-4">{transaction.title}</td>
-                    <td className="p-4">{transaction.type}</td>
-                    <td className="p-4">
-                      {transaction.category?.title || "Unknown"}
-                    </td>
-                    <td className="p-4">
-                      {parseFloat(transaction.amount).toFixed(2)}$
-                    </td>
-                    <td className="p-4">
-                      {formatDateForInput(transaction.date)}
-                    </td>
-                    <td className="p-4">
-                      {transaction.createdAt
-                        ? formatDateForInput(transaction.createdAt)
-                        : "N/A"}
-                    </td>
-                    {/* Action Button inside each row */}
-                    <td className="p-4 text-right right-4 top-4">
-                      {/* Action Menu */}
-                      <Menu
-                        as="div"
-                        className="relative inline-block text-left"
-                      >
-                        <MenuButton
-                          className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
-                          onClick={(e) => e.stopPropagation()}
+                    Type{" "}
+                    <span className={`${getIconColor("type")}`}>
+                      {getSortIcon("type")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 z-10 bg-[#293458] w-1/6"
+                    onClick={() => handleSort("category")}
+                  >
+                    Category{" "}
+                    <span className={`${getIconColor("category")}`}>
+                      {getSortIcon("category")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 z-10 bg-[#293458] w-1/6"
+                    onClick={() => handleSort("amount")}
+                  >
+                    Amount{" "}
+                    <span className={`${getIconColor("amount")}`}>
+                      {getSortIcon("amount")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 z-10 bg-[#293458] w-1/6"
+                    onClick={() => handleSort("date")}
+                  >
+                    Date{" "}
+                    <span className={`${getIconColor("date")}`}>
+                      {getSortIcon("date")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 z-10 bg-[#293458] w-1/6"
+                    onClick={() => handleSort("createdAt")}
+                  >
+                    Created Date{" "}
+                    <span className={`${getIconColor("createdAt")}`}>
+                      {getSortIcon("createdAt")}
+                    </span>
+                  </th>
+                  <th className="p-4 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
+                    {" "}
+                    <button
+                      onClick={() =>
+                        setFilters({
+                          type: "",
+                          title: "",
+                          category: "",
+                          amount: "",
+                          date: "",
+                          createdAt: "",
+                        })
+                      }
+                      aria-label="Clear filters"
+                      title="Clear filters"
+                      className="inline-flex items-center cursor-pointer"
+                    >
+                      <TrashIconWithCross
+                        filtersActive={Object.values(filters).some(
+                          (val) => val !== ""
+                        )}
+                      />
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentTransactions.length > 0 ? (
+                  currentTransactions.map((transaction, index) => (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
+                      onClick={() => handleRowClick(transaction)}
+                    >
+                      <td className="p-4 w-1/6 truncate">
+                        {transaction.title}
+                      </td>
+                      <td className="p-4 w-1/6 truncate">{transaction.type}</td>
+                      <td className="p-4 w-1/6 truncate">
+                        {transaction.category?.title || "Unknown"}
+                      </td>
+                      <td className="p-4 w-1/6 truncate">
+                        {parseFloat(transaction.amount).toFixed(2)}$
+                      </td>
+                      <td className="p-4 w-1/6 truncate">
+                        {formatDateForInput(transaction.date)}
+                      </td>
+                      <td className="p-4 w-1/6 truncate">
+                        {transaction.createdAt
+                          ? formatDateForInput(transaction.createdAt)
+                          : "N/A"}
+                      </td>
+                      {/* Action Button inside each row */}
+                      <td className="p-4 text-right right-4 top-4">
+                        {/* Action Menu */}
+                        <Menu
+                          as="div"
+                          className="relative inline-block text-left"
                         >
-                          ⋮
-                        </MenuButton>
-                        <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
-                          <div className="py-1">
-                            <MenuItem
-                              as="button"
-                              className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEdit(transaction);
-                              }}
-                            >
-                              Edit
-                            </MenuItem>
-                          </div>
-                        </MenuItems>
-                      </Menu>
+                          <MenuButton
+                            className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            ⋮
+                          </MenuButton>
+                          <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
+                            <div className="py-1">
+                              <MenuItem
+                                as="button"
+                                className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEdit(transaction);
+                                }}
+                              >
+                                Edit
+                              </MenuItem>
+                            </div>
+                          </MenuItems>
+                        </Menu>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="p-4 text-center" colSpan="7">
+                      No transactions found.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td className="p-4 text-center" colSpan="7">
-                    No transactions found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Pagination Component */}

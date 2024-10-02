@@ -102,7 +102,9 @@ const PasswordChange = ({ setUser }) => {
       const data = await res.json();
 
       showAlert("success", "Password has been changed");
-      setUser(data.user);
+
+      localStorage.removeItem("token");
+      setUser(null);
       navigate("/login");
     } catch (error) {
       console.error("Error updating user:", error);

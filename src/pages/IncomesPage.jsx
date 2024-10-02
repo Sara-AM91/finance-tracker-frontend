@@ -1,6 +1,14 @@
 import { useState, useMemo, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import {
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ArrowsUpDownIcon,
+  ArrowDownCircleIcon,
+  ArrowUpCircleIcon,
+} from "@heroicons/react/24/solid";
+
 import TransactionFilter from "../components/TransactionFilter";
 import IncomesCategoryBar from "../components/charts/IncomesCategoryBar";
 import IncomesCategoryLine from "../components/charts/IncomesCategoryLine";
@@ -31,6 +39,11 @@ const IncomesPage = () => {
     createdDate: "",
   });
 
+  const [sortConfig, setSortConfig] = useState({
+    key: "date",
+    direction: "desc",
+  });
+
   //Fetch transactions from context
   const { transactions = [], loading, error } = useTransactionContext();
 
@@ -44,7 +57,7 @@ const IncomesPage = () => {
 
   //Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 6; //Number of transactions to display per page
+  const transactionsPerPage = 10; //Number of transactions to display per page
 
   //Reset currentPage to 1 whenever filters change
   useEffect(() => {
@@ -65,7 +78,7 @@ const IncomesPage = () => {
   }));
 
   //Calculate total incomes using useMemo for performance optimization
-  const totalExpenses = useMemo(
+  const totalIncomes = useMemo(
     () =>
       incomeTransactions
         .reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
@@ -77,11 +90,11 @@ const IncomesPage = () => {
   const totalTransactions = incomeTransactions.length;
 
   //Calculate average income
-  const averageExpense = useMemo(() => {
+  const averageIncome = useMemo(() => {
     return incomeTransactions.length > 0
-      ? (totalExpenses / incomeTransactions.length).toFixed(2)
+      ? (totalIncomes / incomeTransactions.length).toFixed(2)
       : 0;
-  }, [totalExpenses, incomeTransactions]);
+  }, [totalIncomes, incomeTransactions]);
 
   //Determine top category by total amount spent
   const topCategory = useMemo(() => {
@@ -188,14 +201,74 @@ const IncomesPage = () => {
     );
   });
 
-  //Apply pagination to filtered incomes
-  const currentTransactions = filteredIncomes.slice(
+  //Calculate total number of pages based on filtered incomes
+  const totalPages = Math.ceil(filteredIncomes.length / transactionsPerPage);
+
+  const sortedIncomes = [...filteredIncomes].sort((a, b) => {
+    const { key, direction } = sortConfig;
+    const order = direction === "asc" ? 1 : -1;
+
+    //Handle sorting for the category column specifically
+    let valueA, valueB;
+
+    if (key === "category") {
+      valueA = a.category?.title || ""; //Safely access category title
+      valueB = b.category?.title || "";
+    } else {
+      valueA = a[key] ?? "";
+      valueB = b[key] ?? "";
+    }
+
+    //Apply sorting based on data type
+    if (key === "amount") {
+      return order * (parseFloat(valueA) - parseFloat(valueB));
+    } else if (key === "date" || key === "createdAt") {
+      return order * (new Date(valueA) - new Date(valueB));
+    } else {
+      return valueA.toString().localeCompare(valueB.toString()) * order;
+    }
+  });
+
+  //Apply pagination to filtered expenses
+  const currentTransactions = sortedIncomes.slice(
     indexOfFirstTransaction,
     indexOfLastTransaction
   );
 
-  //Calculate total number of pages based on filtered incomes
-  const totalPages = Math.ceil(filteredIncomes.length / transactionsPerPage);
+  const handleSort = (key) => {
+    setSortConfig((prevSortConfig) => {
+      // If the same key is clicked, toggle direction
+      const newDirection =
+        prevSortConfig.key === key && prevSortConfig.direction === "asc"
+          ? "desc"
+          : "asc";
+      return { key, direction: newDirection };
+    });
+  };
+
+  // Function to determine the color of the sort icon
+  const getIconColor = (key) => {
+    return sortConfig.key === key ? "text-red-500" : "text-gray-400"; // Red if active, gray otherwise
+  };
+
+  const getSortIcon = (key) => {
+    const className =
+      "w-5 h-5 inline-block ml-1 align-middle transition-colors duration-200";
+
+    const isActive = sortConfig.key === key;
+
+    return isActive ? (
+      sortConfig.direction === "asc" ? (
+        <ChevronUpIcon className={`${className} text-red-500`} />
+      ) : (
+        <ChevronDownIcon className={`${className} text-red-500`} />
+      )
+    ) : (
+      <ArrowsUpDownIcon
+        className={`${className} text-gray-400 group-hover:text-gray-200`}
+      />
+    );
+  };
 
   //Ensure currentPage is within valid range (especially after filtering)
   useEffect(() => {
@@ -256,7 +329,7 @@ const IncomesPage = () => {
               {/* Total Incomes Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Total Incomes</h3>
-                <p className="text-3xl font-bold mt-2">${totalExpenses}</p>
+                <p className="text-3xl font-bold mt-2">${totalIncomes}</p>
               </div>
               {/* Total Transactions Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
@@ -266,7 +339,7 @@ const IncomesPage = () => {
               {/* Average Ixpense Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
                 <h3 className="text-lg font-semibold">Average Income</h3>
-                <p className="text-3xl font-bold mt-2">${averageExpense}</p>
+                <p className="text-3xl font-bold mt-2">${averageIncome}</p>
               </div>
               {/* Top Category Card */}
               <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
@@ -308,102 +381,144 @@ const IncomesPage = () => {
               type="income"
             />
             {/* Transactions Table */}
-            <div className="rounded-2xl mt-4">
-              <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl overflow-hidden">
-                <thead>
-                  <tr className="text-left bg-[#3A3A57]">
-                    <th className="p-4 font-bold bg-[#293458]">Title</th>
-                    <th className="p-4 font-bold bg-[#293458]">Category</th>
-                    <th className="p-4 font-bold bg-[#293458]">Amount</th>
-                    <th className="p-4 font-bold bg-[#293458]">Date</th>
-                    <th className="p-4 font-bold bg-[#293458]">Created Date</th>
-                    <th className="p-4 font-bold text-right bg-[#293458]">
-                      <button
-                        onClick={clearFilters}
-                        aria-label="Clear filters"
-                        title="Clear filters"
-                        className="inline-flex items-center cursor-pointer"
+            <div className="rounded-2xl mt-4 h-[55vh] relative">
+              <div className="h-full overflow-y-auto">
+                <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl">
+                  <thead className="bg-[#293458] z-10">
+                    <tr className="text-left bg-[#3A3A57]">
+                      <th
+                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 rounded-tl-2xl w-1/6"
+                        onClick={() => handleSort("title")}
                       >
-                        <TrashIconWithCross
-                          filtersActive={areFiltersActive()}
-                        />
-                      </button>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentTransactions.length > 0 ? (
-                    currentTransactions.map((income, index) => (
-                      <tr
-                        key={index}
-                        className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
-                        onClick={() => handleRowClick(income)}
+                        Title{" "}
+                        <span className={`${getIconColor("title")}`}>
+                          {getSortIcon("title")}
+                        </span>
+                      </th>
+                      <th
+                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                        onClick={() => handleSort("category")}
                       >
-                        <td className="p-4">{income.title}</td>
-                        <td className="p-4">
-                          {income.category?.title || "Unknown"}
-                        </td>
-                        <td className="p-4">
-                          {parseFloat(income.amount).toFixed(2)}$
-                        </td>
-                        <td className="p-4">
-                          {formatDateForInput(income.date)}
-                        </td>
-                        <td className="p-4">
-                          {income.createdAt
-                            ? formatDateForInput(income.createdAt)
-                            : "N/A"}
-                        </td>
-                        {/* Action Button inside each row */}
-                        <td className="p-4 text-right right-4 top-4">
-                          {/* Action Menu */}
-                          <Menu
-                            as="div"
-                            className="relative inline-block text-left"
-                          >
-                            <MenuButton
-                              className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
-                              onClick={(e) => e.stopPropagation()}
+                        Category{" "}
+                        <span className={`${getIconColor("category")}`}>
+                          {getSortIcon("category")}
+                        </span>
+                      </th>
+                      <th
+                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                        onClick={() => handleSort("amount")}
+                      >
+                        Amount{" "}
+                        <span className={`${getIconColor("amount")}`}>
+                          {getSortIcon("amount")}
+                        </span>
+                      </th>
+                      <th
+                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                        onClick={() => handleSort("date")}
+                      >
+                        Date{" "}
+                        <span className={`${getIconColor("date")}`}>
+                          {getSortIcon("date")}
+                        </span>
+                      </th>
+                      <th
+                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                        onClick={() => handleSort("createdAt")}
+                      >
+                        Created Date{" "}
+                        <span className={`${getIconColor("createdAt")}`}>
+                          {getSortIcon("createdAt")}
+                        </span>
+                      </th>
+                      <th className="p-4 pl-80 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
+                        <button
+                          onClick={clearFilters}
+                          aria-label="Clear filters"
+                          title="Clear filters"
+                          className="inline-flex items-center cursor-pointer"
+                        >
+                          <TrashIconWithCross
+                            filtersActive={areFiltersActive()}
+                          />
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentTransactions.length > 0 ? (
+                      currentTransactions.map((income, index) => (
+                        <tr
+                          key={index}
+                          className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
+                          onClick={() => handleRowClick(income)}
+                        >
+                          <td className="p-4 w-1/6 truncate">{income.title}</td>
+                          <td className="p-4 w-1/6 truncate">
+                            {income.category?.title || "Unknown"}
+                          </td>
+                          <td className="p-4 w-1/6 truncate">
+                            {parseFloat(income.amount).toFixed(2)}$
+                          </td>
+                          <td className="p-4 w-1/6 truncate">
+                            {formatDateForInput(income.date)}
+                          </td>
+                          <td className="p-4 w-1/6 truncate">
+                            {income.createdAt
+                              ? formatDateForInput(income.createdAt)
+                              : "N/A"}
+                          </td>
+                          {/* Action Button inside each row */}
+                          <td className="p-4 text-right right-4 top-4">
+                            {/* Action Menu */}
+                            <Menu
+                              as="div"
+                              className="relative inline-block text-left"
                             >
-                              ⋮
-                            </MenuButton>
-                            <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
-                              <div className="py-1">
-                                <MenuItem
-                                  as="button"
-                                  className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEdit(income);
-                                  }}
-                                >
-                                  Edit
-                                </MenuItem>
-                                <MenuItem
-                                  as="button"
-                                  className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-700 hover:bg-red-200 data-[active=true]:bg-red-200"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDelete(income._id);
-                                  }}
-                                >
-                                  Delete
-                                </MenuItem>
-                              </div>
-                            </MenuItems>
-                          </Menu>
+                              <MenuButton
+                                className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                ⋮
+                              </MenuButton>
+                              <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
+                                <div className="py-1">
+                                  <MenuItem
+                                    as="button"
+                                    className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEdit(income);
+                                    }}
+                                  >
+                                    Edit
+                                  </MenuItem>
+                                  <MenuItem
+                                    as="button"
+                                    className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-700 hover:bg-red-200 data-[active=true]:bg-red-200"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(income._id);
+                                    }}
+                                  >
+                                    Delete
+                                  </MenuItem>
+                                </div>
+                              </MenuItems>
+                            </Menu>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td className="p-4 text-center" colSpan="6">
+                          No transactions found.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td className="p-4 text-center" colSpan="6">
-                        No transactions found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
             {/* Pagination Component */}
             <div className="flex justify-center mt-4">

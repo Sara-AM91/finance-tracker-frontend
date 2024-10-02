@@ -3,12 +3,15 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CiLock } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../contexts/AlertContext"; // Import useAlert
+import GlobalAlert from "./GlobalAlert ";
 
 const PasswordChange = ({ setUser }) => {
   const [loading, setLoading] = useState(false);
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(true);
   const [newPasswordVisible, setNewPasswordVisible] = useState(true);
   const [repeatPasswordVisible, setRepeatPasswordVisible] = useState(true);
+
   const toggleCurrentPasswordVisibility = () => {
     setCurrentPasswordVisible(!currentPasswordVisible);
   };
@@ -29,8 +32,40 @@ const PasswordChange = ({ setUser }) => {
   const [feedback, setFeedback] = useState([]);
 
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const passwordSubmit = async () => {
+    setLoading(true);
+
+    setCurrentPasswordError("");
+    setNewPasswordError(false);
+    setConfirmPasswordError("");
+
+    if (newPassword === currentPassword) {
+      setNewPasswordError(true);
+      showAlert(
+        "error",
+        "New password cannot be the same as the current password."
+      );
+      setLoading(false);
+      return;
+    }
+
+    // Check if the new password is empty
+    if (!newPassword || newPassword.trim() === "") {
+      setNewPasswordError(true);
+      showAlert("error", "New password cannot be empty.");
+      setLoading(false);
+      return;
+    }
+
+    // Check if the confirm password matches the new password
+    if (newPassword !== confirmPassword) {
+      setConfirmPasswordError("Passwords don't match");
+      setLoading(false);
+      return;
+    }
+
     const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
     if (!token) {
       setError("No token found, user is not authenticated");
@@ -59,13 +94,17 @@ const PasswordChange = ({ setUser }) => {
           } else {
             setCurrentPasswordError("");
           }
+          showAlert("error", "There was an issue with changing your password");
         }
         return;
       }
 
       const data = await res.json();
 
-      setUser(data.user);
+      showAlert("success", "Password has been changed");
+
+      localStorage.removeItem("token");
+      setUser(null);
       navigate("/login");
     } catch (error) {
       console.error("Error updating user:", error);
@@ -223,7 +262,7 @@ const PasswordChange = ({ setUser }) => {
               {/* Eye icon on the right */}
               <div className="absolute inset-y-0 right-3 flex items-center">
                 <FontAwesomeIcon
-                  icon={repeatPasswordVisible ? faEyeSlash : faEye}
+                  icon={repeatPasswordVisible ? faEye : faEyeSlash}
                   onClick={toggleRepeatPasswordVisibility}
                   className="cursor-pointer text-gray-400 w-8"
                 />

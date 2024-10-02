@@ -69,14 +69,14 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
   const expenseMax = Math.max(...expenseData);
   const maxExpenseMonthIndex = expenseData.indexOf(expenseMax);
   const maxExpense = {
-    amount: expenseMax,
+    amount: expenseMax.toFixed(2),
     month: monthNames[maxExpenseMonthIndex],
   };
 
   const incomeMax = Math.max(...incomeData);
   const maxIncomeMonthIndex = incomeData.indexOf(incomeMax);
   const maxIncome = {
-    amount: incomeMax,
+    amount: incomeMax.toFixed(2),
     month: monthNames[maxIncomeMonthIndex],
   };
 

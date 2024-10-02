@@ -194,7 +194,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col grow">
-            <h1 className="text-xl">Recent Transactions</h1>
+            <h1 className="text-xl mb-2">Recent Transactions</h1>
             <div className="flex flex-col justify-center grow">
               <TransactionsList transactions={transactions} />
             </div>

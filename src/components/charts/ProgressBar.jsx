@@ -35,7 +35,9 @@ const ProgressBar = ({ balance }) => {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col justify-center h-full">
+      {" "}
+      {/* Ensure the container is full height */}
       <div className="flex gap-10 items-center justify-between px-2">
         <div className="flex flex-row items-center gap-4">
           <h2 className="text-xl text-left">Balance Goal</h2>
@@ -70,7 +72,7 @@ const ProgressBar = ({ balance }) => {
         </div>
       </div>
       {open && <GoalModal setOpen={setOpen} setGoal={setGoal} goal={goal} />}
-    </>
+    </div>
   );
 };
 

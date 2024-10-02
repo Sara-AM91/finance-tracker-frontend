@@ -1,18 +1,17 @@
-const ListItem = ({ action, lastFive }) => {
-  const first = lastFive.indexOf(action);
+const ListItem = ({ action, indexInGroup, groupSize }) => {
   const dateCreated = action.createdAt.split("T")[0];
 
   return (
     <div
       className={`px-3 py-5 flex items-center justify-between ${
-        first !== 0 ? "border-t border-solid border-gray-700" : ""
+        indexInGroup !== 0 ? "border-t border-solid border-gray-700" : ""
       } cursor-pointer hover:bg-[#293458]`}
     >
       <div className="flex items-center">
         <img
           className="rounded-full h-10 w-10"
           src="https://loremflickr.com/g/600/600/girl"
-          //src={action.category.icon}
+          // src={action.category.icon}
         />
         <div className="ml-2 flex flex-col">
           <div className="leading-snug text-sm text-white font-bold uppercase pb-2">

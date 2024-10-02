@@ -1,5 +1,4 @@
 import ListItem from "./ListItem";
-
 const TransactionsList = ({ transactions }) => {
   const sorted = [...transactions].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
@@ -26,9 +25,14 @@ const TransactionsList = ({ transactions }) => {
     <div className="w-full mx-auto x-4 pt-4 overflow-auto">
       {Object.entries(groupedTransactions).map(([date, actions]) => (
         <div key={date} className="mb-4">
-          <h3 className="text-lg font-bold">{date}</h3>
-          {actions.map((action) => (
-            <ListItem key={action._id} action={action} lastFive={lastFive} />
+          <h3 className="text-lg font-semibold">{date}</h3>
+          {actions.map((action, index) => (
+            <ListItem
+              key={action._id}
+              action={action}
+              indexInGroup={index} // Pass the index of the action in its group
+              groupSize={actions.length} // Pass the total number of actions in this group
+            />
           ))}
         </div>
       ))}

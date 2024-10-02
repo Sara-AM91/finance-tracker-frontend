@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import { useTransactionContext } from "../contexts/TransactionContext"; // Import context
+import { useAlert } from "../contexts/AlertContext"; // Import the useAlert hook
 
 const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
   const { user } = useOutletContext();
@@ -17,6 +18,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
     invoice: "",
   });
 
+  const { showAlert } = useAlert();
   const { refreshTransactions } = useTransactionContext();
 
   const [types, setTypes] = useState([]);
@@ -116,8 +118,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
 
     const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
     if (!token) {
-      setError("No token found, user is not authenticated");
-      setLoading(false);
+      showAlert("error", "No token found, user is not authenticated");
       return;
     }
 
@@ -141,17 +142,22 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
       });
 
       if (!res.ok) {
+        showAlert(
+          "error",
+          `Failed to create transaction. Status: ${res.status}`
+        );
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      //console.log(data);
-
       addTransaction(data.transaction);
+
+      refreshTransactions();
+      setOpen(false);
+      showAlert("success", "Transaction successfully created!"); // Show success alert
     } catch (error) {
       console.error("Error creating product:", error);
+      showAlert("error", "Error creating transaction. Please try again.");
     }
-    refreshTransactions();
-    setOpen(false);
   };
 
   return (

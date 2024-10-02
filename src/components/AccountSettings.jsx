@@ -15,7 +15,7 @@ const AccountSettings = ({ setUser, user }) => {
   const [city, setCity] = useState("");
   const [zipCode, setZipCode] = useState(null);
   const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(null);
 
   const [emailError, setEmailError] = useState(null);
   const [existingEmailError, setExistingEmailError] = useState("");
@@ -133,6 +133,7 @@ const AccountSettings = ({ setUser, user }) => {
 
       setUser(data.user);
       setPicture(null);
+      showAlert("success", "Profile details successfully updated");
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -199,7 +200,7 @@ const AccountSettings = ({ setUser, user }) => {
             )}
 
             <div className="ml-4">
-              <p className="text-2xl font-semibold">
+              <p className="text-2xl font-semibold text-white">
                 {user.firstName} {user.lastName}
               </p>
             </div>
@@ -221,7 +222,7 @@ const AccountSettings = ({ setUser, user }) => {
           <h2 className="text-xl text-white mb-4">Full Name</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs">First name</label>
+              <label className="block text-xs text-gray-400">First name</label>
               <input
                 type="text"
                 value={firstName || ""}
@@ -232,7 +233,7 @@ const AccountSettings = ({ setUser, user }) => {
               />
             </div>
             <div>
-              <label className="block text-xs">Last name</label>
+              <label className="block text-xs text-gray-400">Last name</label>
               <input
                 type="text"
                 placeholder={user.lastName}
@@ -248,12 +249,12 @@ const AccountSettings = ({ setUser, user }) => {
         <div className="h-[2px] w-full bg-[#1a243d] mt-10"></div>
         <div className="mt-10">
           <h2 className="text-xl text-white">Contact Email</h2>
-          <p className="text-sm mb-4">
+          <p className="text-sm mb-4 text-gray-400">
             Your email address is used to login to this plattform
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
             <div className="relative">
-              <label className="block text-xs">Email</label>
+              <label className="block text-xs text-gray-400">Email</label>
               <div className="relative">
                 {/* Mail icon centered on the left */}
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -287,10 +288,12 @@ const AccountSettings = ({ setUser, user }) => {
         <div className="h-[2px] w-full bg-[#1a243d] mt-10"></div>
         <div className="mt-10">
           <h2 className="text-xl text-white">Address</h2>
-          <p className="text-sm mb-4">Feel free to add your address</p>
+          <p className="text-sm mb-4 text-gray-400">
+            Feel free to add your address
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
             <div>
-              <label className="block text-xs">Address</label>
+              <label className="block text-xs text-gray-400">Address</label>
               <input
                 type="text"
                 value={address || ""}
@@ -301,7 +304,7 @@ const AccountSettings = ({ setUser, user }) => {
               />
             </div>
             <div>
-              <label className="block text-xs">City</label>
+              <label className="block text-xs text-gray-400">City</label>
               <input
                 type="text"
                 value={city || ""}
@@ -312,7 +315,7 @@ const AccountSettings = ({ setUser, user }) => {
               />
             </div>
             <div>
-              <label className="block text-xs">Zip Code</label>
+              <label className="block text-xs text-gray-400">Zip Code</label>
               <input
                 type="text"
                 value={zipCode || ""}
@@ -323,7 +326,7 @@ const AccountSettings = ({ setUser, user }) => {
               />
             </div>
             <div>
-              <label className="block text-xs">Country</label>
+              <label className="block text-xs text-gray-400">Country</label>
               <input
                 type="text"
                 value={country || ""}
@@ -340,7 +343,9 @@ const AccountSettings = ({ setUser, user }) => {
           <h2 className="text-xl text-white mb-4">Phone Number</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
             <div className="relative">
-              <label className="block text-xs">Phone Number</label>
+              <label className="block text-xs text-gray-400">
+                Phone Number
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                   <CiPhone size={25} />

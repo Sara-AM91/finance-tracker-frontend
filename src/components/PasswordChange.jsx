@@ -133,10 +133,12 @@ const PasswordChange = ({ setUser }) => {
   return (
     <div className="my-10">
       <h2 className="text-xl text-white">Password</h2>
-      <p className="text-sm mb-4">Modify your current password</p>
+      <p className="text-sm mb-4 text-gray-400">Modify your current password</p>
       <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
         <div>
-          <label className="font-light text-xs">Current Password</label>
+          <label className="font-light text-xs text-gray-400">
+            Current Password
+          </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <CiLock size={25} />
@@ -167,7 +169,9 @@ const PasswordChange = ({ setUser }) => {
         </div>
 
         <div>
-          <label className="font-light text-xs">New Password</label>
+          <label className="font-light text-xs text-gray-400">
+            New Password
+          </label>
           <div className="relative">
             <div className="md:relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -198,7 +202,9 @@ const PasswordChange = ({ setUser }) => {
         </div>
 
         <div>
-          <label className="font-light text-xs">Confirm New Password</label>
+          <label className="font-light text-xs text-gray-400">
+            Confirm New Password
+          </label>
           <div className="relative">
             <div className="relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">

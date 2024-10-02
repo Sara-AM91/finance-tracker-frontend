@@ -1,11 +1,23 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaExchangeAlt, FaSignOutAlt } from "react-icons/fa";
+import { RxDashboard } from "react-icons/rx";
+import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ user }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-
+  const navigate = useNavigate();
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleLogout = () => {
+    // Clear user authentication data
+    localStorage.removeItem("token"); // Adjust the key as per your implementation
+    // Optionally, clear more data or reset state
+    // Redirect to the login page
+    navigate("/login");
   };
 
   return (
@@ -62,6 +74,7 @@ const Sidebar = ({ user }) => {
                 to="/dashboard"
                 className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
               >
+                <RxDashboard className="text-xl" />
                 <span className="ml-3">Dashboard</span>
               </Link>
 
@@ -69,18 +82,21 @@ const Sidebar = ({ user }) => {
                 to="/expenses"
                 className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
               >
+                <GiPayMoney className="text-xl" />
                 <span className="ml-3">Expenses</span>
               </Link>
               <Link
                 to="/incomes"
                 className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
               >
+                <GiReceiveMoney className="text-xl" />
                 <span className="ml-3">Incomes</span>
               </Link>
               <Link
                 to="/transactions-list"
                 className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
               >
+                <FaExchangeAlt className="text-xl" />
                 <span className="ml-3">All Transactions</span>
               </Link>
             </li>
@@ -88,6 +104,19 @@ const Sidebar = ({ user }) => {
           </ul>
         </div>
       ) : null}
+
+      {/* Logout Button at the Bottom */}
+      {!isCollapsed && (
+        <div className="absolute bottom-4 w-full">
+          <button
+            onClick={handleLogout}
+            className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2 w-full text-left"
+          >
+            <FaSignOutAlt className="text-xl" />
+            <span className="ml-3">Logout</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

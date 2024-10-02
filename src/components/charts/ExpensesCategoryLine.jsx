@@ -56,7 +56,7 @@ const IncomesCategoryLine = ({ transactions }) => {
           const { ctx, chartArea } = chart;
 
           if (!chartArea) {
-            //This case happens on initial chart load
+            // This case happens on initial chart load
             return null;
           }
 
@@ -67,10 +67,44 @@ const IncomesCategoryLine = ({ transactions }) => {
             chartArea.right,
             0
           );
-          colors.forEach((color, index) => {
-            const t = index / (colors.length - 1);
-            gradient.addColorStop(t, color);
-          });
+
+          // Handle case for a single color (to avoid division by zero)
+          if (colors.length === 1) {
+            gradient.addColorStop(0, colors[0]);
+            gradient.addColorStop(1, colors[0]);
+          } else {
+            colors.forEach((color, index) => {
+              // Calculate the stop position `t` and validate it
+              const t = index / (colors.length - 1);
+
+              // Check if `t` is finite
+              if (!isFinite(t)) {
+                console.error(
+                  "Invalid 't' value:",
+                  t,
+                  "Index:",
+                  index,
+                  "Colors length:",
+                  colors.length
+                );
+                return;
+              }
+
+              // Check if color is a valid string
+              if (typeof color !== "string" || color.trim() === "") {
+                console.error(
+                  "Invalid color value at index",
+                  index,
+                  ":",
+                  color
+                );
+                return;
+              }
+
+              // Add color stop to gradient
+              gradient.addColorStop(t, color);
+            });
+          }
 
           return gradient;
         },

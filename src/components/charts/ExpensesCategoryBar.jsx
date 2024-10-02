@@ -64,9 +64,10 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
       {
         label: "Amount",
         data: yData,
-        backgroundColor: barColors,
-        borderRadius: 20,
-        hoverBackgroundColor: barColors,
+        backgroundColor: yData.map(() => "rgba(243, 103, 18, 0.5)"), // Semi-transparent fill
+        borderColor: "#F36712",
+        borderWidth: 3,
+        borderRadius: 15,
       },
     ],
   };
@@ -89,13 +90,13 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     plugins: {
       legend: { display: false },
       datalabels: {
-        anchor: "end",
-        align: "end",
-        formatter: (value) => `${value}$`,
-        color: "#fff",
-        font: { weight: "bold" },
-        clip: true, // Clip labels that overflow
-        display: false, // Only show labels above 100
+        color: "white", // Change text color to white
+        anchor: "end", // Position labels at the end of the bars
+        align: "top", // Align the labels at the bottom of the anchor
+        offset: 5, // Space between the bar and the label
+
+        // Custom function to determine when to show the label
+        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
       },
     },
     scales: {

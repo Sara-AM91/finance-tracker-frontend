@@ -68,9 +68,10 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
       {
         label: "Amount",
         data: yData,
-        backgroundColor: barColors,
-        borderRadius: 20,
-        hoverBackgroundColor: barColors,
+        backgroundColor: yData.map(() => "rgba(1, 255, 185, 0.5)"), // Semi-transparent fill
+        borderColor: "#01FFB9",
+        borderWidth: 3,
+        borderRadius: 15,
       },
     ],
   };
@@ -82,13 +83,13 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     plugins: {
       legend: { display: false },
       datalabels: {
-        anchor: "end",
-        align: "end",
-        formatter: (value) => `${value}$`,
-        color: "#fff",
-        font: { weight: "bold" },
-        clip: true,
-        display: false, // Set to true if you want to display data labels
+        color: "white", // Change text color to white
+        anchor: "end", // Position labels at the end of the bars
+        align: "top", // Align the labels at the bottom of the anchor
+        offset: 5, // Space between the bar and the label
+
+        // Custom function to determine when to show the label
+        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
       },
     },
     scales: {

@@ -91,7 +91,7 @@ const Dashboard = () => {
                     id="year"
                     name="year"
                     aria-label="Select Year"
-                    className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
+                    className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400 mb-2"
                     value={year || ""}
                     onChange={(e) => setYear(e.target.value)}
                     required
@@ -143,7 +143,7 @@ const Dashboard = () => {
           <div className="col-span-1 bg-[#161A40] p-4 text-white rounded-3xl overflow-auto flex flex-col items-center justify-around gap-6">
             <div className="flex flex-col items-center">
               <p className="text-lg">Max. Income</p>
-              <p className="text-3xl">{maxInc.amount}</p>
+              <p className="text-3xl">{maxInc.amount}€</p>
               <div className={animate ? "swipe swipe--delay" : ""}>
                 <img src={greenWave} />
               </div>
@@ -153,7 +153,7 @@ const Dashboard = () => {
 
             <div className="flex flex-col items-center">
               <p className="text-lg">Max. Expenses</p>
-              <p className="text-3xl">{maxExp.amount}</p>
+              <p className="text-3xl">{maxExp.amount}€</p>
               <div className={animate ? "swipe swipe--delay" : ""}>
                 <img src={redWave} className=" my-3" alt="Red Wave" />
               </div>

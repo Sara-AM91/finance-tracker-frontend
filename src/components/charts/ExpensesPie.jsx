@@ -48,18 +48,33 @@ export default function ExpensesPie({ transactions }) {
             cy: "50%", // Y center position of the pie chart
           },
         ]}
-        slotProps={{
-          legend: {
-            direction: "column",
-            position: { vertical: "middle", horizontal: "right" }, // Legend on the right
-            padding: 2,
-            itemSpacing: 10, // Space between legend items
-          },
-        }}
+        slotProps={{ legend: { hidden: true } }}
         width={400}
         height={300} // Increased height to accommodate the legend
-        legendposition="right" // Ensure legend stays on the right
       />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {data.map((item, index) => (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: colors[index],
+                width: "12px",
+                height: "12px",
+                marginRight: "8px",
+              }}
+            ></div>
+            <span style={{ color: "#FFFFFF" }}>{item.label}</span>{" "}
+            {/* Label with white text */}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

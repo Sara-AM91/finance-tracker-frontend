@@ -45,6 +45,7 @@ const ExpensesPage = () => {
 
   //Fetch transactions from context
   const { transactions = [], loading, error } = useTransactionContext();
+  const { addTransaction } = useTransactionContext();
 
   //Ensure filters have default values
   const filtersWithDefaults = {
@@ -296,12 +297,6 @@ const ExpensesPage = () => {
     setOpenEditEntryModal(true);
   };
 
-  //Handle delete action (functionality to be implemented)
-  const handleDelete = (expenseId) => {
-    console.log("Delete:", expenseId);
-    //Implement delete functionality here
-  };
-
   //Handle page change in pagination
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -495,16 +490,6 @@ const ExpensesPage = () => {
                                   >
                                     Edit
                                   </MenuItem>
-                                  <MenuItem
-                                    as="button"
-                                    className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-red-700 hover:bg-red-200 data-[active=true]:bg-red-200"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDelete(expense._id);
-                                    }}
-                                  >
-                                    Delete
-                                  </MenuItem>
                                 </div>
                               </MenuItems>
                             </Menu>
@@ -551,6 +536,7 @@ const ExpensesPage = () => {
             open={openNewEntryModal}
             setOpen={setOpenNewEntryModal}
             defaultCategory="Expense"
+            addTransaction={addTransaction}
           />
           {/* Edit Entry Modal */}
           {entryToEdit && (

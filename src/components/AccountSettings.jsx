@@ -169,7 +169,7 @@ const AccountSettings = ({ setUser, user }) => {
 
   return (
     <>
-      <div className="w-full rounded-3xl shadow-lg p-5 ">
+      <div className="w-full rounded-3xl shadow-lg p-5 glass ">
         <div className="flex lg:items-center items-start justify-between flex-col lg:flex-row">
           <div className="flex items-center">
             {loading ? (

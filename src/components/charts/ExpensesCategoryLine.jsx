@@ -44,6 +44,19 @@ const IncomesCategoryLine = ({ transactions }) => {
     return interpolateReds(t);
   });
 
+  const createGradient = (ctx, chartArea, color1, color2) => {
+    const gradient = ctx.createLinearGradient(
+      0,
+      chartArea.top,
+      0,
+      chartArea.bottom
+    );
+    gradient.addColorStop(0, `${color1}66`); // Full opacity at the top
+    gradient.addColorStop(0.7, `${color2}33`); // Mostly opaque in the middle
+    gradient.addColorStop(1, `${color2}00`); // Transparent at the bottom
+    return gradient;
+  };
+
   //Step 5: Create the chart data
   const chartData = {
     labels: xLabels,
@@ -51,70 +64,20 @@ const IncomesCategoryLine = ({ transactions }) => {
       {
         label: "Amount",
         data: yData,
-        borderColor: function (context) {
+        borderColor: "#F36712",
+        // backgroundColor: "rgba(243,103,18,0.4)",
+        backgroundColor: (context) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
 
           if (!chartArea) {
-            // This case happens on initial chart load
             return null;
           }
 
-          //Create gradient
-          const gradient = ctx.createLinearGradient(
-            chartArea.left,
-            0,
-            chartArea.right,
-            0
-          );
-
-          // Handle case for a single color (to avoid division by zero)
-          if (colors.length === 1) {
-            gradient.addColorStop(0, colors[0]);
-            gradient.addColorStop(1, colors[0]);
-          } else {
-            colors.forEach((color, index) => {
-              // Calculate the stop position `t` and validate it
-              const t = index / (colors.length - 1);
-
-              // Check if `t` is finite
-              if (!isFinite(t)) {
-                console.error(
-                  "Invalid 't' value:",
-                  t,
-                  "Index:",
-                  index,
-                  "Colors length:",
-                  colors.length
-                );
-                return;
-              }
-
-              // Check if color is a valid string
-              if (typeof color !== "string" || color.trim() === "") {
-                console.error(
-                  "Invalid color value at index",
-                  index,
-                  ":",
-                  color
-                );
-                return;
-              }
-
-              // Add color stop to gradient
-              gradient.addColorStop(t, color);
-            });
-          }
-
-          return gradient;
+          return createGradient(ctx, chartArea, "#F36712", "#F36712", 1);
         },
-        pointBackgroundColor: colors,
-        pointBorderColor: colors,
-        fill: false,
-        tension: 0.4, //Slightly curved line
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
       },
     ],
   };
@@ -136,6 +99,20 @@ const IncomesCategoryLine = ({ transactions }) => {
     plugins: {
       legend: {
         display: false,
+        position: "top",
+      },
+      title: {
+        display: false,
+        text: "Income vs Expenses",
+      },
+      datalabels: {
+        color: "white", // Change text color to white
+        anchor: "end", // Position labels at the end of the bars
+        align: "top", // Align the labels at the bottom of the anchor
+        offset: 5, // Space between the bar and the label
+
+        // Custom function to determine when to show the label
+        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
       },
     },
     scales: {

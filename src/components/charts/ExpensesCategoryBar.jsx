@@ -12,7 +12,6 @@ import {
 } from "chart.js";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
-//Import interpolateReds from d3-scale-chromatic
 import { interpolateReds } from "d3-scale-chromatic";
 
 ChartJS.register(
@@ -72,18 +71,6 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     ],
   };
 
-  // const createGradient = (ctx, chartArea, color) => {
-  //   const gradient = ctx.createLinearGradient(
-  //     0,
-  //     chartArea.top,
-  //     0,
-  //     chartArea.bottom
-  //   );
-  //   gradient.addColorStop(0, color);
-  //   gradient.addColorStop(1, `${color}00`);
-  //   return gradient;
-  // };
-
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -93,9 +80,9 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
         color: "white", // Change text color to white
         anchor: "end", // Position labels at the end of the bars
         align: "top", // Align the labels at the bottom of the anchor
-        offset: 5, // Space between the bar and the label
+        offset: -10, // Space between the bar and the label
 
-        // Custom function to determine when to show the label
+        //Custom function to determine when to show the label
         formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
       },
     },

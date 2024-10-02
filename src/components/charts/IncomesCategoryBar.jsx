@@ -11,8 +11,6 @@ import {
 } from "chart.js";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
-
-// Import interpolateGreens from d3-scale-chromatic
 import { interpolateGreens } from "d3-scale-chromatic";
 
 ChartJS.register(
@@ -86,7 +84,7 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
         color: "white", // Change text color to white
         anchor: "end", // Position labels at the end of the bars
         align: "top", // Align the labels at the bottom of the anchor
-        offset: 5, // Space between the bar and the label
+        offset: -10, // Space between the bar and the label
 
         // Custom function to determine when to show the label
         formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0

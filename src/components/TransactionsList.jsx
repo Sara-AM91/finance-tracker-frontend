@@ -23,7 +23,7 @@ const TransactionsList = ({ transactions }) => {
   }, {});
 
   return (
-    <div className="w-full mx-auto p-4 overflow-auto">
+    <div className="w-full mx-auto x-4 pt-4 overflow-auto">
       {Object.entries(groupedTransactions).map(([date, actions]) => (
         <div key={date} className="mb-4">
           <h3 className="text-lg font-bold">{date}</h3>

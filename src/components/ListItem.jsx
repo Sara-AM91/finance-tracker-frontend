@@ -1,5 +1,6 @@
 const ListItem = ({ action, lastFive }) => {
   const first = lastFive.indexOf(action);
+  const dateCreated = action.createdAt.split("T")[0];
 
   return (
     <div
@@ -17,8 +18,11 @@ const ListItem = ({ action, lastFive }) => {
           <div className="leading-snug text-sm text-white font-bold uppercase pb-2">
             {action.title}
           </div>
-          <div className="leading-snug text-xs text-gray-400 uppercase">
+          <div className="leading-snug text-xs text-gray-200 uppercase">
             {action.description}
+          </div>
+          <div className="leading-snug text-[8pt] text-gray-400 mt-1">
+            CREATED: {dateCreated}
           </div>
         </div>
       </div>

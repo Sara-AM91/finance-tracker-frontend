@@ -4,29 +4,35 @@ import GoalModal from "../GoalModal";
 const ProgressBar = ({ balance }) => {
   const [value, setValue] = useState(0);
   const [goal, setGoal] = useState(0);
-
   const [reached, setReached] = useState(false);
   const [open, setOpen] = useState(false);
 
+  // Check if the goal is reached
   useEffect(() => {
-    if ((balance === goal && goal !== 0) || (balance > goal && goal !== 0)) {
+    if (goal > 0 && balance >= goal) {
       setReached(true);
     } else {
-      setReached(false); //Reset if condition is not met
+      setReached(false);
     }
   }, [balance, goal]);
 
+  // Calculate the progress value
   useEffect(() => {
-    const progress = Math.round(
-      (parseFloat(balance).toFixed(2) / parseFloat(goal)).toFixed(2) * 100
-    );
-    setValue(progress);
+    if (goal > 0) {
+      const progress = Math.round((balance / goal) * 100);
+      setValue(progress > 100 ? 100 : progress); // Clamp to 100%
+    } else {
+      setValue(0); // Set to 0 if the goal is not set
+    }
   }, [goal, balance]);
 
+  // Retrieve goal from local storage
   useEffect(() => {
-    const retrievedGoal = localStorage.getItem("goal");
-    setGoal(retrievedGoal);
-  }, [goal]);
+    const retrievedGoal = parseFloat(localStorage.getItem("goal")); // Ensure it's a number
+    if (!isNaN(retrievedGoal)) {
+      setGoal(retrievedGoal);
+    }
+  }, []);
 
   return (
     <>
@@ -40,7 +46,7 @@ const ProgressBar = ({ balance }) => {
 
         {/* Progress bar */}
         <div className="flex flex-col items-end w-full gap-2">
-          <p>
+          <p className="text-right">
             {balance}€/{goal}€
           </p>
           <div className="w-full bg-gray-400 h-4 rounded-r-full overflow-hidden">
@@ -54,7 +60,7 @@ const ProgressBar = ({ balance }) => {
             ></div>
           </div>
           <button
-            className="px-2 py-1 bg-[#7F3BCB] rounded-lg mt-2"
+            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base self-end mt-2"
             onClick={() => {
               setOpen(true);
             }}

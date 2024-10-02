@@ -5,8 +5,6 @@ import {
   ChevronUpIcon,
   ChevronDownIcon,
   ArrowsUpDownIcon,
-  ArrowDownCircleIcon,
-  ArrowUpCircleIcon,
 } from "@heroicons/react/24/solid";
 import TransactionFilter from "../components/TransactionFilter";
 import ViewEntryModal from "../components/ViewEntryModal";
@@ -37,7 +35,7 @@ const TransactionsListPage = () => {
     direction: "desc",
   });
   const { transactions = [], loading, error } = useTransactionContext();
-  console.log(transactions);
+  const { addTransaction } = useTransactionContext();
   const [currentPage, setCurrentPage] = useState(1);
   const transactionsPerPage = 20;
 
@@ -404,7 +402,11 @@ const TransactionsListPage = () => {
         />
       )}
       {/* New Entry Modal */}
-      <NewEntryModal open={openNewEntryModal} setOpen={setOpenNewEntryModal} />
+      <NewEntryModal
+        open={openNewEntryModal}
+        setOpen={setOpenNewEntryModal}
+        addTransaction={addTransaction}
+      />
       {/* Edit Entry Modal */}
       {entryToEdit && (
         <EditEntryModal

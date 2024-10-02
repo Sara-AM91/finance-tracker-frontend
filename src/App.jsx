@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -10,12 +9,14 @@ import TransactionsListPage from "./pages/TransactionsListPage";
 import AccountPage from "./pages/AccountPage";
 import { TransactionProvider } from "./contexts/TransactionContext";
 import { AlertProvider } from "./contexts/AlertContext";
+import ScrollToTop from "./utils/ScrollToTop";
 
 const App = () => {
   return (
     <BrowserRouter>
       <AlertProvider>
         <TransactionProvider>
+          <ScrollToTop /> {/* Add ScrollToTop here */}
           <Routes>
             {/* Redirect root path to login page */}
             <Route path="/" element={<Navigate to="/login" />} />

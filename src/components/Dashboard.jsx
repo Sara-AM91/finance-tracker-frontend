@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import ExpensesVsIncomeBar from "./charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
 import IncomePie from "./charts/IncomePie";
@@ -192,9 +193,17 @@ const Dashboard = () => {
               <p className="text-6xl text-[#08D59C] text-right">{balance}€</p>
             </div>
           </div>
-          <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col justify-center grow">
-            <h1 className="text-xl">Recent Transactions</h1>
-            <TransactionsList transactions={transactions} />
+          <div className="flex-8 bg-[#161A40] text-white rounded-3xl overflow-auto p-4 flex flex-col grow">
+            <h1 className="text-xl mb-2">Recent Transactions</h1>
+            <div className="flex flex-col justify-center grow">
+              <TransactionsList transactions={transactions} />
+            </div>
+
+            <Link to="/transactions-list" className="self-end">
+              <button className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base self-end mx-4 mb-4">
+                View All
+              </button>
+            </Link>
           </div>
           <div
             className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-900 rounded-3xl flex justify-center items-center max-h-12 cursor-pointer"

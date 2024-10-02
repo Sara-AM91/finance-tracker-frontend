@@ -69,14 +69,14 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
   const expenseMax = Math.max(...expenseData);
   const maxExpenseMonthIndex = expenseData.indexOf(expenseMax);
   const maxExpense = {
-    amount: expenseMax.toFixed(2),
+    amount: expenseMax,
     month: monthNames[maxExpenseMonthIndex],
   };
 
   const incomeMax = Math.max(...incomeData);
   const maxIncomeMonthIndex = incomeData.indexOf(incomeMax);
   const maxIncome = {
-    amount: incomeMax.toFixed(2),
+    amount: incomeMax,
     month: monthNames[maxIncomeMonthIndex],
   };
 
@@ -99,6 +99,9 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
     "Nov",
     "Dec",
   ];
+
+  const overallMax = Math.max(...uData, ...pData);
+  const yMax = overallMax + overallMax * 0.1;
 
   const chartData = {
     labels: xLabels,
@@ -127,7 +130,8 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false, // Ensure legend is not displayed
+        display: false,
+        position: "top",
       },
       title: {
         display: false,
@@ -136,25 +140,27 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
       datalabels: {
         color: "white",
         anchor: "end",
-        align: "top",
-        offset: 5,
-        formatter: (value) => (value > 0 ? value : ""),
+        align: "top", // Keep the labels above the points
+        offset: 5, // Space between the point and the label
+        formatter: (value) => (value > 0 ? value.toFixed(2) : ""), // Format for display
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        max: yMax, // Increase max Y value to create space above the highest point
         grid: {
-          color: "#343756", // Change this to your desired grid color
+          color: "#343756",
         },
       },
       x: {
         grid: {
-          color: "#343756", // Change this to your desired grid color
+          color: "#343756",
         },
       },
     },
   };
+
   return (
     <div style={{ width: "100%", height: "90%" }} className="px-4">
       <Bar ref={chartRef} data={chartData} options={options} />

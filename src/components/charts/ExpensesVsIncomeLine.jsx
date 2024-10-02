@@ -82,6 +82,9 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
     gradient.addColorStop(1, `${color2}00`); // Transparent at the bottom
     return gradient;
   };
+
+  const overallMax = Math.max(...uData, ...pData);
+  const yMax = overallMax + overallMax * 0.1; // Add 10% to the max value
   // Create chart data with gradient fill
   const chartData = {
     labels: xLabels,
@@ -116,10 +119,9 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
     ],
   };
 
-  // Chart options
   const options = {
-    responsive: true, // Disable responsive resizing
-    maintainAspectRatio: false, // Allow chart to stretch without maintaining aspect ratio
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -130,25 +132,24 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
         text: "Income vs Expenses",
       },
       datalabels: {
-        color: "white", // Change text color to white
-        anchor: "end", // Position labels at the end of the bars
-        align: "top", // Align the labels at the bottom of the anchor
-        offset: 5, // Space between the bar and the label
-
-        // Custom function to determine when to show the label
-        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
+        color: "white",
+        anchor: "end",
+        align: "top", // Keep the labels above the points
+        offset: 5, // Space between the point and the label
+        formatter: (value) => (value > 0 ? value.toFixed(2) : ""),
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         grid: {
-          color: "#343756", // Change this to your desired grid color
+          color: "#343756",
         },
+        max: yMax,
       },
       x: {
         grid: {
-          color: "#343756", // Change this to your desired grid color
+          color: "#343756",
         },
       },
     },

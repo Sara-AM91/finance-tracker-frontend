@@ -14,7 +14,6 @@ const AccountPage = () => {
       </p>
       <div className="flex flex-col gap-6 px-2 sm:px-10 lg:px-20 mt-10">
         <AccountSettings user={user} setUser={setUser} />
-
         <PasswordChange setUser={setUser} />
         <DeleteAccount user={user} setUser={setUser} />
       </div>

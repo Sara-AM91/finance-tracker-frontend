@@ -258,7 +258,7 @@ const AccountSettings = ({ setUser, user }) => {
               <div className="relative">
                 {/* Mail icon centered on the left */}
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <CiMail size={25} />
+                  <CiMail size={25} color="white" />
                 </div>
 
                 {/* Input field */}
@@ -348,7 +348,7 @@ const AccountSettings = ({ setUser, user }) => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <CiPhone size={25} />
+                  <CiPhone size={25} color="white" />
                 </div>
                 <input
                   type="tel"

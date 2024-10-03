@@ -180,7 +180,7 @@ const PasswordChange = ({ setUser }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <CiLock size={25} />
+              <CiLock size={25} color="white" />
             </div>
             <input
               id="current"
@@ -214,7 +214,7 @@ const PasswordChange = ({ setUser }) => {
           <div className="relative">
             <div className="md:relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <CiLock size={25} />
+                <CiLock size={25} color="white" />
               </div>
               <input
                 id="new"
@@ -247,7 +247,7 @@ const PasswordChange = ({ setUser }) => {
           <div className="relative">
             <div className="relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <CiLock size={25} />
+                <CiLock size={25} color="white" />
               </div>
               <input
                 id="confirm"

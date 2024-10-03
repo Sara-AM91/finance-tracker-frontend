@@ -26,13 +26,13 @@ ChartJS.register(
 const IncomesCategoryBar = ({ transactions, onBarClick }) => {
   const chartRef = useRef(null);
 
-  // Filter transactions to include only incomes
+  //Filter transactions to include only incomes
   const incomeTransactions = useMemo(
     () => transactions.filter((transaction) => transaction.type === "income"),
     [transactions]
   );
 
-  // Aggregate the incomes by category
+  //Aggregate the incomes by category
   const categoryData = useMemo(() => {
     const categoryMap = {};
 
@@ -47,26 +47,30 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     return categoryMap;
   }, [incomeTransactions]);
 
-  // Extract labels and data for the bar chart
+  //Extract labels and data for the bar chart
   const xLabels = Object.keys(categoryData);
   const yData = xLabels.map((category) =>
     parseFloat(categoryData[category].amount.toFixed(2))
   );
 
-  // Generate colors using interpolateGreens
+  //Generate colors using interpolateGreens
   const barColors = yData.map((_, index) => {
-    const t = index / (yData.length - 1) || 0; // Normalize index to [0,1]
+    const t = index / (yData.length - 1) || 0; //Normalize index to [0,1]
     return interpolateGreens(t);
   });
 
-  // Define chart data
+  //Calculate the overall maximum and adjust the chart height
+  const overallMax = Math.max(...yData);
+  const yMax = overallMax + overallMax * 0.2; //Add 20% extra height
+
+  //Define chart data
   const chartData = {
     labels: xLabels,
     datasets: [
       {
         label: "Amount",
         data: yData,
-        backgroundColor: yData.map(() => "rgba(1, 255, 185, 0.5)"), // Semi-transparent fill
+        backgroundColor: yData.map(() => "rgba(1, 255, 185, 0.5)"), //Semi-transparent fill
         borderColor: "#01FFB9",
         borderWidth: 3,
         borderRadius: 15,
@@ -74,25 +78,26 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     ],
   };
 
-  // Chart options
+  //Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       datalabels: {
-        color: "white", // Change text color to white
-        anchor: "end", // Position labels at the end of the bars
-        align: "top", // Align the labels at the bottom of the anchor
-        offset: -10, // Space between the bar and the label
+        color: "white", //Change text color to white
+        anchor: "end", //Position labels at the end of the bars
+        align: "top", //Align the labels at the bottom of the anchor
+        offset: -5, //Space between the bar and the label
 
-        // Custom function to determine when to show the label
-        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
+        //Custom function to determine when to show the label
+        formatter: (value) => (value > 0 ? value : ""), //Show only if value > 0
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        max: yMax, //Use the calculated maximum value
         ticks: { color: "#B7B7B7" },
         grid: { color: "#343756" },
       },
@@ -108,7 +113,7 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
     },
   };
 
-  // Fix the onClick handler
+  //Fix the onClick handler
   const onClick = (event) => {
     const chart = chartRef.current;
     if (!chart) return;

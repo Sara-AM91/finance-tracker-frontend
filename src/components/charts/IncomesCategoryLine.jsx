@@ -3,19 +3,19 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js";
 import { interpolateGreens } from "d3-scale-chromatic";
 
-// Register chart.js components
+//Register chart.js components
 ChartJS.register();
 
 const IncomesCategoryLine = ({ transactions }) => {
   const chartRef = useRef(null);
 
-  // Step 1: Filter transactions to include only incomes
+  //Step 1: Filter transactions to include only incomes
   const incomeTransactions = useMemo(
     () => transactions.filter((transaction) => transaction.type === "income"),
     [transactions]
   );
 
-  // Step 2: Aggregate the incomes by category
+  //Step 2: Aggregate the incomes by category
   const categoryData = useMemo(() => {
     const categoryMap = {};
 
@@ -30,15 +30,15 @@ const IncomesCategoryLine = ({ transactions }) => {
     return categoryMap;
   }, [incomeTransactions]);
 
-  // Step 3: Extract labels and data for the line chart
+  //Step 3: Extract labels and data for the line chart
   const xLabels = Object.keys(categoryData);
   const yData = xLabels.map((category) =>
     parseFloat(categoryData[category].amount.toFixed(2))
   );
 
-  // Step 4: Generate colors using interpolateGreens
+  //Step 4: Generate colors using interpolateGreens
   const colors = yData.map((_, index) => {
-    const t = index / (yData.length - 1); // Normalize index to [0,1]
+    const t = index / (yData.length - 1); //Normalize index to [0,1]
     return interpolateGreens(t);
   });
 
@@ -49,13 +49,17 @@ const IncomesCategoryLine = ({ transactions }) => {
       0,
       chartArea.bottom
     );
-    gradient.addColorStop(0, `${color1}66`); // Full opacity at the top
-    gradient.addColorStop(0.7, `${color2}33`); // Mostly opaque in the middle
-    gradient.addColorStop(1, `${color2}00`); // Transparent at the bottom
+    gradient.addColorStop(0, `${color1}66`); //Full opacity at the top
+    gradient.addColorStop(0.7, `${color2}33`); //Mostly opaque in the middle
+    gradient.addColorStop(1, `${color2}00`); //Transparent at the bottom
     return gradient;
   };
 
-  // Step 5: Create the chart data
+  // Step 3: Calculate the overall maximum and adjust the chart height
+  const overallMax = Math.max(...yData);
+  const yMax = overallMax + overallMax * 0.2; //Add 20% extra height
+
+  //Step 5: Create the chart data
   const chartData = {
     labels: xLabels,
     datasets: [
@@ -79,7 +83,7 @@ const IncomesCategoryLine = ({ transactions }) => {
     ],
   };
 
-  // Step 6: Chart options
+  //Step 6: Chart options
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -101,18 +105,19 @@ const IncomesCategoryLine = ({ transactions }) => {
         display: false,
       },
       datalabels: {
-        color: "white", // Change text color to white
-        anchor: "end", // Position labels at the end of the bars
-        align: "top", // Align the labels at the bottom of the anchor
-        offset: -10, // Space between the bar and the label
+        color: "white", //Change text color to white
+        anchor: "end", //Position labels at the end of the bars
+        align: "top", //Align the labels at the bottom of the anchor
+        offset: -5, //Space between the bar and the label
 
-        // Custom function to determine when to show the label
-        formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
+        //Custom function to determine when to show the label
+        formatter: (value) => (value > 0 ? value : ""), //Show only if value > 0
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        max: yMax, //Use the calculated maximum value
         grid: {
           color: "#343756",
         },

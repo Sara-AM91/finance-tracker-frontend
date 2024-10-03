@@ -114,7 +114,7 @@ const LoginPage = () => {
         setError(null);
         setAlertVisible(false);
         const token = data.token;
-        localStorage.setItem("token", token); //Store only the token
+        localStorage.setItem("token", token); // Store only the token
         console.log("Token stored in localStorage:", token);
         setUser(data.user);
 
@@ -129,12 +129,13 @@ const LoginPage = () => {
           );
           const transactionsData = await transactionsResponse.json();
           console.log("Fetched transactions data:", transactionsData);
-          setTransactions(transactionsData.transactions); //or setTransactions(transactionsData.transactions || []);
+          setTransactions(transactionsData.transactions || []); //or setTransactions(transactionsData.transactions || []);
         } catch (err) {
           console.error("Failed to fetch transactions:", err);
         }
-
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
       }
     } catch (err) {
       setIsLoading(false);

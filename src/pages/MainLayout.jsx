@@ -21,7 +21,7 @@ const MainLayout = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 1024);
     };
 
     // Add event listener to handle resize
@@ -70,8 +70,18 @@ const MainLayout = () => {
         <Header user={user} isMobile={isMobile} />
         <div className="flex flex-grow gap-6 h-full">
           {!isMobile && <Sidebar user={user} isMobile={isMobile} />}
-          <Outlet context={{ user, setUser, transactions, addTransaction }} />
-          {/* Dashboard content */}
+          <div className="flex-grow">
+            {/* Ensuring that the outlet content still grows but doesn't mess with layout */}
+            <Outlet
+              context={{
+                user,
+                setUser,
+                transactions,
+                addTransaction,
+                isMobile,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

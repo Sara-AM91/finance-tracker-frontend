@@ -162,7 +162,7 @@ const ExpensesVsIncomeBar = ({ transactions, setMaxInc, setMaxExp }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "90%" }} className="px-4">
+    <div style={{ width: "100%", height: "90%" }} className="md:px-4">
       <Bar ref={chartRef} data={chartData} options={options} />
     </div>
   );

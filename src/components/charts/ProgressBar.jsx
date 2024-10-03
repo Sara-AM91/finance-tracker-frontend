@@ -62,7 +62,7 @@ const ProgressBar = ({ balance }) => {
             ></div>
           </div>
           <button
-            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base self-end mt-2"
+            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base self-center xl:self-end mt-2"
             onClick={() => {
               setOpen(true);
             }}

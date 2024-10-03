@@ -17,6 +17,22 @@ const MainLayout = () => {
 
   const [user, setUser] = useState({});
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Add event listener to handle resize
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   useEffect(() => {
     if (userData) {
       setUser(userData);
@@ -51,9 +67,9 @@ const MainLayout = () => {
       <GlobalAlert />
       {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
-        <Header />
+        <Header user={user} isMobile={isMobile} />
         <div className="flex flex-grow gap-6 h-full">
-          <Sidebar user={user} />
+          {!isMobile && <Sidebar user={user} isMobile={isMobile} />}
           <Outlet context={{ user, setUser, transactions, addTransaction }} />
           {/* Dashboard content */}
         </div>

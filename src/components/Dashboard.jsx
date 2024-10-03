@@ -1,4 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
+import { TransactionContext } from "../contexts/TransactionContext";
+import { AuthContext } from "../contexts/AuthContext";
+
 import { Link } from "react-router-dom";
 import ExpensesVsIncomeBar from "./charts/ExpensesVsIncomeBar";
 import ExpensesVsIncomeLine from "./charts/ExpensesVsIncomeLine";
@@ -10,10 +13,14 @@ import NewEntryModal from "./NewEntryModal";
 import greenWave from "../assets/greenWave2.png";
 import redWave from "../assets/redWave2.png";
 import plus from "../assets/plus.png";
-import { useOutletContext } from "react-router-dom";
+//import { useOutletContext } from "react-router-dom";
 import CalculateBalance from "../utils/CalculateBalance";
 
 const Dashboard = () => {
+  const { transactions, addTransaction, loading, error } =
+    useContext(TransactionContext);
+  const { user } = useContext(AuthContext);
+
   const [isBarChart, setIsBarChart] = useState(true);
   const [balance, setBalance] = useState(0);
   const [maxInc, setMaxInc] = useState({});
@@ -22,10 +29,21 @@ const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [year, setYear] = useState(null);
 
-  const { transactions, addTransaction } = useOutletContext();
+  //const { addTransaction } = useOutletContext();
 
   // Automatically set the default year to the latest year from transactions
   //this helps data load when component mounts without having to reselect year
+
+  // Handle loading state
+  if (loading) {
+    return <div>Loading...</div>; // Or a spinner
+  }
+
+  // Handle error state
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   useEffect(() => {
     if (transactions.length > 0) {
       const years = transactions.map(({ date }) =>

@@ -10,38 +10,40 @@ import AccountPage from "./pages/AccountPage";
 import { TransactionProvider } from "./contexts/TransactionContext";
 import { AlertProvider } from "./contexts/AlertContext";
 import ScrollToTop from "./utils/ScrollToTop";
-
+import AuthProvider from "./contexts/AuthContext";
 const App = () => {
   return (
     <BrowserRouter>
-      <AlertProvider>
+      <AuthProvider>
         <TransactionProvider>
-          <ScrollToTop /> {/* Add ScrollToTop here */}
-          <Routes>
-            {/* Redirect root path to login page */}
-            <Route path="/" element={<Navigate to="/login" />} />
+          <AlertProvider>
+            <ScrollToTop /> {/* Add ScrollToTop here */}
+            <Routes>
+              {/* Redirect root path to login page */}
+              <Route path="/" element={<Navigate to="/login" />} />
 
-            {/* Login and Signup routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
+              {/* Login and Signup routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
 
-            {/* Wrap Dashboard and Expenses with MainLayout */}
-            <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/expenses" element={<ExpensesPage />} />
-              <Route path="/incomes" element={<IncomesPage />} />
-              <Route
-                path="/transactions-list"
-                element={<TransactionsListPage />}
-              />
-              <Route path="/account" element={<AccountPage />} />
-            </Route>
+              {/* Wrap Dashboard and Expenses with MainLayout */}
+              <Route element={<MainLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/expenses" element={<ExpensesPage />} />
+                <Route path="/incomes" element={<IncomesPage />} />
+                <Route
+                  path="/transactions-list"
+                  element={<TransactionsListPage />}
+                />
+                <Route path="/account" element={<AccountPage />} />
+              </Route>
 
-            {/* Optional: handle unknown routes by redirecting */}
-            <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
+              {/* Optional: handle unknown routes by redirecting */}
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Routes>
+          </AlertProvider>
         </TransactionProvider>
-      </AlertProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 };

@@ -1,8 +1,10 @@
 import loginImg from "../assets/LoginPage.png";
+import { AuthContext } from "../contexts/AuthContext";
+import { TransactionContext } from "../contexts/TransactionContext";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +15,10 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState([]);
+
+  const { setToken, setUser } = useContext(AuthContext);
+  const { setTransactions } = useContext(TransactionContext);
+
   const navigate = useNavigate();
 
   //Alert:
@@ -78,7 +84,6 @@ const LoginPage = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        // alert("login failed: " + data.error);
         setIsLoading(false);
         console.log(data.error);
         if (data.error === "Incorrect email") {
@@ -104,10 +109,31 @@ const LoginPage = () => {
       }
 
       if (res.ok) {
-        localStorage.setItem("token", data.token);
-        console.log("String", typeof data.token);
+        setToken(data.token);
         setIsLoading(false);
-        //alert("Loged in!");
+        setError(null);
+        setAlertVisible(false);
+        const token = data.token;
+        localStorage.setItem("token", token); //Store only the token
+        console.log("Token stored in localStorage:", token);
+        setUser(data.user);
+
+        try {
+          const transactionsResponse = await fetch(
+            "http://localhost:5000/transactions",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const transactionsData = await transactionsResponse.json();
+          console.log("Fetched transactions data:", transactionsData);
+          setTransactions(transactionsData.transactions); //or setTransactions(transactionsData.transactions || []);
+        } catch (err) {
+          console.error("Failed to fetch transactions:", err);
+        }
+
         navigate("/dashboard");
       }
     } catch (err) {

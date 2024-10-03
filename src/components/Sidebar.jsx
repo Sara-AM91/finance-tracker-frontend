@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+
+import { AuthContext } from "../contexts/AuthContext";
+import { TransactionContext } from "../contexts/TransactionContext";
+
 import { Link } from "react-router-dom";
 import { FaExchangeAlt, FaSignOutAlt } from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
@@ -6,6 +10,9 @@ import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ user }) => {
+  const { setToken, setUser } = useContext(AuthContext);
+  const { setTransactions } = useContext(TransactionContext);
+
   const [isCollapsed, setIsCollapsed] = useState(true);
   const navigate = useNavigate();
   const toggleSidebar = () => {
@@ -13,10 +20,17 @@ const Sidebar = ({ user }) => {
   };
 
   const handleLogout = () => {
-    // Clear user authentication data
-    localStorage.removeItem("token"); // Adjust the key as per your implementation
-    // Optionally, clear more data or reset state
-    // Redirect to the login page
+    // Reset authentication state
+    setToken(null);
+    setUser(null);
+
+    // Reset transactions
+    setTransactions([]);
+
+    // Clear localStorage
+    localStorage.clear();
+
+    // Redirect to login page
     navigate("/login");
   };
 

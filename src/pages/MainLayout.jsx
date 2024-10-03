@@ -48,7 +48,7 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-full">
+    <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-full lg:overflow-hidden lg:min-h-screen lg:max-h-screen">
       {/* First Background Curve */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#121428] to-[#000036] z-0">
         {/* Upper Curve */}
@@ -68,9 +68,9 @@ const MainLayout = () => {
       {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
         <Header user={user} isMobile={isMobile} />
-        <div className="flex flex-grow gap-6 h-full">
+        <div className="flex flex-grow gap-6 lg:overflow-hidden h-full">
           {!isMobile && <Sidebar user={user} isMobile={isMobile} />}
-          <div className="flex-grow">
+          <div className="flex-grow lg:overflow-y-auto">
             {/* Ensuring that the outlet content still grows but doesn't mess with layout */}
             <Outlet
               context={{

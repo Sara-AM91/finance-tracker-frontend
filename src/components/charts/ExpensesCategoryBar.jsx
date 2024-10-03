@@ -1,4 +1,3 @@
-// components/charts/ExpensesCategoryBar.js
 import { useRef, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -56,6 +55,10 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     return interpolateReds(t);
   });
 
+  //Calculate the overall maximum and adjust the chart height
+  const overallMax = Math.max(...yData);
+  const yMax = overallMax + overallMax * 0.2; //Add 20% extra height
+
   //Define chart data and options
   const chartData = {
     labels: xLabels,
@@ -77,10 +80,10 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     plugins: {
       legend: { display: false },
       datalabels: {
-        color: "white", // Change text color to white
-        anchor: "end", // Position labels at the end of the bars
-        align: "top", // Align the labels at the bottom of the anchor
-        offset: -10, // Space between the bar and the label
+        color: "white", //Change text color to white
+        anchor: "end", //Position labels at the end of the bars
+        align: "top", //Align the labels at the bottom of the anchor
+        offset: -5, //Space between the bar and the label
 
         //Custom function to determine when to show the label
         formatter: (value) => (value > 0 ? value : ""), // Show only if value > 0
@@ -89,14 +92,15 @@ const ExpensesCategoryBar = ({ transactions, onBarClick }) => {
     scales: {
       y: {
         beginAtZero: true,
+        max: yMax, //Use the calculated maximum value
         ticks: { color: "#B7B7B7" },
         grid: { color: "#343756" },
       },
       x: {
         ticks: {
           color: "#B7B7B7",
-          autoSkip: false, // Do not skip labels automatically
-          maxRotation: 45, // Rotate labels to prevent overlap
+          autoSkip: false, //Do not skip labels automatically
+          maxRotation: 45, //Rotate labels to prevent overlap
           minRotation: 45,
         },
         grid: { color: "#343756" },

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-const TransactionContext = createContext();
+export const TransactionContext = createContext();
 
 export const TransactionProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]); // Store transactions
@@ -43,12 +43,12 @@ export const TransactionProvider = ({ children }) => {
     }
   };
 
-  // Automatically fetch transactions on mount or when filters change
+  //Automatically fetch transactions on mount or when filters change
   useEffect(() => {
     fetchTransactions();
   }, [filters]);
 
-  // Define a function to refresh transactions manually
+  //Define a function to refresh transactions manually
   const refreshTransactions = () => {
     setLoading(true);
     fetchTransactions();

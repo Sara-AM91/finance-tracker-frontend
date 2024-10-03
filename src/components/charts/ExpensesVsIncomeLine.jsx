@@ -135,7 +135,7 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
         color: "white",
         anchor: "end",
         align: "top", // Keep the labels above the points
-        offset: 5, // Space between the point and the label
+        offset: -5, // Space between the point and the label
         formatter: (value) => (value > 0 ? value.toFixed(2) : ""),
       },
     },

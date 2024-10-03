@@ -9,7 +9,7 @@ import { RxDashboard } from "react-icons/rx";
 import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ user }) => {
+const Sidebar = ({ user, isMobile }) => {
   const { setToken, setUser } = useContext(AuthContext);
   const { setTransactions } = useContext(TransactionContext);
 
@@ -79,14 +79,14 @@ const Sidebar = ({ user }) => {
             <li>
               <Link
                 to="/account"
-                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-4 py-2 "
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-4 py-2 mb-7"
               >
                 <img src={user.profilePic} className="h-10 w-10 rounded-full" />
                 <span className="ml-3">Account</span>
               </Link>
               <Link
                 to="/dashboard"
-                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
               >
                 <RxDashboard className="text-xl" />
                 <span className="ml-3">Dashboard</span>
@@ -94,21 +94,21 @@ const Sidebar = ({ user }) => {
 
               <Link
                 to="/expenses"
-                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
               >
                 <GiPayMoney className="text-xl" />
                 <span className="ml-3">Expenses</span>
               </Link>
               <Link
                 to="/incomes"
-                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
               >
                 <GiReceiveMoney className="text-xl" />
                 <span className="ml-3">Incomes</span>
               </Link>
               <Link
                 to="/transactions-list"
-                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2"
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
               >
                 <FaExchangeAlt className="text-xl" />
                 <span className="ml-3">All Transactions</span>

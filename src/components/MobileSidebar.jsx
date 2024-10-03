@@ -3,8 +3,28 @@ import { RxDashboard } from "react-icons/rx";
 import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
 import { Link } from "react-router-dom";
 import { SlCalender } from "react-icons/sl";
+import { AuthContext } from "../contexts/AuthContext";
+import { TransactionContext } from "../contexts/TransactionContext";
+import { useContext } from "react";
 
 const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
+  const { setToken, setUser } = useContext(AuthContext);
+  const { setTransactions } = useContext(TransactionContext);
+
+  const handleLogout = () => {
+    // Reset authentication state
+    setToken(null);
+    setUser(null);
+
+    // Reset transactions
+    setTransactions([]);
+
+    // Clear localStorage
+    localStorage.clear();
+
+    // Redirect to login page
+    navigate("/login");
+  };
   return (
     <div>
       {isSidebarOpen && (
@@ -100,6 +120,15 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
                 </li>
                 {/* Add more menu items here */}
               </ul>
+              <div className="absolute bottom-4 w-full">
+                <button
+                  onClick={handleLogout}
+                  className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2 w-full text-left"
+                >
+                  <FaSignOutAlt className="text-xl" />
+                  <span className="ml-3">Logout</span>
+                </button>
+              </div>
             </div>
           </ul>
         </div>

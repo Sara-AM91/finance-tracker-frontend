@@ -313,7 +313,7 @@ const ExpensesPage = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col text-white">
+    <div className="h-screen w-full flex flex-col text-white">
       <div className="flex flex-grow">
         {/* Main Content */}
         <div className="flex-grow space-y-6 overflow-hidden">

@@ -124,7 +124,7 @@ const Sidebar = ({ user, isMobile }) => {
         <div className="absolute bottom-4 w-full">
           <button
             onClick={handleLogout}
-            className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-16 py-2 w-full text-left"
+            className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2 w-full text-left"
           >
             <FaSignOutAlt className="text-xl" />
             <span className="ml-3">Logout</span>

@@ -213,7 +213,7 @@ const TransactionsListPage = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col text-white">
+    <div className="h-screen w-full flex flex-col text-white">
       <div className="flex-grow w-full bg-gradient-to-b from-[#121428] to-[#000036] text-white overflow-hidden">
         {/* Filter Section */}
         <TransactionFilter

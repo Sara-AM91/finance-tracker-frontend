@@ -1,21 +1,17 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import useUser from "../hooks/useUser";
 import { useEffect, useState } from "react";
 import { useTransactionContext } from "../contexts/TransactionContext";
 import GlobalAlert from "../components/GlobalAlert "; // Import GlobalAlert
 
 const MainLayout = () => {
-  const { user: userData, loading: userLoading, error: userError } = useUser();
   const {
     transactions,
     loading: transactionsLoading,
     error: transactionsError,
     addTransaction, // Directly access addTransaction from context
   } = useTransactionContext();
-
-  const [user, setUser] = useState({});
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -32,20 +28,6 @@ const MainLayout = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  useEffect(() => {
-    if (userData) {
-      setUser(userData);
-    }
-  }, [userData]);
-
-  if (userLoading || transactionsLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (userError || transactionsError) {
-    return <p>Error: {userError || transactionsError}</p>;
-  }
 
   return (
     <div className="relative flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] h-full lg:overflow-hidden lg:min-h-screen lg:max-h-screen">
@@ -67,15 +49,13 @@ const MainLayout = () => {
       <GlobalAlert />
       {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow overflow-hidden p-4">
-        <Header user={user} isMobile={isMobile} />
+        <Header isMobile={isMobile} />
         <div className="flex flex-grow gap-6 lg:overflow-hidden h-full">
-          {!isMobile && <Sidebar user={user} isMobile={isMobile} />}
+          {!isMobile && <Sidebar isMobile={isMobile} />}
           <div className="flex-grow lg:overflow-y-auto">
             {/* Ensuring that the outlet content still grows but doesn't mess with layout */}
             <Outlet
               context={{
-                user,
-                setUser,
                 transactions,
                 addTransaction,
                 isMobile,

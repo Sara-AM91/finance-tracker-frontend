@@ -1,15 +1,17 @@
 import { createContext, useState, useEffect } from "react";
+import { useJwt } from "react-jwt";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(
-    () => localStorage.getItem("token") || null
-  );
-  const [user, setUser] = useState(null);
+  // Initialize token with the stored value
+  const storedToken = localStorage.getItem("token");
+  const [token, setToken] = useState(storedToken || null);
+
+  const { decodedToken, isExpired } = useJwt(token);
+  console.log("Decoded Token:", decodedToken);
 
   useEffect(() => {
-    //Update localStorage when token changes
     if (token) {
       localStorage.setItem("token", token);
     } else {
@@ -17,8 +19,33 @@ const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
+  const login = (newToken) => {
+    setToken(newToken);
+  };
+
+  const logout = () => {
+    setToken(null);
+  };
+
+  const getUser = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/user/${decodedToken._id}`);
+      const data = await res.json();
+      console.log("User Data:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("PLZ RUN :(");
+    if (decodedToken) {
+      getUser();
+    }
+  }, [decodedToken]);
+
   return (
-    <AuthContext.Provider value={{ token, setToken, user, setUser }}>
+    <AuthContext.Provider value={{ token, login, logout, user: decodedToken }}>
       {children}
     </AuthContext.Provider>
   );

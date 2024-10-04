@@ -19,7 +19,7 @@ import CalculateBalance from "../utils/CalculateBalance";
 const Dashboard = () => {
   const { transactions, addTransaction, loading, error } =
     useContext(TransactionContext);
-  const { user } = useContext(AuthContext);
+
   const { isMobile } = useOutletContext();
 
   const [isBarChart, setIsBarChart] = useState(true);

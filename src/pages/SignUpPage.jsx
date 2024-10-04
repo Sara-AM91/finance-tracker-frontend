@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import loginImg from "../assets/LoginPage.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../contexts/AuthContext";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -11,8 +12,8 @@ const SignUpPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [emailError, setEmailError] = useState();
-  const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(true);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(true);
   const [strength, setStrength] = useState(0);
@@ -25,8 +26,8 @@ const SignUpPage = () => {
   const [alertType, setAlertType] = useState(""); //can be 'success' or 'error'
   const [alertMessage, setAlertMessage] = useState("");
 
-  //useNavigate to redirect after signup
-  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
   useEffect(() => {
     if (alertVisible) {
       const timer = setTimeout(() => {
@@ -157,17 +158,14 @@ const SignUpPage = () => {
       email,
       password,
     };
+
     try {
       const res = await fetch("http://localhost:5000/user/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
+        body: JSON.stringify(userData),
       });
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -196,14 +194,26 @@ const SignUpPage = () => {
       }
 
       if (res.ok) {
+        localStorage.setItem("token", data.token);
+        login(data.token);
         setIsLoading(false);
         setAlertType("success");
         setAlertMessage("Your account has been created successfully!");
-        setAlertVisible(true);
 
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 3000);
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setEmailError(null);
+        setPasswordError(null);
+        setPasswordVisible(false);
+        setStrength(0);
+        setFeedback([]);
+        setError(null);
+        setAlertVisible(false);
+        setAlertType("");
+        setAlertMessage("");
       }
     } catch (err) {
       setIsLoading(false);

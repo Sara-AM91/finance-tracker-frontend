@@ -10,28 +10,13 @@ import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ user, isMobile }) => {
-  const { setToken, setUser } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const { setTransactions } = useContext(TransactionContext);
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const navigate = useNavigate();
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
-  };
-
-  const handleLogout = () => {
-    // Reset authentication state
-    setToken(null);
-    setUser(null);
-
-    // Reset transactions
-    setTransactions([]);
-
-    // Clear localStorage
-    localStorage.clear();
-
-    // Redirect to login page
-    navigate("/login");
   };
 
   return (
@@ -81,7 +66,10 @@ const Sidebar = ({ user, isMobile }) => {
                 to="/account"
                 className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-4 py-2 mb-7"
               >
-                <img src={user.profilePic} className="h-10 w-10 rounded-full" />
+                <img
+                  src="https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png"
+                  className="h-10 w-10 rounded-full"
+                />
                 <span className="ml-3">Account</span>
               </Link>
               <Link
@@ -123,7 +111,7 @@ const Sidebar = ({ user, isMobile }) => {
       {!isCollapsed && (
         <div className="absolute bottom-4 w-full">
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2 w-full text-left"
           >
             <FaSignOutAlt className="text-xl" />

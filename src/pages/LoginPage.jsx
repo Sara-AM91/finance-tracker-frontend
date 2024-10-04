@@ -16,7 +16,7 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState([]);
 
-  const { setToken, setUser } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const { setTransactions } = useContext(TransactionContext);
 
   const navigate = useNavigate();
@@ -109,21 +109,18 @@ const LoginPage = () => {
       }
 
       if (res.ok) {
-        setToken(data.token);
+        console.log("##########################", data);
+        login(data.token);
         setIsLoading(false);
         setError(null);
         setAlertVisible(false);
-        const token = data.token;
-        localStorage.setItem("token", token); // Store only the token
-        console.log("Token stored in localStorage:", token);
-        setUser(data.user);
 
         try {
           const transactionsResponse = await fetch(
             "http://localhost:5000/transactions",
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${data.token}`,
               },
             }
           );
@@ -133,9 +130,6 @@ const LoginPage = () => {
         } catch (err) {
           console.error("Failed to fetch transactions:", err);
         }
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1000);
       }
     } catch (err) {
       setIsLoading(false);

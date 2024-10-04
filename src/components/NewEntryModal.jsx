@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useMediaQuery } from "@mui/material";
 import { useOutletContext } from "react-router-dom";
 import { useTransactionContext } from "../contexts/TransactionContext"; // Import context
 import { useAlert } from "../contexts/AlertContext"; // Import the useAlert hook
+import { AuthContext } from "../contexts/AuthContext";
 
 const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
-  const { user } = useOutletContext();
+  const { token } = useContext(AuthContext);
+  console.log("TOKEN:", token);
+  //const { user } = useOutletContext();
   //console.log(user);
   const [form, setForm] = useState({
-    user: user._id,
+    //user: user._id,
     title: "",
     type: defaultCategory ? defaultCategory.toLowerCase() : "",
     category: "",

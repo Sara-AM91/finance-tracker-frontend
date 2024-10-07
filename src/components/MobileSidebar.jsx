@@ -75,14 +75,14 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
                       src={user.profilePic}
                       className="h-10 w-10 rounded-full"
                     />
-                    <span className="ml-3 text-white text-lg">Account</span>
+                    <span className="ml-3 text-white text-base">Account</span>
                   </Link>
                   <Link
                     to="/dashboard"
                     className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
                   >
                     <RxDashboard className="text-xl text-white" />
-                    <span className="ml-3 text-white text-lg">Dashboard</span>
+                    <span className="ml-3 text-white text-base">Dashboard</span>
                   </Link>
 
                   <Link
@@ -90,21 +90,21 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
                     className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
                   >
                     <GiPayMoney className="text-xl text-white" />
-                    <span className="ml-3 text-white text-lg">Expenses</span>
+                    <span className="ml-3 text-white text-base">Expenses</span>
                   </Link>
                   <Link
                     to="/incomes"
                     className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
                   >
                     <GiReceiveMoney className="text-xl text-white" />
-                    <span className="ml-3 text-white text-lg">Incomes</span>
+                    <span className="ml-3 text-white text-base">Incomes</span>
                   </Link>
                   <Link
                     to="/transactions-list"
                     className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
                   >
                     <FaExchangeAlt className="text-xl text-white" />
-                    <span className="ml-3 text-white text-lg">
+                    <span className="ml-3 text-white text-base">
                       All Transactions
                     </span>
                   </Link>
@@ -113,7 +113,7 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
                     className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
                   >
                     <SlCalender className="text-xl text-white" />
-                    <span className="ml-3 text-white text-lg">
+                    <span className="ml-3 text-white text-base">
                       Your Calender
                     </span>
                   </Link>

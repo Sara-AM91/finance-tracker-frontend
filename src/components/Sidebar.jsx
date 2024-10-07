@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
-
+import DateCalendarModal from "./DateCalendarModal";
 import { AuthContext } from "../contexts/AuthContext";
 import { TransactionContext } from "../contexts/TransactionContext";
-
+import { SlCalender } from "react-icons/sl";
 import { Link } from "react-router-dom";
 import { FaExchangeAlt, FaSignOutAlt } from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
@@ -17,6 +17,16 @@ const Sidebar = ({ user, isMobile }) => {
   const navigate = useNavigate();
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const handleLogout = () => {
@@ -113,9 +123,17 @@ const Sidebar = ({ user, isMobile }) => {
                 <FaExchangeAlt className="text-xl" />
                 <span className="ml-3">All Transactions</span>
               </Link>
+              <div
+                className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2 cursor-pointer"
+                onClick={handleClickOpen}
+              >
+                <SlCalender className="text-xl text-white" />
+                <span className="ml-3 text-white text-base">Your Calender</span>
+              </div>
             </li>
             {/* Add more menu items here */}
           </ul>
+          <DateCalendarModal open={open} handleClose={handleClose} />
         </div>
       ) : null}
 

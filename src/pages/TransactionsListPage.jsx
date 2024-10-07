@@ -14,8 +14,13 @@ import { useTransactionContext } from "../contexts/TransactionContext";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
 import TrashIconWithCross from "../components/TrashIconWithCross";
+import { useOutletContext } from "react-router-dom";
 
 const TransactionsListPage = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const { isMobile } = useOutletContext();
+
   const [openNewEntryModal, setOpenNewEntryModal] = useState(false);
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
@@ -213,18 +218,65 @@ const TransactionsListPage = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col text-white">
-      <div className="flex-grow w-full bg-gradient-to-b from-[#121428] to-[#000036] text-white overflow-hidden">
+    <div className="h-full w-full text-white">
+      <div className="flex flex-col flex-grow w-full text-white overflow-hidden">
         {/* Filter Section */}
-        <TransactionFilter
-          filters={filters}
-          setFilters={setFilters}
-          type="all"
-          showTypeFilter={true}
-        />
+        {isMobile && (
+          <button
+            className="self-end px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            Filter
+          </button>
+        )}
+        {!isMobile && (
+          <TransactionFilter
+            filters={filters}
+            setFilters={setFilters}
+            type="all"
+            showTypeFilter={true}
+          />
+        )}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
+            onClick={toggleSidebar}
+          >
+            <div
+              className="bg-[#161A40] w-3/4 sm:w-1/2 h-full p-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="text-white"
+                onClick={toggleSidebar} // Button to close sidebar
+              >
+                Close
+              </button>
+              <TransactionFilter
+                filters={filters}
+                setFilters={setFilters}
+                type="all"
+                showTypeFilter={true}
+              />
+            </div>
+          </div>
+        )}
+        {/* Pagination Component */}
+        <div className="flex justify-center mt-4">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(e, value) => setCurrentPage(value)}
+              variant="outlined"
+              shape="rounded"
+              className="custom-pagination"
+            />
+          </Stack>
+        </div>
 
         {/* Transactions Table */}
-        <div className="rounded-2xl mt-4 h-[75vh] relative">
+        <div className="rounded-2xl mt-4 h-[75vh] sm:h-[55vh] md:h-[70vh] w-[40vh] sm:w-[70vh] md:w-auto relative overflow-x-auto self-center md:self-auto">
           <div className="h-full overflow-y-auto">
             <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl">
               <thead>
@@ -376,20 +428,6 @@ const TransactionsListPage = () => {
               </tbody>
             </table>
           </div>
-        </div>
-
-        {/* Pagination Component */}
-        <div className="flex justify-center mt-4">
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={(e, value) => setCurrentPage(value)}
-              variant="outlined"
-              shape="rounded"
-              className="custom-pagination"
-            />
-          </Stack>
         </div>
       </div>
       {/* View Entry Modal */}

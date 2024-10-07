@@ -162,7 +162,7 @@ const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
     <div className="relative z-10">
       <div
         transition="true"
-        className="fixed inset-0 bg-blue-950 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
       />
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">

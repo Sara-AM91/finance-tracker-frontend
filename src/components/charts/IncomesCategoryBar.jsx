@@ -134,7 +134,7 @@ const IncomesCategoryBar = ({ transactions, onBarClick }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "120%", backgroundColor: "#161A40" }}>
+    <div style={{ width: "100%", height: "100%", backgroundColor: "#161A40" }}>
       <Bar
         ref={chartRef}
         data={chartData}

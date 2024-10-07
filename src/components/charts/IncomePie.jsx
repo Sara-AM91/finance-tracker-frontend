@@ -46,7 +46,7 @@ export default function IncomePie({ transactions }) {
             outerRadius: 100,
             paddingAngle: 5,
             cornerRadius: 5,
-            cx: "50%", // X center position of the pie chart
+            cx: "70%", // X center position of the pie chart
             cy: "50%", // Y center position of the pie chart
           },
         ]}

@@ -350,7 +350,7 @@ const SignUpPage = () => {
 
               <div className="mb-4 relative flex items-center">
                 <input
-                  type={passwordVisible ? "password" : "text"}
+                  type={confirmPasswordVisible ? "password" : "text"}
                   placeholder="Confirm Password"
                   className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-[15px] text-[#969696]"
                   value={confirmPassword}

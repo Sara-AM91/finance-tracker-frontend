@@ -510,7 +510,7 @@ const ExpensesPage = () => {
                         {expense.category?.title || "Unknown"}
                       </td>
                       <td className="p-4 w-1/6 truncate">
-                        {parseFloat(expense.amount).toFixed(2)}$
+                        {parseFloat(expense.amount).toFixed(2)}€
                       </td>
                       <td className="p-4 w-1/6 truncate">
                         {formatDateForInput(expense.date)}

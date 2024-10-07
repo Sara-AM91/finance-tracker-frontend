@@ -5,11 +5,21 @@ import { Link } from "react-router-dom";
 import { SlCalender } from "react-icons/sl";
 import { AuthContext } from "../contexts/AuthContext";
 import { TransactionContext } from "../contexts/TransactionContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import DateCalendarModal from "./DateCalendarModal";
 
 const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
   const { setToken, setUser } = useContext(AuthContext);
   const { setTransactions } = useContext(TransactionContext);
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleLogout = () => {
     // Reset authentication state
@@ -25,6 +35,7 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
     // Redirect to login page
     navigate("/login");
   };
+
   return (
     <div>
       {isSidebarOpen && (
@@ -108,15 +119,13 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
                       All Transactions
                     </span>
                   </Link>
-                  <Link
-                    to="/transactions-list"
+                  <div
+                    onClick={handleClickOpen}
                     className="flex gap-2 items-center hover:bg-gradient-to-r from-purple-600 to-indigo-900 pl-9 py-2"
                   >
                     <SlCalender className="text-xl text-white" />
-                    <span className="ml-3 text-white text-base">
-                      Your Calender
-                    </span>
-                  </Link>
+                    <span className="ml-3 text-white text-base">Calender</span>
+                  </div>
                 </li>
                 {/* Add more menu items here */}
               </ul>
@@ -133,6 +142,7 @@ const MobileSidebar = ({ user, isSidebarOpen, toggleSidebar }) => {
           </ul>
         </div>
       </div>
+      {open && <DateCalendarModal open={open} handleClose={handleClose} />}
     </div>
   );
 };

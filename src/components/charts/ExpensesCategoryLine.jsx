@@ -139,7 +139,7 @@ const IncomesCategoryLine = ({ transactions }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "110%", backgroundColor: "#161A40" }}>
+    <div style={{ width: "100%", height: "100%", backgroundColor: "#161A40" }}>
       <Line ref={chartRef} data={chartData} options={options} />
     </div>
   );

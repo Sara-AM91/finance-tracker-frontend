@@ -17,7 +17,7 @@ const MainLayout = () => {
 
   const [user, setUser] = useState({});
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
 
   useEffect(() => {
     const handleResize = () => {

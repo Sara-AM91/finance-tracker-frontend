@@ -75,7 +75,7 @@ const TransactionFilter = ({
     ? "w-full sm:w-[8%] md:w-[10%] lg:w-[15%]" // Smaller custom size if showTypeFilter is true
     : "w-full sm:w-[12%] md:w-[15%] lg:w-[18%]"; // Larger custom size if showTypeFilter is false
   return (
-    <div className="flex flex-wrap justify-between p-3 bg-[#161A40] rounded-3xl shadow-md">
+    <div className="flex flex-wrap flex-col lg:flex-row justify-between p-3 bg-[#161A40] rounded-3xl shadow-md">
       {/* Type Filter (conditionally displayed) */}
       {showTypeFilter && (
         <div className={inputClass}>

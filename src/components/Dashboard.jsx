@@ -102,6 +102,9 @@ const Dashboard = () => {
       setIsMedium(window.innerWidth <= 1296);
     };
 
+    // Call the function immediately to ensure the correct screen size is detected
+    handleResize();
+
     // Add event listener to handle resize
     window.addEventListener("resize", handleResize);
 

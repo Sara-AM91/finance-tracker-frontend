@@ -18,8 +18,12 @@ import EditEntryModal from "../components/EditEntryModal";
 import { useTransactionContext } from "../contexts/TransactionContext";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
+import { useOutletContext } from "react-router-dom";
 
 const ExpensesPage = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const { isMobile } = useOutletContext();
   //State for toggling between Bar and Line chart
   const [bar, setBar] = useState(true);
 
@@ -313,248 +317,297 @@ const ExpensesPage = () => {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col text-white">
-      <div className="flex flex-grow">
-        {/* Main Content */}
-        <div className="flex-grow space-y-6 overflow-hidden">
-          {/* Cards and Chart Section */}
-          <div className="grid grid-cols-3 gap-6">
-            {/* Card Section */}
-            <div className="col-span-2 grid grid-cols-2 gap-6">
-              {/* Total Expenses Card */}
-              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
-                <h3 className="text-lg font-semibold">Total Expenses</h3>
-                <p className="text-3xl font-bold mt-2">${totalExpenses}</p>
-              </div>
-              {/* Total Transactions Card */}
-              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
-                <h3 className="text-lg font-semibold">Total Transactions</h3>
-                <p className="text-3xl font-bold mt-2">{totalTransactions}</p>
-              </div>
-              {/* Average Expense Card */}
-              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
-                <h3 className="text-lg font-semibold">Average Expense</h3>
-                <p className="text-3xl font-bold mt-2">${averageExpense}</p>
-              </div>
-              {/* Top Category Card */}
-              <div className="p-6 bg-[#161A40] rounded-3xl shadow-lg">
-                <h3 className="text-lg font-semibold">Top Category</h3>
-                <p className="text-3xl font-bold mt-2">{topCategory}</p>
-              </div>
-            </div>
+    <div className="text-white">
+      {/* Main Content */}
 
-            {/* Chart Section */}
-            <div className="bg-[#161A40] p-6 rounded-3xl shadow-lg">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Expenses by Category</h3>
-                <button
-                  className="px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
-                  onClick={toggleChart}
-                >
-                  {bar ? "Line Chart" : "Bar Chart"}
-                </button>
-              </div>
-              <div className="h-40 rounded-3xl mt-4">
-                {bar ? (
-                  <ExpensesCategoryBar
-                    transactions={formattedTransactions}
-                    onBarClick={handleBarClick}
-                  />
-                ) : (
-                  <ExpensesCategoryLine transactions={formattedTransactions} />
-                )}
-              </div>
-            </div>
+      {/* Cards and Chart Section */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        {/* Card Section */}
+        <div className="xl:col-span-2 col-span-1 grid sm:grid-cols-2 gap-4">
+          {/* Total Expenses Card */}
+          <div className="p-4 md:p-6 bg-[#161A40] rounded-3xl shadow-lg flex flex-col">
+            <h3 className="text-lg font-semibold">Total Expenses</h3>
+            <p className="text-3xl font-bold mt-4 md:mt-2 self-start">
+              {totalExpenses}€
+            </p>
           </div>
-
-          {/* Latest Transactions Section */}
-          <div className="w-full flex flex-col bg-gradient-to-b from-[#121428] to-[#000036] text-white">
-            {/* Filter Section */}
-            <TransactionFilter
-              filters={filters}
-              setFilters={setFilters}
-              type="expense"
-            />
-            {/* Transactions Table */}
-            <div className="rounded-2xl mt-4 h-[55vh] relative">
-              <div className="h-full overflow-y-auto">
-                <table className="min-w-full bg-[#161A40] text-gray-300 rounded-3xl">
-                  <thead className="bg-[#293458] z-10">
-                    <tr className="text-left bg-[#3A3A57]">
-                      <th
-                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 rounded-tl-2xl w-1/6"
-                        onClick={() => handleSort("title")}
-                      >
-                        Title{" "}
-                        <span className={`${getIconColor("title")}`}>
-                          {getSortIcon("title")}
-                        </span>
-                      </th>
-                      <th
-                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
-                        onClick={() => handleSort("category")}
-                      >
-                        Category{" "}
-                        <span className={`${getIconColor("category")}`}>
-                          {getSortIcon("category")}
-                        </span>
-                      </th>
-                      <th
-                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
-                        onClick={() => handleSort("amount")}
-                      >
-                        Amount{" "}
-                        <span className={`${getIconColor("amount")}`}>
-                          {getSortIcon("amount")}
-                        </span>
-                      </th>
-                      <th
-                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
-                        onClick={() => handleSort("date")}
-                      >
-                        Date{" "}
-                        <span className={`${getIconColor("date")}`}>
-                          {getSortIcon("date")}
-                        </span>
-                      </th>
-                      <th
-                        className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
-                        onClick={() => handleSort("createdAt")}
-                      >
-                        Created Date{" "}
-                        <span className={`${getIconColor("createdAt")}`}>
-                          {getSortIcon("createdAt")}
-                        </span>
-                      </th>
-                      <th className="p-4 pl-80 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
-                        <button
-                          onClick={clearFilters}
-                          aria-label="Clear filters"
-                          title="Clear filters"
-                          className="inline-flex items-center cursor-pointer"
-                        >
-                          <TrashIconWithCross
-                            filtersActive={areFiltersActive()}
-                          />
-                        </button>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentTransactions.length > 0 ? (
-                      currentTransactions.map((expense, index) => (
-                        <tr
-                          key={index}
-                          className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
-                          onClick={() => handleRowClick(expense)}
-                        >
-                          <td className="p-4 w-1/6 truncate">
-                            {expense.title}
-                          </td>
-                          <td className="p-4 w-1/6 truncate">
-                            {expense.category?.title || "Unknown"}
-                          </td>
-                          <td className="p-4 w-1/6 truncate">
-                            {parseFloat(expense.amount).toFixed(2)}$
-                          </td>
-                          <td className="p-4 w-1/6 truncate">
-                            {formatDateForInput(expense.date)}
-                          </td>
-                          <td className="p-4 w-1/6 truncate">
-                            {expense.createdAt
-                              ? formatDateForInput(expense.createdAt)
-                              : "N/A"}
-                          </td>
-                          {/* Action Button inside each row */}
-                          <td className="p-4 text-right right-4 top-4">
-                            {/* Action Menu */}
-                            <Menu
-                              as="div"
-                              className="relative inline-block text-left"
-                            >
-                              <MenuButton
-                                className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                ⋮
-                              </MenuButton>
-                              <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
-                                <div className="py-1">
-                                  <MenuItem
-                                    as="button"
-                                    className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEdit(expense);
-                                    }}
-                                  >
-                                    Edit
-                                  </MenuItem>
-                                </div>
-                              </MenuItems>
-                            </Menu>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td className="p-4 text-center" colSpan="6">
-                          No transactions found.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            {/* Pagination Component */}
-            <div className="flex justify-center mt-4">
-              <Stack spacing={2}>
-                <Pagination
-                  count={totalPages}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                  variant="outlined"
-                  shape="rounded"
-                  className="custom-pagination"
-                />
-              </Stack>
-            </div>
+          {/* Total Transactions Card */}
+          <div className="p-4 md:p-6 bg-[#161A40] rounded-3xl shadow-lg flex flex-col">
+            <h3 className="text-lg font-semibold">Total Transactions</h3>
+            <p className="text-3xl font-bold mt-4 md:mt-2 self-start">
+              {totalTransactions}
+            </p>
           </div>
+          {/* Average Expense Card */}
+          <div className="p-4 md:p-6 bg-[#161A40] rounded-3xl shadow-lg flex flex-col">
+            <h3 className="text-lg font-semibold">Average Expense</h3>
+            <p className="text-3xl font-bold mt-4 md:mt-2 self-start">
+              {averageExpense}€
+            </p>
+          </div>
+          {/* Top Category Card */}
+          <div className="p-4 md:p-6 bg-[#161A40] rounded-3xl shadow-lg flex flex-col">
+            <h3 className="text-lg font-semibold">Top Category</h3>
+            <p className="text-3xl font-bold mt-4 md:mt-2 self-start">
+              {topCategory}
+            </p>
+          </div>
+        </div>
 
-          {/* View Entry Modal */}
-          {entryToEdit && (
-            <ViewEntryModal
-              open={openViewModal}
-              setOpen={setOpenViewModal}
-              entry={entryToEdit}
-              onEdit={handleEditFromViewModal}
-            />
-          )}
-          {/* New Entry Modal */}
-          <NewEntryModal
-            open={openNewEntryModal}
-            setOpen={setOpenNewEntryModal}
-            defaultCategory="Expense"
-            addTransaction={addTransaction}
-          />
-          {/* Edit Entry Modal */}
-          {entryToEdit && (
-            <EditEntryModal
-              open={openEditEntryModal}
-              setOpen={setOpenEditEntryModal}
-              entry={entryToEdit}
-            />
-          )}
-          {/* Floating "+" Button */}
-          <button
-            className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"
-            onClick={() => setOpenNewEntryModal(true)}
-          >
-            +
-          </button>
+        {/* Chart Section */}
+        <div className="bg-[#161A40] p-4 rounded-3xl shadow-lg w-full">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Expenses by Category</h3>
+            <button
+              className="px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
+              onClick={toggleChart}
+            >
+              {bar ? "Line Chart" : "Bar Chart"}
+            </button>
+          </div>
+          <div className="h-60 w-full rounded-3xl mt-4">
+            {bar ? (
+              <ExpensesCategoryBar
+                transactions={formattedTransactions}
+                onBarClick={handleBarClick}
+              />
+            ) : (
+              <ExpensesCategoryLine transactions={formattedTransactions} />
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Latest Transactions Section */}
+      <div className="w-full flex flex-col gap-4 text-white mt-4">
+        {isMobile && (
+          <button
+            className="self-end px-3 py-1 bg-[#293458] text-white text-sm font-semibold rounded-md hover:bg-cyan-800 transition-colors duration-200 w-24"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            Filter
+          </button>
+        )}
+        {/* Filter Section */}
+        {!isMobile && (
+          <TransactionFilter
+            filters={filters}
+            setFilters={setFilters}
+            type="expense"
+          />
+        )}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
+            onClick={toggleSidebar}
+          >
+            <div
+              className="bg-[#161A40] w-3/4 sm:w-1/2 h-full p-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="text-white"
+                onClick={toggleSidebar} // Button to close sidebar
+              >
+                Close
+              </button>
+              <TransactionFilter
+                filters={filters}
+                setFilters={setFilters}
+                type="expense"
+              />
+            </div>
+          </div>
+        )}
+        {/* Pagination Component */}
+        {isMobile && (
+          <div className="flex justify-center">
+            <Stack spacing={2}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+                className="custom-pagination"
+              />
+            </Stack>
+          </div>
+        )}
+        {/* Transactions Table */}
+        <div className="rounded-2xl h-[75vh] sm:h-[55vh] w-[40vh] sm:w-[70vh] md:w-auto relative overflow-x-auto self-center md:self-auto">
+          <div className="h-full overflow-x-auto">
+            <table className="w-full bg-[#161A40] text-gray-300 rounded-3xl">
+              <thead className="bg-[#293458] z-10">
+                <tr className="text-left bg-[#3A3A57]">
+                  <th
+                    className="p-4 font-bold sticky top-0 bg-[#293458] z-10 md:rounded-tl-2xl w-1/6"
+                    onClick={() => handleSort("title")}
+                  >
+                    Title{" "}
+                    <span className={`${getIconColor("title")}`}>
+                      {getSortIcon("title")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                    onClick={() => handleSort("category")}
+                  >
+                    Category{" "}
+                    <span className={`${getIconColor("category")}`}>
+                      {getSortIcon("category")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                    onClick={() => handleSort("amount")}
+                  >
+                    Amount{" "}
+                    <span className={`${getIconColor("amount")}`}>
+                      {getSortIcon("amount")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                    onClick={() => handleSort("date")}
+                  >
+                    Date{" "}
+                    <span className={`${getIconColor("date")}`}>
+                      {getSortIcon("date")}
+                    </span>
+                  </th>
+                  <th
+                    className="p-4 font-bold sticky top-0 bg-[#293458] z-10 w-1/6"
+                    onClick={() => handleSort("createdAt")}
+                  >
+                    Created Date{" "}
+                    <span className={`${getIconColor("createdAt")}`}>
+                      {getSortIcon("createdAt")}
+                    </span>
+                  </th>
+                  <th className="p-4 xl:pl-80 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
+                    <button
+                      onClick={clearFilters}
+                      aria-label="Clear filters"
+                      title="Clear filters"
+                      className="inline-flex items-center cursor-pointer float-end"
+                    >
+                      <TrashIconWithCross filtersActive={areFiltersActive()} />
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentTransactions.length > 0 ? (
+                  currentTransactions.map((expense, index) => (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-700 hover:bg-[#293458]/45 transition-colors duration-200 cursor-pointer"
+                      onClick={() => handleRowClick(expense)}
+                    >
+                      <td className="p-4 w-1/6 truncate">{expense.title}</td>
+                      <td className="p-4 w-1/6 truncate">
+                        {expense.category?.title || "Unknown"}
+                      </td>
+                      <td className="p-4 w-1/6 truncate">
+                        {parseFloat(expense.amount).toFixed(2)}$
+                      </td>
+                      <td className="p-4 w-1/6 truncate">
+                        {formatDateForInput(expense.date)}
+                      </td>
+                      <td className="p-4 w-1/6 truncate">
+                        {expense.createdAt
+                          ? formatDateForInput(expense.createdAt)
+                          : "N/A"}
+                      </td>
+                      {/* Action Button inside each row */}
+                      <td className="p-4 text-right right-4 top-4">
+                        {/* Action Menu */}
+                        <Menu
+                          as="div"
+                          className="relative inline-block text-left"
+                        >
+                          <MenuButton
+                            className="inline-flex justify-center w-full px-2 py-2 text-sm font-medium text-white bg-transparent rounded-md hover:bg-[#293458]/30 focus:outline-none"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            ⋮
+                          </MenuButton>
+                          <MenuItems className="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none z-10">
+                            <div className="py-1">
+                              <MenuItem
+                                as="button"
+                                className="group flex rounded-md items-center w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-200 data-[active=true]:bg-gray-200"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEdit(expense);
+                                }}
+                              >
+                                Edit
+                              </MenuItem>
+                            </div>
+                          </MenuItems>
+                        </Menu>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="p-4 text-center" colSpan="6">
+                      No transactions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>{" "}
+        </div>
+      </div>
+      {!isMobile && (
+        <div className="flex justify-center mt-4">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              className="custom-pagination"
+            />
+          </Stack>
+        </div>
+      )}
+      {/* View Entry Modal */}
+      {entryToEdit && (
+        <ViewEntryModal
+          open={openViewModal}
+          setOpen={setOpenViewModal}
+          entry={entryToEdit}
+          onEdit={handleEditFromViewModal}
+        />
+      )}
+      {/* New Entry Modal */}
+      <NewEntryModal
+        open={openNewEntryModal}
+        setOpen={setOpenNewEntryModal}
+        defaultCategory="Expense"
+        addTransaction={addTransaction}
+      />
+      {/* Edit Entry Modal */}
+      {entryToEdit && (
+        <EditEntryModal
+          open={openEditEntryModal}
+          setOpen={setOpenEditEntryModal}
+          entry={entryToEdit}
+        />
+      )}
+      {/* Floating "+" Button */}
+      <button
+        className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10 z-10"
+        onClick={() => setOpenNewEntryModal(true)}
+      >
+        +
+      </button>
     </div>
   );
 };

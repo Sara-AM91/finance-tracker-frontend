@@ -262,18 +262,20 @@ const TransactionsListPage = () => {
           </div>
         )}
         {/* Pagination Component */}
-        <div className="flex justify-center mt-4">
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={(e, value) => setCurrentPage(value)}
-              variant="outlined"
-              shape="rounded"
-              className="custom-pagination"
-            />
-          </Stack>
-        </div>
+        {isMobile && (
+          <div className="flex justify-center mt-4">
+            <Stack spacing={2}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(e, value) => setCurrentPage(value)}
+                variant="outlined"
+                shape="rounded"
+                className="custom-pagination"
+              />
+            </Stack>
+          </div>
+        )}
 
         {/* Transactions Table */}
         <div className="rounded-2xl mt-4 h-[75vh] sm:h-[55vh] md:h-[70vh] w-[40vh] sm:w-[70vh] md:w-auto relative overflow-x-auto self-center md:self-auto">
@@ -372,12 +374,14 @@ const TransactionsListPage = () => {
                       <td className="p-4 w-1/6 truncate">
                         {transaction.title}
                       </td>
-                      <td className="p-4 w-1/6 truncate">{transaction.type}</td>
+                      <td className="p-4 w-1/6 truncate capitalize">
+                        {transaction.type}
+                      </td>
                       <td className="p-4 w-1/6 truncate">
                         {transaction.category?.title || "Unknown"}
                       </td>
                       <td className="p-4 w-1/6 truncate">
-                        {parseFloat(transaction.amount).toFixed(2)}$
+                        {parseFloat(transaction.amount).toFixed(2)}€
                       </td>
                       <td className="p-4 w-1/6 truncate">
                         {formatDateForInput(transaction.date)}
@@ -430,6 +434,20 @@ const TransactionsListPage = () => {
           </div>
         </div>
       </div>
+      {!isMobile && (
+        <div className="flex justify-center mt-4">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(e, value) => setCurrentPage(value)}
+              variant="outlined"
+              shape="rounded"
+              className="custom-pagination"
+            />
+          </Stack>
+        </div>
+      )}
       {/* View Entry Modal */}
       {entryToEdit && (
         <ViewEntryModal

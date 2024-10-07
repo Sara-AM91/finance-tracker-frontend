@@ -178,11 +178,14 @@ const AccountSettings = ({ setUser, user }) => {
               </div>
             ) : (
               <label htmlFor="file-input" className="cursor-pointer">
-                <img
-                  src={user.profilePic}
-                  alt="Profile"
-                  className="w-24 h-24 rounded-full bg-[#161A40] shadow-lg"
-                />
+                <div className="w-24 h-24 rounded-full flex justify-center items-center overflow-hidden">
+                  <img
+                    src={user.profilePic}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full bg-[#161A40] shadow-lg object-cover"
+                  />
+                </div>
+
                 {/* Hidden file input */}
                 <input
                   id="file-input"

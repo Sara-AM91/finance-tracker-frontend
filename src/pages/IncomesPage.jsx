@@ -405,7 +405,7 @@ const IncomesPage = () => {
               <TransactionFilter
                 filters={filters}
                 setFilters={setFilters}
-                type="expense"
+                type="income"
               />
             </div>
           </div>
@@ -476,12 +476,12 @@ const IncomesPage = () => {
                       {getSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="p-4 pl-80 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
+                  <th className="p-4 xl:pl-80 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
                     <button
                       onClick={clearFilters}
                       aria-label="Clear filters"
                       title="Clear filters"
-                      className="inline-flex items-center cursor-pointer"
+                      className="inline-flex items-center cursor-pointer float-end"
                     >
                       <TrashIconWithCross filtersActive={areFiltersActive()} />
                     </button>
@@ -501,7 +501,7 @@ const IncomesPage = () => {
                         {income.category?.title || "Unknown"}
                       </td>
                       <td className="p-4 w-1/6 truncate">
-                        {parseFloat(income.amount).toFixed(2)}$
+                        {parseFloat(income.amount).toFixed(2)}€
                       </td>
                       <td className="p-4 w-1/6 truncate">
                         {formatDateForInput(income.date)}

@@ -4,9 +4,9 @@ const FilterCategory = (transactions, type) => {
   // Group filtered transactions by category
   const grouped = filtered.reduce((group, transaction) => {
     const category =
-      typeof transaction.category === "object"
-        ? transaction.category.title // Access the name property if category is an object
-        : transaction.category; // Use directly if category is a string
+      transaction.category && typeof transaction.category === "object"
+        ? transaction.category.title //Access the title property if category is a valid object
+        : transaction.category ?? "Unknown"; //Default to "Unknown" if category is null or undefined
 
     // Initialize the group for the category if it doesn't exist
     group[category] = group[category] ?? [];

@@ -6,12 +6,12 @@ import { useAlert } from "../contexts/AlertContext"; // Import the useAlert hook
 
 const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
   const { user } = useOutletContext();
-  //console.log(user);
   const [form, setForm] = useState({
     user: user._id,
     title: "",
     type: defaultCategory ? defaultCategory.toLowerCase() : "",
     category: "",
+    customCategoryTitle: "", // Added for custom category title
     description: "",
     amount: "",
     date: "",
@@ -23,21 +23,21 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
 
   const [types, setTypes] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showCustomCategoryField, setShowCustomCategoryField] = useState(false); // State to control the visibility of custom category input
 
-  const isDesktop = useMediaQuery("(min-width: 768px)"); // Always called, no condition
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   useEffect(() => {
     if (form.type) {
       const fetchCategories = async () => {
         try {
-          const token = localStorage.getItem("token").replace(/['"]+/g, ""); //Remove extra quotes
-          //.log("Token", token);
+          const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
           let headers = {};
 
           if (token) {
             headers = {
               Authorization: `Bearer ${token}`,
             };
-            console.log("headers", headers);
           } else {
             console.error("No token found, user is not logged in.");
             return;
@@ -92,6 +92,20 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+
+    // Detect when "Other" is selected
+    if (name === "category") {
+      const selectedCategory = categories.find(
+        (category) => category._id === value
+      );
+      if (selectedCategory && selectedCategory.title === "Other") {
+        setShowCustomCategoryField(true);
+      } else {
+        setShowCustomCategoryField(false);
+        // Reset custom category title when "Other" is deselected
+        setForm((prev) => ({ ...prev, customCategoryTitle: "" }));
+      }
+    }
   };
 
   useEffect(() => {
@@ -107,6 +121,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
       setForm((prev) => ({ ...prev, amount: amount }));
     }
   };
+
   const filteredCategories = categories.filter(
     (category) => category.categoryType === form.type.toLowerCase()
   );
@@ -122,10 +137,47 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
       return;
     }
 
+    let categoryId = form.category; // Initially use the selected category id
+
+    if (showCustomCategoryField && form.customCategoryTitle) {
+      // Create the new category
+      try {
+        const categoryData = {
+          title: form.customCategoryTitle,
+          categoryType: form.type,
+        };
+        const categoryResponse = await fetch(
+          "http://localhost:5000/categories",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(categoryData),
+          }
+        );
+        if (!categoryResponse.ok) {
+          showAlert(
+            "error",
+            `Failed to create category. Status: ${categoryResponse.status}`
+          );
+          throw new Error(`HTTP error! status: ${categoryResponse.status}`);
+        }
+        const newCategory = await categoryResponse.json();
+        categoryId = newCategory._id; // Use the new category's id
+      } catch (error) {
+        console.error("Error creating category:", error);
+        showAlert("error", "Error creating category. Please try again.");
+        return; // Stop submission if category creation fails
+      }
+    }
+
+    // Proceed to create transaction
     const formData = new FormData();
     formData.append("user", form.user);
     formData.append("type", form.type);
-    formData.append("category", form.category);
+    formData.append("category", categoryId);
     formData.append("title", form.title);
     formData.append("description", form.description);
     formData.append("amount", form.amount);
@@ -153,9 +205,9 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
 
       refreshTransactions();
       setOpen(false);
-      showAlert("success", "Transaction successfully created!"); // Show success alert
+      showAlert("success", "Transaction successfully created!");
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error("Error creating transaction:", error);
       showAlert("error", "Error creating transaction. Please try again.");
     }
   };
@@ -166,16 +218,16 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
         transition="true"
         className="fixed inset-0 bg-blue-950 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
       />
-
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div className=" w-[420px]">
+          <div className="w-[420px]">
             <div
               transition="true"
               className="relative transform overflow-hidden rounded-xl text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
             >
               <div className="bg-[#161a40] border border-indigo-400 rounded-xl relative overflow-hidden pb-2">
                 <div className="absolute top-0 left-0 w-full">
+                  {/* SVG Wave Background */}
                   <svg
                     viewBox="0 0 1440 320"
                     className="w-full h-[100px]"
@@ -264,6 +316,19 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
                             </div>
                           </div>
 
+                          {/* Show custom category input when "Other" is selected */}
+                          {showCustomCategoryField && (
+                            <input
+                              id="customCategoryTitle"
+                              name="customCategoryTitle"
+                              className="w-full p-2 mb-4 bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block placeholder-gray-400"
+                              placeholder="Enter your category"
+                              value={form.customCategoryTitle}
+                              onChange={handleChange}
+                              required
+                            />
+                          )}
+
                           <input
                             id="title"
                             name="title"
@@ -330,7 +395,8 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
                       !form.title ||
                       !form.type ||
                       !form.date ||
-                      !form.amount
+                      !form.amount ||
+                      (showCustomCategoryField && !form.customCategoryTitle) // Disable if custom category is required but empty
                     }
                     type="button"
                     className={`inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm  sm:ml-3 sm:w-auto ${
@@ -338,7 +404,8 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
                       !form.title ||
                       !form.type ||
                       !form.date ||
-                      !form.amount
+                      !form.amount ||
+                      (showCustomCategoryField && !form.customCategoryTitle)
                         ? "bg-gradient-to-r from-cyan-500 to-teal-400 opacity-40 shadow-inner text-gray-300 cursor-not-allowed"
                         : "bg-gradient-to-r from-cyan-500 to-teal-400 text-white"
                     }`}

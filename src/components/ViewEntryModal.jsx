@@ -10,7 +10,7 @@ const ViewEntryModal = ({ open, setOpen, entry, onEdit }) => {
     user: entry?.user || "",
     title: entry?.title || "",
     type: entry?.type || "",
-    category: entry?.category?.title || "",
+    category: entry?.category?._id || "",
     description: entry?.description || "",
     amount: entry?.amount || "",
     date: entry?.date || "",
@@ -25,12 +25,66 @@ const ViewEntryModal = ({ open, setOpen, entry, onEdit }) => {
         user: entry.user || "",
         title: entry.title || "",
         type: entry.type || "",
-        category: entry.category?.title || "",
+        category: entry.category?._id || "", // Changed from title to _id
         description: entry.description || "",
         amount: entry.amount || "",
         date: formatDateForInput(entry?.date),
         invoice: entry.invoice || "",
       });
+
+      // Fetch categories based on entry type
+      const fetchCategories = async () => {
+        try {
+          const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
+          if (!token) {
+            console.error("No token found, user is not logged in.");
+            return;
+          }
+
+          const headers = {
+            Authorization: `Bearer ${token}`,
+          };
+
+          const response = await fetch(
+            `http://localhost:5000/categories/global?categoryType=${entry.type}`
+          );
+          const globalCategories = await response.json();
+
+          const userResponse = await fetch(
+            `http://localhost:5000/categories/filter?categoryType=${entry.type}`,
+            { headers }
+          );
+
+          let userCategories = [];
+          if (userResponse.status === 401) {
+            console.error("User not authorized to fetch categories.");
+          } else {
+            userCategories = await userResponse.json();
+          }
+
+          const allCategories = [
+            ...globalCategories,
+            ...userCategories.filter(
+              (userCategory) =>
+                !globalCategories.some(
+                  (globalCategory) => globalCategory._id === userCategory._id
+                )
+            ),
+          ];
+
+          const sortedCategories = [
+            ...allCategories.filter((category) => category.title !== "Other"),
+            ...allCategories.filter((category) => category.title === "Other"),
+          ];
+
+          setCategories(sortedCategories);
+        } catch (error) {
+          console.error("Failed to fetch categories", error);
+          setCategories([]);
+        }
+      };
+
+      fetchCategories();
     }
   }, [entry, open]);
 

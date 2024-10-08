@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { formatDateForInput } from "../utils/dateUtils";
 import { useTransactionContext } from "../contexts/TransactionContext"; // Import context
 
-const ViewEntryModal = ({ open, setOpen, entry, onEdit }) => {
-  //Call the useTransactionContext hook at the top level
-  const { refreshTransactions } = useTransactionContext();
-
+const ViewEntryModal = ({ open, setOpen, entry, onEdit, defaultCategory }) => {
   const [form, setForm] = useState({
     user: entry?.user || "",
     title: entry?.title || "",
@@ -17,49 +14,61 @@ const ViewEntryModal = ({ open, setOpen, entry, onEdit }) => {
     invoice: entry?.invoice || "",
   });
 
+  const { refreshTransactions } = useTransactionContext();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (open && entry) {
+      //Update form values when entry changes
       setForm({
         user: entry.user || "",
         title: entry.title || "",
         type: entry.type || "",
-        category: entry.category?._id || "", // Changed from title to _id
+        category: entry.category?._id || "",
         description: entry.description || "",
         amount: entry.amount || "",
         date: formatDateForInput(entry?.date),
         invoice: entry.invoice || "",
       });
+    }
+  }, [entry, open, defaultCategory]);
 
-      // Fetch categories based on entry type
+  useEffect(() => {
+    if (form.type) {
       const fetchCategories = async () => {
         try {
-          const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
-          if (!token) {
+          const token = localStorage.getItem("token").replace(/['"]+/g, ""); //Remove extra quotes
+          console.log("Token", token);
+          let headers = {};
+
+          if (token) {
+            headers = {
+              Authorization: `Bearer ${token}`,
+            };
+            console.log("headers", headers);
+          } else {
             console.error("No token found, user is not logged in.");
             return;
           }
 
-          const headers = {
-            Authorization: `Bearer ${token}`,
-          };
-
-          const response = await fetch(
-            `https://finance-tracker-api-eunu.onrender.comcategories/global?categoryType=${entry.type}`
+          const globalResponse = await fetch(
+            `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=${form.type}`
           );
-          const globalCategories = await response.json();
-
-          const userResponse = await fetch(
-            `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=${entry.type}`,
-            { headers }
-          );
+          const globalCategories = await globalResponse.json();
 
           let userCategories = [];
-          if (userResponse.status === 401) {
-            console.error("User not authorized to fetch categories.");
-          } else {
-            userCategories = await userResponse.json();
+
+          if (token) {
+            const userResponse = await fetch(
+              `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=${form.type}`,
+              { headers }
+            );
+
+            if (userResponse.status === 401) {
+              console.error("User not authorized to fetch categories.");
+            } else {
+              userCategories = await userResponse.json();
+            }
           }
 
           const allCategories = [
@@ -86,7 +95,13 @@ const ViewEntryModal = ({ open, setOpen, entry, onEdit }) => {
 
       fetchCategories();
     }
-  }, [entry, open]);
+  }, [form.type]);
+
+  useEffect(() => {
+    if (defaultCategory) {
+      setForm((prev) => ({ ...prev, type: defaultCategory.toLowerCase() }));
+    }
+  }, [defaultCategory]);
 
   if (!open) return null;
 

@@ -76,14 +76,17 @@ const PasswordChange = ({ setUser }) => {
     const body = { currentPassword, newPassword, confirmPassword };
 
     try {
-      const res = await fetch("http://localhost:5000/user/profile/password", {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        "https://finance-tracker-api-eunu.onrender.com/user/profile/password",
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!res.ok) {
         const data = await res.json();

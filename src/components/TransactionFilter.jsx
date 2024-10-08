@@ -25,7 +25,7 @@ const TransactionFilter = ({
         }
 
         const response = await fetch(
-          `http://localhost:5000/categories/global?categoryType=${selectedType}`,
+          `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=${selectedType}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

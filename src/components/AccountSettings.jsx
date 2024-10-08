@@ -64,13 +64,16 @@ const AccountSettings = ({ setUser, user }) => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/user/profile/picture", {
-        method: "PUT",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://finance-tracker-api-eunu.onrender.com/user/profile/picture",
+        {
+          method: "PUT",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!res.ok) {
         const errorData = await res.text();
         showAlert("error", "Profile picture upload failed.");
@@ -107,14 +110,17 @@ const AccountSettings = ({ setUser, user }) => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/user/profile/details", {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        "https://finance-tracker-api-eunu.onrender.com/user/profile/details",
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!res.ok) {
         const data = await res.json();

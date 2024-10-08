@@ -46,12 +46,12 @@ const ViewEntryModal = ({ open, setOpen, entry, onEdit }) => {
           };
 
           const response = await fetch(
-            `http://localhost:5000/categories/global?categoryType=${entry.type}`
+            `https://finance-tracker-api-eunu.onrender.comcategories/global?categoryType=${entry.type}`
           );
           const globalCategories = await response.json();
 
           const userResponse = await fetch(
-            `http://localhost:5000/categories/filter?categoryType=${entry.type}`,
+            `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=${entry.type}`,
             { headers }
           );
 

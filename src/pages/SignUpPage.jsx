@@ -158,16 +158,19 @@ const SignUpPage = () => {
       password,
     };
     try {
-      const res = await fetch("http://localhost:5000/user/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-      });
+      const res = await fetch(
+        "https://finance-tracker-api-eunu.onrender.com/user/signup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password,
+          }),
+        }
+      );
       const data = await res.json();
 
       if (!res.ok) {

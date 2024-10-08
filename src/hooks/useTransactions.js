@@ -35,8 +35,8 @@ const useTransactions = (filters = {}) => {
         // Construct query parameters based on filters and use the second endpoint if there is no filter used
         const queryParams = new URLSearchParams(filters).toString();
         const url = queryParams
-          ? `http://localhost:5000/transactions?${queryParams}`
-          : `http://localhost:5000/transactions`;
+          ? `https://finance-tracker-api-eunu.onrender.com/transactions?${queryParams}`
+          : `https://finance-tracker-api-eunu.onrender.com/transactions`;
 
         const response = await fetch(url, {
           headers: {

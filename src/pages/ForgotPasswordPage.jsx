@@ -10,7 +10,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/forgot-password",
+        "https://finance-tracker-api-eunu.onrender.com/api/forgot-password",
         { email }
       );
       setMessage(response.data.message);

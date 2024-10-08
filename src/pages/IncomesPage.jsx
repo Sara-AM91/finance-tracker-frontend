@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useContext } from "react";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {
@@ -16,11 +16,12 @@ import TrashIconWithCross from "../components/TrashIconWithCross";
 import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
 import EditEntryModal from "../components/EditEntryModal";
-import { useTransactionContext } from "../contexts/TransactionContext";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
-
+import { TransactionContext } from "../contexts/TransactionContext";
 const IncomesPage = () => {
+  const { transactions, addTransaction, loading, error } =
+    useContext(TransactionContext);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const { isMobile } = useOutletContext();
@@ -32,7 +33,7 @@ const IncomesPage = () => {
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [entryToEdit, setEntryToEdit] = useState(null);
-
+  const [open, setOpen] = useState(false);
   //Local filters state for filtering transactions
   const [filters, setFilters] = useState({
     title: "",
@@ -46,10 +47,6 @@ const IncomesPage = () => {
     key: "date",
     direction: "desc",
   });
-
-  //Fetch transactions from context
-  const { transactions = [], loading, error } = useTransactionContext();
-
   const filtersWithDefaults = {
     title: filters.title || "",
     category: filters.category || "",
@@ -579,8 +576,9 @@ const IncomesPage = () => {
       )}
       {/* New Entry Modal */}
       <NewEntryModal
-        open={openNewEntryModal}
-        setOpen={setOpenNewEntryModal}
+        open={open}
+        setOpen={setOpen}
+        addTransaction={addTransaction}
         defaultCategory="Income"
       />
       {/* Edit Entry Modal */}
@@ -594,7 +592,9 @@ const IncomesPage = () => {
       {/* Floating "+" Button */}
       <button
         className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10"
-        onClick={() => setOpenNewEntryModal(true)}
+        onClick={() => {
+          setOpen(true);
+        }}
       >
         +
       </button>

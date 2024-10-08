@@ -10,7 +10,7 @@ const PasswordChange = ({ setUser }) => {
   const [loading, setLoading] = useState(false);
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(true);
   const [newPasswordVisible, setNewPasswordVisible] = useState(true);
-  const [repeatPasswordVisible, setRepeatPasswordVisible] = useState(true);
+  const [repeatPasswordVisible, setRepeatPasswordVisible] = useState(false);
 
   const toggleCurrentPasswordVisibility = () => {
     setCurrentPasswordVisible(!currentPasswordVisible);

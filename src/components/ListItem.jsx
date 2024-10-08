@@ -6,9 +6,9 @@ const defaultOtherIcon = icons["../assets/icons/other.png"]?.default;
 
 const ListItem = ({ action, indexInGroup, groupSize }) => {
   const dateCreated = action.createdAt.split("T")[0];
-
+  //console.log("action: ", action);
   //If the category icon is not defined, use the default "other.png"
-  const categoryIconPath = action.category.icon
+  const categoryIconPath = action.category?.icon
     ? icons[`../assets/icons/${action.category.icon}`]?.default
     : defaultOtherIcon;
 
@@ -26,7 +26,7 @@ const ListItem = ({ action, indexInGroup, groupSize }) => {
             filter:
               "invert(100%) sepia(0%) saturate(0%) hue-rotate(360deg) brightness(200%) contrast(100%)",
           }}
-          alt={`${action.category.title} icon`}
+          alt={`${action?.category?.title} icon`}
         />
         <div className="ml-2 flex flex-col">
           <div className="leading-snug text-sm text-white font-bold uppercase pb-2">

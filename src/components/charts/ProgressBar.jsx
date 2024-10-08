@@ -7,22 +7,19 @@ const ProgressBar = ({ balance }) => {
   const [reached, setReached] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // Check if the goal is reached
-  useEffect(() => {
-    if (goal > 0 && balance >= goal) {
-      setReached(true);
-    } else {
-      setReached(false);
-    }
-  }, [balance, goal]);
-
-  // Calculate the progress value
   useEffect(() => {
     if (goal > 0) {
-      const progress = Math.round((balance / goal) * 100);
-      setValue(progress > 100 ? 100 : progress); // Clamp to 100%
+      const progress = (balance / goal) * 100;
+      console.log(
+        `Progress: ${progress}% - Balance: ${balance}, Goal: ${goal}`
+      );
+
+      setReached(balance >= goal && progress >= 100);
+
+      setValue(Math.min(100, parseFloat(progress.toFixed(2))));
     } else {
-      setValue(0); // Set to 0 if the goal is not set
+      setValue(0);
+      setReached(false); // If there's no goal, you haven't reached it
     }
   }, [goal, balance]);
 
@@ -36,29 +33,28 @@ const ProgressBar = ({ balance }) => {
 
   return (
     <div className="flex flex-col justify-center h-full">
-      {" "}
-      {/* Ensure the container is full height */}
       <div className="flex gap-10 items-center justify-between px-2">
         <div className="flex flex-row items-center gap-4">
           <h2 className="text-xl text-left">Balance Goal</h2>
+          {/* Only show "100%" when `reached` is true */}
           <h2 className="font-bold text-[#01FFB9] text-2xl">
             {reached ? "100%" : `${value}%`}
           </h2>
         </div>
 
-        {/* Progress bar */}
         <div className="flex flex-col items-end w-full gap-2">
           <p className="text-right">
             {balance}€/{goal}€
           </p>
           <div className="w-full bg-gray-400 h-4 rounded-r-full overflow-hidden">
+            {/* Update the progress bar color based on `reached` */}
             <div
               className={`h-4 rounded-r-full ${
                 reached
-                  ? "bg-[#01FFB9]"
-                  : "bg-gradient-to-r from-[#F36713] to-[#7F3BCB]"
+                  ? "bg-[#01FFB9]" // Green when goal is reached
+                  : "bg-gradient-to-r from-[#F36713] to-[#7F3BCB]" // Gradient when not reached
               }`}
-              style={{ width: `${value}%` }}
+              style={{ width: `${value}%` }} // Show the correct width based on progress
             ></div>
           </div>
           <button

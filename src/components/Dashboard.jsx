@@ -200,7 +200,10 @@ const Dashboard = () => {
           </div>
 
           <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl">
-            <h1 className="text-xl">Sources Income</h1>
+            <h1 className="text-xl">Top 5 Sources Income</h1>
+            <p className="text-left text-base text-gray-400">
+              Here you can view your top categories for income
+            </p>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
                 <IncomePie transactions={yearlyTransactions} />
@@ -209,7 +212,10 @@ const Dashboard = () => {
           </div>
 
           <div className="col-span-2 bg-[#161A40] p-4 text-white rounded-3xl">
-            <h1 className="text-xl">Sources Expenses</h1>
+            <h1 className="text-xl">Top 5 Sources Expenses</h1>
+            <p className="text-left text-base text-gray-400">
+              Here you can view your top categories for expenses
+            </p>
             <div className="flex-grow flex items-center justify-center">
               <div className="h-full max-w-full max-h-full">
                 <ExpensesPie transactions={yearlyTransactions} />

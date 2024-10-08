@@ -8,9 +8,9 @@ const TransactionsList = ({ transactions }) => {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [entryToEdit, setEntryToEdit] = useState(null);
-
+  console.log(transactions);
   const sorted = [...transactions].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   ); //Sort in descending order
 
   //Get the last five transactions after sorting

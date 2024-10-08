@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useContext } from "react";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {
@@ -15,12 +15,14 @@ import TrashIconWithCross from "../components/TrashIconWithCross";
 import ViewEntryModal from "../components/ViewEntryModal";
 import NewEntryModal from "../components/NewEntryModal";
 import EditEntryModal from "../components/EditEntryModal";
-import { useTransactionContext } from "../contexts/TransactionContext";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { formatDateForInput } from "../utils/dateUtils";
 import { useOutletContext } from "react-router-dom";
+import { TransactionContext } from "../contexts/TransactionContext";
 
 const ExpensesPage = () => {
+  const { transactions, addTransaction, loading, error } =
+    useContext(TransactionContext);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const { isMobile } = useOutletContext();
@@ -32,6 +34,7 @@ const ExpensesPage = () => {
   const [openEditEntryModal, setOpenEditEntryModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [entryToEdit, setEntryToEdit] = useState(null);
+  const [open, setOpen] = useState(false);
 
   //Local filters state for filtering transactions
   const [filters, setFilters] = useState({
@@ -46,10 +49,6 @@ const ExpensesPage = () => {
     key: "date",
     direction: "desc",
   });
-
-  //Fetch transactions from context
-  const { transactions = [], loading, error } = useTransactionContext();
-  const { addTransaction } = useTransactionContext();
 
   //Ensure filters have default values
   const filtersWithDefaults = {
@@ -242,7 +241,7 @@ const ExpensesPage = () => {
 
   const handleSort = (key) => {
     setSortConfig((prevSortConfig) => {
-      // If the same key is clicked, toggle direction
+      //If the same key is clicked, toggle direction
       const newDirection =
         prevSortConfig.key === key && prevSortConfig.direction === "asc"
           ? "desc"
@@ -251,9 +250,9 @@ const ExpensesPage = () => {
     });
   };
 
-  // Function to determine the color of the sort icon
+  //Function to determine the color of the sort icon
   const getIconColor = (key) => {
-    return sortConfig.key === key ? "text-red-500" : "text-gray-400"; // Red if active, gray otherwise
+    return sortConfig.key === key ? "text-red-500" : "text-gray-400"; //Red if active, gray otherwise
   };
 
   const getSortIcon = (key) => {
@@ -407,7 +406,7 @@ const ExpensesPage = () => {
             >
               <button
                 className="text-white"
-                onClick={toggleSidebar} // Button to close sidebar
+                onClick={toggleSidebar} //Button to close sidebar
               >
                 Close
               </button>
@@ -588,10 +587,10 @@ const ExpensesPage = () => {
       )}
       {/* New Entry Modal */}
       <NewEntryModal
-        open={openNewEntryModal}
-        setOpen={setOpenNewEntryModal}
-        defaultCategory="Expense"
+        open={open}
+        setOpen={setOpen}
         addTransaction={addTransaction}
+        defaultCategory="Expense"
       />
       {/* Edit Entry Modal */}
       {entryToEdit && (
@@ -604,7 +603,9 @@ const ExpensesPage = () => {
       {/* Floating "+" Button */}
       <button
         className="bg-orange-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-3xl fixed bottom-10 right-10 z-10"
-        onClick={() => setOpenNewEntryModal(true)}
+        onClick={() => {
+          setOpen(true);
+        }}
       >
         +
       </button>

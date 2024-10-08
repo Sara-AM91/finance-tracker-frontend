@@ -15,11 +15,14 @@ const useUser = () => {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:5000/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "https://finance-tracker-api-eunu.onrender.com/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Something went wrong");
         }

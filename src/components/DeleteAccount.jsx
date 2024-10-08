@@ -20,13 +20,16 @@ const DeleteAccount = ({ user, setUser }) => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/user/profile/deactivate", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        "https://finance-tracker-api-eunu.onrender.com/user/profile/deactivate",
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!res.ok) {
         const data = await res.json();

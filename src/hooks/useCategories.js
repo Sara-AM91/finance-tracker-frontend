@@ -14,7 +14,7 @@ const useCategories = (type) => {
         }
 
         const globalResponse = await fetch(
-          `http://localhost:5000/categories/global?categoryType=expense`,
+          `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=expense`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -35,7 +35,7 @@ const useCategories = (type) => {
         }
 
         const userResponse = await fetch(
-          `http://localhost:5000/categories/filter?categoryType=expense`,
+          `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=expense`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 

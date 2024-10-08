@@ -44,7 +44,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
           }
 
           const globalResponse = await fetch(
-            `http://localhost:5000/categories/global?categoryType=${form.type}`
+            `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=${form.type}`
           );
           const globalCategories = await globalResponse.json();
 
@@ -52,7 +52,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
 
           if (token) {
             const userResponse = await fetch(
-              `http://localhost:5000/categories/filter?categoryType=${form.type}`,
+              `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=${form.type}`,
               { headers }
             );
 
@@ -147,7 +147,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
           categoryType: form.type,
         };
         const categoryResponse = await fetch(
-          "http://localhost:5000/categories",
+          "https://finance-tracker-api-eunu.onrender.com/categories",
           {
             method: "POST",
             headers: {
@@ -185,13 +185,16 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
     formData.append("invoice", form.invoice);
 
     try {
-      const res = await fetch("http://localhost:5000/transactions", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://finance-tracker-api-eunu.onrender.com/transactions",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         showAlert(

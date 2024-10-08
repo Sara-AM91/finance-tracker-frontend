@@ -55,7 +55,7 @@ const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
           }
 
           const globalResponse = await fetch(
-            `http://localhost:5000/categories/global?categoryType=${form.type}`
+            `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=${form.type}`
           );
           const globalCategories = await globalResponse.json();
 
@@ -63,7 +63,7 @@ const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
 
           if (token) {
             const userResponse = await fetch(
-              `http://localhost:5000/categories/filter?categoryType=${form.type}`,
+              `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=${form.type}`,
               { headers }
             );
 
@@ -126,7 +126,7 @@ const EditEntryModal = ({ open, setOpen, entry, defaultCategory }) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/transactions/${entry._id}`,
+        `https://finance-tracker-api-eunu.onrender.com/transactions/${entry._id}`,
         {
           method: "PUT",
           headers: {

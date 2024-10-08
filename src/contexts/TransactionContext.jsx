@@ -20,8 +20,8 @@ export const TransactionProvider = ({ children }) => {
     try {
       const queryParams = new URLSearchParams(filters).toString();
       const url = queryParams
-        ? `http://localhost:5000/transactions?${queryParams}`
-        : `http://localhost:5000/transactions`;
+        ? `https://finance-tracker-api-eunu.onrender.com/transactions?${queryParams}`
+        : `https://finance-tracker-api-eunu.onrender.com/transactions`;
 
       const response = await fetch(url, {
         headers: {

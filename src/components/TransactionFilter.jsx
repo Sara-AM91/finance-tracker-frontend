@@ -11,7 +11,7 @@ const TransactionFilter = ({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token")?.replace(/['"]+/g, "");
         if (!token) {
           console.error("No token found in localStorage");
           return;
@@ -24,31 +24,52 @@ const TransactionFilter = ({
           return;
         }
 
-        const response = await fetch(
-          `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=${selectedType}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        //Fetch global categories
+        const globalResponse = await fetch(
+          `https://finance-tracker-api-eunu.onrender.com/categories/global?categoryType=${selectedType}`
         );
-        const data = await response.json();
+        const globalCategories = await globalResponse.json();
 
-        //Ensure "Other" is at the end of the array
-        const sortedCategories = data.sort((a, b) => {
-          if (a.title === "Other") return 1;
-          if (b.title === "Other") return -1;
-          return a.title.localeCompare(b.title);
-        });
+        //Fetch user-specific categories
+        let userCategories = [];
+        const headers = { Authorization: `Bearer ${token}` };
+        const userResponse = await fetch(
+          `https://finance-tracker-api-eunu.onrender.com/categories/filter?categoryType=${selectedType}`,
+          { headers }
+        );
+
+        if (userResponse.status === 401) {
+          console.error("User not authorized to fetch categories.");
+        } else {
+          userCategories = await userResponse.json();
+        }
+
+        //Merge global and user categories, avoiding duplicates
+        const allCategories = [
+          ...globalCategories,
+          ...userCategories.filter(
+            (userCategory) =>
+              !globalCategories.some(
+                (globalCategory) => globalCategory._id === userCategory._id
+              )
+          ),
+        ];
+
+        //Sort categories and ensure "Other" is at the end of the array
+        const sortedCategories = [
+          ...allCategories.filter((category) => category.title !== "Other"),
+          ...allCategories.filter((category) => category.title === "Other"),
+        ];
 
         setCategories(sortedCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        setCategories([]);
       }
     };
 
     fetchCategories();
-  }, [filters.type]); //Re-fetch categories when the selected type changes
+  }, [filters.type, type]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,8 +93,8 @@ const TransactionFilter = ({
 
   //Set the size class for inputs depending on the showTypeFilter prop
   const inputClass = showTypeFilter
-    ? "w-full sm:w-[8%] md:w-[10%] lg:w-[15%]" // Smaller custom size if showTypeFilter is true
-    : "w-full sm:w-[12%] md:w-[15%] lg:w-[18%]"; // Larger custom size if showTypeFilter is false
+    ? "w-full sm:w-[8%] md:w-[10%] lg:w-[15%]" //Smaller custom size if showTypeFilter is true
+    : "w-full sm:w-[12%] md:w-[15%] lg:w-[18%]"; //Larger custom size if showTypeFilter is false
   return (
     <div className="flex flex-wrap flex-col lg:flex-row justify-between p-3 bg-[#161A40] rounded-3xl shadow-md">
       {/* Type Filter (conditionally displayed) */}
@@ -114,7 +135,7 @@ const TransactionFilter = ({
           className="w-full bg-white text-black pl-2 rounded-md h-9"
           onChange={handleInputChange}
           value={category}
-          disabled={!selectedType && showTypeFilter} // Disable if type is not selected and showTypeFilter is true
+          disabled={!selectedType && showTypeFilter} //Disable if type is not selected and showTypeFilter is true
         >
           <option value="">All</option>
           {categories.length > 0 ? (

@@ -3,6 +3,8 @@ import { useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import MobileSidebar from "./MobileSidebar";
 import DateCalendarModal from "./DateCalendarModal";
+import logo from "../assets/Logo.png";
+import logoMobile from "../assets/LogoMobile.png";
 
 const Header = ({ user, isMobile }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -28,6 +30,15 @@ const Header = ({ user, isMobile }) => {
       <div className="flex gap-4">
         <div className="navbar bg-[#161A40] rounded-3xl py-2 px-6 mb-4">
           <div className="navbar-start">
+            {!isMobile && (
+              <>
+                <span className="text-sm text-white">Welcome,</span>{" "}
+                <span className="text-sm text-white font-bold ml-2">
+                  {user.firstName} {user.lastName}
+                </span>
+                <span className="text-sm text-white">!</span>
+              </>
+            )}
             {isMobile && (
               <>
                 <div className="relative">
@@ -70,9 +81,15 @@ const Header = ({ user, isMobile }) => {
             )}
           </div>
           <div className="navbar-center">
-            <Link to="/dashboard" className="text-xl text-white">
-              FinanceTracker
-            </Link>
+            {isMobile ? (
+              <Link to="/dashboard" className="text-xl text-white">
+                <img src={logoMobile} alt="logo" className="h-14" />
+              </Link>
+            ) : (
+              <Link to="/dashboard" className="text-xl text-white">
+                <img src={logo} alt="logo" className="h-14" />
+              </Link>
+            )}
           </div>
           {isMobile && (
             <div className="navbar-end">

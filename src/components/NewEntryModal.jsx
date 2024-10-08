@@ -272,6 +272,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                               ></label>
                               <select
+                                style={{ width: "150px" }}
                                 id="type"
                                 name="type"
                                 onChange={(e) => {
@@ -298,6 +299,7 @@ const NewEntryModal = ({ open, setOpen, defaultCategory, addTransaction }) => {
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                               ></label>
                               <select
+                                style={{ width: "150px" }}
                                 id="category"
                                 name="category"
                                 className="bg-[#161a40] border-b border-indigo-300 text-white text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"

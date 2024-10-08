@@ -68,6 +68,7 @@ export default function ExpensesPie({ transactions }) {
                 width: "12px",
                 height: "12px",
                 marginRight: "8px",
+                border: "none",
               }}
             ></div>
             <span style={{ color: "#FFFFFF" }}>{item.label}</span>{" "}

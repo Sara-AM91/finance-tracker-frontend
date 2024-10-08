@@ -3,8 +3,10 @@ import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import Dialog from "@mui/material/Dialog";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { pickersLayoutClasses } from "@mui/x-date-pickers";
 // import { useTransactionContext } from "../contexts/TransactionContext"; // Uncomment if using context
 
 const DateCalendarModal = ({ open, handleClose }) => {
@@ -42,12 +44,22 @@ const DateCalendarModal = ({ open, handleClose }) => {
           },
         },
       },
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            "&.MuiDayCalendar-weekDayLabel": {
+              color: "white",
+            },
+          },
+        },
+      },
+
       MuiDayCalendar: {
         styleOverrides: {
           header: {
             background: "linear-gradient(90deg, #633FD7 0%, #7F3BCB 100%)",
             borderBottom: "none",
-            color: "#ffffff", // Style for header text color
+            color: "red", // Style for header text color
           },
           headerTypography: {
             color: "#ffffff", // Style for header text color
@@ -69,12 +81,21 @@ const DateCalendarModal = ({ open, handleClose }) => {
       MuiPickersArrowSwitcher: {
         styleOverrides: {
           root: {
-            backgroundColor: "#7F3BCB",
-            borderRadius: "20px",
-            color: "#ffffff",
+            "& .MuiIconButton-root": {
+              color: "white",
+            },
           },
-          icon: {
-            color: "#ffffff", // Ensure the arrow icon color is white
+        },
+      },
+    },
+  });
+
+  const theme2 = createTheme({
+    components: {
+      MuiPickersCalendarHeader: {
+        styleOverrides: {
+          dayLabel: {
+            color: "red",
           },
         },
       },
@@ -82,9 +103,9 @@ const DateCalendarModal = ({ open, handleClose }) => {
   });
 
   return (
-    <Dialog open={open} onClose={handleClose} className="">
+    <Dialog open={open} onClose={handleClose}>
       <ThemeProvider theme={theme}>
-        <div className="p-4 text-white bg-[#000036] shadow-lg border border-solid border-indigo-400 ">
+        <div className="sm:p-4 text-white bg-[#000036] shadow-lg border border-solid border-indigo-400 box-border">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateCalendar
               defaultValue={dayjs()} // Today's date
@@ -92,10 +113,10 @@ const DateCalendarModal = ({ open, handleClose }) => {
             />
           </LocalizationProvider>
 
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 float-end">
             <button
               onClick={handleClose}
-              className="rounded-md bg-gradient-to-r from-orange-500 to-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm"
+              className="rounded-md bg-gradient-to-r from-orange-500 to-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm mr-2 mb-2"
             >
               Close
             </button>

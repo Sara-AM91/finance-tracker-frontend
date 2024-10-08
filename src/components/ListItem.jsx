@@ -1,13 +1,17 @@
 //Dynamically import all icons from the `src/assets/icons` folder
 const icons = import.meta.glob("../assets/icons/*.png", { eager: true });
 
+//Define a default icon for categories without a defined icon
+const defaultOtherIcon = icons["../assets/icons/other.png"]?.default;
+
 const ListItem = ({ action, indexInGroup, groupSize }) => {
   const dateCreated = action.createdAt.split("T")[0];
 
-  //Resolve the icon path using the `action.category.icon` value
+  //If the category icon is not defined, use the default "other.png"
   const categoryIconPath = action.category.icon
     ? icons[`../assets/icons/${action.category.icon}`]?.default
-    : null;
+    : defaultOtherIcon;
+
   return (
     <div
       className={`px-3 py-5 flex items-center justify-between ${
@@ -21,7 +25,7 @@ const ListItem = ({ action, indexInGroup, groupSize }) => {
           style={{
             filter:
               "invert(100%) sepia(0%) saturate(0%) hue-rotate(360deg) brightness(200%) contrast(100%)",
-          }} //Makes the icon white
+          }}
           alt={`${action.category.title} icon`}
         />
         <div className="ml-2 flex flex-col">

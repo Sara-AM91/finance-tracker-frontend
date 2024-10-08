@@ -33,7 +33,7 @@ const ProgressBar = ({ balance }) => {
 
   return (
     <div className="flex flex-col justify-center h-full">
-      <div className="flex gap-10 items-center justify-between px-2">
+      <div className="flex flex-col sm:flex-row gap-10 items-center justify-between px-2">
         <div className="flex flex-row items-center gap-4">
           <h2 className="text-xl text-left">Balance Goal</h2>
           {/* Only show "100%" when `reached` is true */}
@@ -58,7 +58,7 @@ const ProgressBar = ({ balance }) => {
             ></div>
           </div>
           <button
-            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base self-center xl:self-end mt-2"
+            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white py-2 px-4 rounded-lg text-base self-start sm:self-center xl:self-end mt-2"
             onClick={() => {
               setOpen(true);
             }}

@@ -171,7 +171,11 @@ const Dashboard = () => {
                     setMaxExp={setMaxExp}
                   />
                 ) : (
-                  <ExpensesVsIncomeLine transactions={yearlyTransactions} />
+                  <ExpensesVsIncomeLine
+                    transactions={yearlyTransactions}
+                    setMaxInc={setMaxInc}
+                    setMaxExp={setMaxExp}
+                  />
                 )}
               </div>
             </div>

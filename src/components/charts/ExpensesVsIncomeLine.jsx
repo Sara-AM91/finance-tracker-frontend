@@ -26,7 +26,22 @@ ChartJS.register(
   ChartDataLabels
 );
 
-const ExpensesVsIncomeLine = ({ transactions }) => {
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const ExpensesVsIncomeLine = ({ transactions, setMaxInc, setMaxExp }) => {
   const chartRef = useRef(null);
 
   const months = Array(12)
@@ -55,6 +70,26 @@ const ExpensesVsIncomeLine = ({ transactions }) => {
 
   const uData = expenseData;
   const pData = incomeData;
+
+  const expenseMax = Math.max(...expenseData);
+  const maxExpenseMonthIndex = expenseData.indexOf(expenseMax);
+  const maxExpense = {
+    amount: expenseMax.toFixed(2),
+    month: monthNames[maxExpenseMonthIndex],
+  };
+
+  const incomeMax = Math.max(...incomeData);
+  const maxIncomeMonthIndex = incomeData.indexOf(incomeMax);
+  const maxIncome = {
+    amount: incomeMax.toFixed(2),
+    month: monthNames[maxIncomeMonthIndex],
+  };
+
+  useEffect(() => {
+    setMaxInc(maxIncome);
+    setMaxExp(maxExpense);
+  }, [transactions]);
+
   const xLabels = [
     "Jan",
     "Feb",

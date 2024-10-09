@@ -250,6 +250,9 @@ const LoginPage = () => {
                   Sign Up
                 </Link>
               </p>
+              {isLoading && (
+                <span className="loading loading-dots loading-lg text-white mt-6"></span>
+              )}
             </div>
 
             {/* Add Alert */}

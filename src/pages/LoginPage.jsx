@@ -198,7 +198,7 @@ const LoginPage = () => {
                 <input
                   type="email"
                   placeholder="E-mail"
-                  className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
+                  className="w-[380px] p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
                   value={email}
                   onChange={handleEmailChange}
                 />
@@ -208,7 +208,7 @@ const LoginPage = () => {
                 <input
                   type={passwordVisible ? "password" : "text"}
                   placeholder="Password"
-                  className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
+                  className="w-[380px] p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-normal text-[20px] text-[#969696]"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />

@@ -22,7 +22,7 @@ const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const { isMobile } = useOutletContext();
 
-  const [isBarChart, setIsBarChart] = useState(true);
+  const [isBarChart, setIsBarChart] = useState(false);
   const [balance, setBalance] = useState(0);
   const [maxInc, setMaxInc] = useState({});
   const [maxExp, setMaxExp] = useState({});
@@ -338,7 +338,11 @@ const Dashboard = () => {
                 setMaxExp={setMaxExp}
               />
             ) : (
-              <ExpensesVsIncomeLine transactions={yearlyTransactions} />
+              <ExpensesVsIncomeLine
+                transactions={yearlyTransactions}
+                setMaxInc={setMaxInc}
+                setMaxExp={setMaxExp}
+              />
             )}
           </div>
         </div>

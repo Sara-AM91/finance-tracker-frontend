@@ -102,13 +102,3 @@
   background-color: #293458; /* Blue background for selected */
   color: #ffffff; /* White text for selected */
 }
-
-/* For Webkit browsers (Chrome, Safari, Edge) */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Inverts the color */
-}
-
-/* For Firefox */
-input[type="date"]::-moz-calendar-picker-indicator {
-  color: black;
-}

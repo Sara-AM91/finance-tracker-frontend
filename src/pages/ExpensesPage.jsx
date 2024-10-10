@@ -484,7 +484,7 @@ const ExpensesPage = () => {
                       {getSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="p-4 xl:pl-80 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl">
+                  <th className="p-4 font-bold sticky top-0 bg-[#293458] z-10 rounded-tr-2xl w-1/6 text-right">
                     <button
                       onClick={clearFilters}
                       aria-label="Clear filters"
@@ -519,8 +519,7 @@ const ExpensesPage = () => {
                           ? formatDateForInput(expense.createdAt)
                           : "N/A"}
                       </td>
-                      {/* Action Button inside each row */}
-                      <td className="p-4 text-right right-4 top-4">
+                      <td className="p-4 w-1/6 text-right right-4 top-4">
                         {/* Action Menu */}
                         <Menu
                           as="div"
